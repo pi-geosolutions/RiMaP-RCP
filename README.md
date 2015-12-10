@@ -13,3 +13,4 @@ Aims to provide a desktop alternative to the online geoportal project (see  for 
 - offline functionnality
 - cache management (clean cache, add data into cache, create cache for selected layer/area)
 
+world-wind-java-sdk-rcp* are setupas submodules from the https://github.com/unofficial-nasa repository.
