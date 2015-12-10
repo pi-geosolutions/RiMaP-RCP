@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_o0Uz4JzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.application">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_qDDQ0JzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.trimmedwindow.rimap3d" label="RiMaP 3D">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_59ebQJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspectivestack.main">
+      <children xsi:type="advanced:Perspective" xmi:id="_--feEJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspective.main" label="Main">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_q4OlUJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.0" horizontal="true">
+          <children xsi:type="basic:PartStack" xmi:id="_s2bXYJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partstack.0" containerData="300">
+            <children xsi:type="basic:Part" xmi:id="_xZkycJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.layertree" label="Layertree"/>
+          </children>
+          <children xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.WWJView" label="WWJView"/>
+        </children>
+      </children>
+    </children>
+  </children>
+  <addons xmi:id="_o0Uz4ZzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_o0Uz4pzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_o0Uz45zFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_o0Uz5JzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_o0Uz5ZzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_o0Uz5pzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_o0Uz55zFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+</application:Application>
