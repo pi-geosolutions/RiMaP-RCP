@@ -17,13 +17,6 @@
    </license>
 
    <plugin
-         id="fr.pigeo.rimap.rimaprcp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="gov.nasa.worldwind.linux.amd64"
          download-size="0"
          install-size="0"
@@ -44,5 +37,25 @@
          version="0.0.0"
          fragment="true"
          unpack="false"/>
+
+   <plugin
+         id="fr.pigeo.rimap.rimaprcp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="fr.pigeo.rimap.rimaprcp.catalog"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="fr.pigeo.externals.com.fasterxml.jackson.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

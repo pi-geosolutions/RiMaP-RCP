@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Catalog
+Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.catalog
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: pi-Geosolutions
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: fr.pigeo.externals.com.fasterxml.jackson.core;bundle-version="1.0.0";visibility:=reexport,
+ org.eclipse.swt;bundle-version="3.104.1"
+Export-Package: fr.pigeo.rimap.rimaprcp.catalog

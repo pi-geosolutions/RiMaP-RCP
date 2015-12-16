@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="RiMaP RCP" id="fr.pigeo.rimap.rimaprcp.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" useFeatures="true" includeLaunchers="true">
-
+<product name="RiMaP RCP" uid="fr.pigeo.rimap.rimaprcp.product" id="fr.pigeo.rimap.rimaprcp.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -16,7 +15,6 @@
 
    <windowImages/>
 
-
    <launcher>
       <solaris/>
       <win useIco="false">
@@ -24,13 +22,10 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
-
    <plugins>
-      <plugin id="fr.pigeo.rimap.rimaprcp"/>
    </plugins>
 
    <features>
