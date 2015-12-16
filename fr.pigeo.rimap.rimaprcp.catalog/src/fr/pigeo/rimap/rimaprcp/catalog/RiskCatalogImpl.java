@@ -79,7 +79,7 @@ public class RiskCatalogImpl implements ICatalog {
 		         JsonNode child = itr.next();
 		         TreeItem item = new TreeItem(parentItem, SWT.NONE);
 		         item.setText(child.get("text").asText("node"));
-		         System.out.println(item.getText());
+		         //System.out.println(item.getText());
 		         this.loadChildren(item, child);
 		      }
 			

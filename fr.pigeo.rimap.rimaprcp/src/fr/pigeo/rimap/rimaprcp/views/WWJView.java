@@ -57,8 +57,8 @@ public class WWJView {
 		WorldWindowGLCanvas wwd = new WorldWindowGLCanvas();
 		Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
 		wwd.setModel(m);
-		System.out.println(Configuration.getStringValue("gov.nasa.worldwind.config.file"));
-		System.out.println(System.getProperty("gov.nasa.worldwind.app.config.document"));
+		//System.out.println(Configuration.getStringValue("gov.nasa.worldwind.config.file"));
+		//System.out.println(System.getProperty("gov.nasa.worldwind.app.config.document"));
 		//wwd.setModel(new BasicModel());
 		// create a new local_ context
 		  IEclipseContext localCtx = EclipseContextFactory.create("rimapRcpContext");
