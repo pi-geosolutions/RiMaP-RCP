@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +22,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.pigeo.rimap.rimaprcp.catalog.RiskJfaceCatalogImpl;
 
 public class FolderLayer extends AbstractLayer {
+	private static List<FolderLayer> expandedFolders; //used to give initial expanded info to jTreeViewer
+	
 	private boolean isRoot = false;
 	private LayerType type = LayerType.FOLDER;
 	private String id;
@@ -39,21 +42,23 @@ public class FolderLayer extends AbstractLayer {
 
 	public FolderLayer(AbstractLayer parent) {
 		this.parent = parent;
+		if (FolderLayer.expandedFolders == null)
+			FolderLayer.expandedFolders = new ArrayList<FolderLayer>();
 	}
 
 	public FolderLayer(AbstractLayer parent, JsonNode node) {
-		this.parent = parent;
+		this(parent);
 		this.loadFromJson(node);
 	}
 
 	public FolderLayer(AbstractLayer parent, boolean isroot) {
-		this.parent = parent;
+		this(parent);
 		if (isroot)
 			this.setIsRoot();
 	}
 
 	public FolderLayer(AbstractLayer parent, JsonNode node, boolean isroot) {
-		this.parent = parent;
+		this(parent);
 		if (isroot)
 			this.setIsRoot();
 		this.loadFromJson(node);
@@ -89,6 +94,8 @@ public class FolderLayer extends AbstractLayer {
 			if (children.isArray())
 				this.children = this.loadChildren(children);
 		}
+		if (this.expanded)
+			FolderLayer.expandedFolders.add(this);
 	}
 
 	private List<AbstractLayer> loadChildren(JsonNode list) {
@@ -194,8 +201,9 @@ public class FolderLayer extends AbstractLayer {
 		return children;
 	}
 
-	public Image getImage(boolean expanded) {
-		if (expanded) {
+	@Override
+	public Image getImage() {
+		if (this.expanded) {
 			if (FolderLayer.folderExpandedImage == null) {
 				Bundle bundle = FrameworkUtil.getBundle(FolderLayer.class);
 				URL url = FileLocator.find(bundle, new Path(FolderLayer.folderExpandedImagePath), null);
@@ -213,4 +221,8 @@ public class FolderLayer extends AbstractLayer {
 			return FolderLayer.folderImage;
 		}
 	}
+	
+	public static FolderLayer[] getExpandedFolders() {
+		return FolderLayer.expandedFolders.toArray(new FolderLayer[0]);
+	}	
 }

@@ -4,10 +4,10 @@
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_59ebQJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspectivestack.main">
       <children xsi:type="advanced:Perspective" xmi:id="_--feEJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspective.main" label="Main">
         <children xsi:type="basic:PartSashContainer" xmi:id="_q4OlUJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.0" horizontal="true">
-          <children xsi:type="basic:PartStack" xmi:id="_s2bXYJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partstack.0" containerData="300" selectedElement="_xZkycJzFEeW3eM-i01vfSQ">
-            <children xsi:type="basic:Part" xmi:id="_xZkycJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.layertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.Layertree" label="Layertree1" iconURI="" closeable="true"/>
+          <children xsi:type="basic:PartStack" xmi:id="_s2bXYJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partstack.0" containerData="300" selectedElement="_eQ228KPdEeWES4bRRX2C7A">
             <children xsi:type="basic:Part" xmi:id="_eQ228KPdEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.jfacelayertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.JfaceLayertree" label="JfaceLayertree" closeable="true"/>
-            <children xsi:type="basic:Part" xmi:id="_CQ5JUKQjEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.filebrowser" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.FileBrowserPart" label="FileBrowser" closeable="true"/>
+            <children xsi:type="basic:Part" xmi:id="_xZkycJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.layertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.Layertree" label="Layertree1" iconURI="" closeable="true"/>
+            <children xsi:type="basic:Part" xmi:id="_CQ5JUKQjEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.filebrowser" visible="false" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.FileBrowserPart" label="FileBrowser" closeable="true"/>
           </children>
           <children xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.WWJView" label="WWJView"/>
         </children>

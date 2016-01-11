@@ -9,6 +9,8 @@ Require-Bundle: fr.pigeo.externals.com.fasterxml.jackson.core;bundle-version="1.
  org.eclipse.swt;bundle-version="3.104.1",
  org.eclipse.jface,
  org.eclipse.osgi,
- org.eclipse.equinox.registry
+ org.eclipse.equinox.registry,
+ org.eclipse.e4.core.contexts,
+ gov.nasa.worldwind
 Export-Package: fr.pigeo.rimap.rimaprcp.catalog,
  fr.pigeo.rimap.rimaprcp.riskcatalog

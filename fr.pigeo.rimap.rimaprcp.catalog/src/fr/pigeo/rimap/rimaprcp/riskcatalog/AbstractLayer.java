@@ -8,7 +8,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.swt.graphics.Image;
+
 import com.fasterxml.jackson.databind.JsonNode;
+
+import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 
 /**
  * @author Jean Pommier (jean.pommier@pi-geosolutions.fr)
@@ -31,6 +35,14 @@ public abstract class AbstractLayer {
 
 	public String getName() {
 		return name;
+	}
+	
+	public Image getImage() {
+		//To override in child classes
+		return null;
+	}
+	public void setChecked() {
+		//To override in child classes
 	}
 
 	public void setName(String name) {
@@ -90,5 +102,10 @@ public abstract class AbstractLayer {
 		if (node.has(tag))
 			out = node.get(tag).asDouble(defaultValue);
 		return out;
+	}
+
+	public void addToGlobe(WorldWindowGLCanvas wwd) {
+		//To override in child classes
+				return ;
 	}
 }

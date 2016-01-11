@@ -65,6 +65,7 @@ public class WWJView {
 		  localCtx.set(WorldWindowGLCanvas.class, wwd);
 		  // connect new local context with context hierarchy
 		  localCtx.setParent(app.getContext());
+		  app.getContext().set(WorldWindowGLCanvas.class, wwd);
 		  
 		  
 		//gov.nasa.worldwindx.examples.ApplicationTemplate.insertBeforePlacenames(wwd, new LatLonGraticuleLayer());
