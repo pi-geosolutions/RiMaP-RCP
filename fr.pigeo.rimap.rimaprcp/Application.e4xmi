@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_o0Uz4JzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.application">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_qDDQ0JzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.trimmedwindow.rimap3d" label="RiMaP 3D">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_qDDQ0JzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.trimmedwindow.rimap3d" label="%trimmedwindow.label.1">
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_59ebQJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspectivestack.main">
-      <children xsi:type="advanced:Perspective" xmi:id="_--feEJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspective.main" label="Main">
+      <children xsi:type="advanced:Perspective" xmi:id="_--feEJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspective.main" label="%perspective.label.1">
         <children xsi:type="basic:PartSashContainer" xmi:id="_q4OlUJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.0" horizontal="true">
-          <children xsi:type="basic:PartStack" xmi:id="_s2bXYJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partstack.0" containerData="300" selectedElement="_eQ228KPdEeWES4bRRX2C7A">
-            <children xsi:type="basic:Part" xmi:id="_eQ228KPdEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.jfacelayertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.JfaceLayertree" label="JfaceLayertree" closeable="true"/>
-            <children xsi:type="basic:Part" xmi:id="_xZkycJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.layertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.Layertree" label="Layertree1" iconURI="" closeable="true"/>
-            <children xsi:type="basic:Part" xmi:id="_CQ5JUKQjEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.filebrowser" visible="false" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.FileBrowserPart" label="FileBrowser" closeable="true"/>
+          <children xsi:type="basic:PartStack" xmi:id="_s2bXYJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partstack.controlstack" containerData="300" selectedElement="_eQ228KPdEeWES4bRRX2C7A">
+            <children xsi:type="basic:Part" xmi:id="_eQ228KPdEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.jfacelayertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.JfaceLayertree" label="%part.label.1"/>
+            <children xsi:type="basic:Part" xmi:id="_5mi3MLiNEeWNs8HUC5fhyg" elementId="fr.pigeo.rimap.rimaprcp.part.organize" label="%part.label.2"/>
+            <children xsi:type="basic:Part" xmi:id="_xZkycJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.layertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.Layertree" label="%part.label.3" iconURI=""/>
+            <children xsi:type="basic:Part" xmi:id="_CQ5JUKQjEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.filebrowser" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.FileBrowserPart" label="%part.label.4"/>
           </children>
-          <children xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.WWJView" label="WWJView"/>
+          <children xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.WWJView" label="%part.label.5"/>
         </children>
       </children>
     </children>
     <mainMenu xmi:id="_qcxpQKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.0">
-      <children xsi:type="menu:Menu" xmi:id="_sfbdgKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.io" label="I/O">
-        <children xsi:type="menu:DirectMenuItem" xmi:id="_wAE5wKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menus.io.directmenuitem.load" label="Load" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.menus.load"/>
+      <children xsi:type="menu:Menu" xmi:id="_sfbdgKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.io" label="%menu.label.1">
+        <children xsi:type="menu:DirectMenuItem" xmi:id="_wAE5wKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menus.io.directmenuitem.load" label="%directmenuitem.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.menus.load"/>
       </children>
     </mainMenu>
   </children>
