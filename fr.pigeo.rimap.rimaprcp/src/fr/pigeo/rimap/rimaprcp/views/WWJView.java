@@ -11,7 +11,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.widgets.Composite;
 
-import gov.nasa.worldwind.Configuration;
+import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
@@ -34,42 +34,15 @@ public class WWJView {
 	}
 
 	@PostConstruct
-	public void postConstruct(Composite parent,MApplication app) {
+	public void postConstruct(Composite parent,MApplication app, WwjInstance wwj) {
 		// Setup AWT container.
 		_embeddedContainer = new Composite(parent, SWT.EMBEDDED);
 		java.awt.Frame frame = SWT_AWT.new_Frame(_embeddedContainer);
 		java.awt.Panel panel = new java.awt.Panel(new java.awt.BorderLayout());
 		frame.add(panel);
-		
-		
-
-//		// Create World Wind canvas and add it to panel.
-//		System.setProperty(
-//	            "gov.nasa.worldwind.config.file",
-//	            "fr/pigeo/rimap/rimaprcp/config/wwj/worldwind.xml");
-		System.setProperty(
-	            "gov.nasa.worldwind.app.config.document",
-	            "customconfig/worldwind.xml");
-//        Configuration.setValue(
-//        		"gov.nasa.worldwind.config.file",
-//	            "fr/pigeo/rimap/rimaprcp/config/wwj/worldwind.xml");
-		
-		WorldWindowGLCanvas wwd = new WorldWindowGLCanvas();
-		Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
-		wwd.setModel(m);
-		//System.out.println(Configuration.getStringValue("gov.nasa.worldwind.config.file"));
-		//System.out.println(System.getProperty("gov.nasa.worldwind.app.config.document"));
-		//wwd.setModel(new BasicModel());
-		// create a new local_ context
-		  IEclipseContext localCtx = EclipseContextFactory.create("rimapRcpContext");
-		  localCtx.set(WorldWindowGLCanvas.class, wwd);
-		  // connect new local context with context hierarchy
-		  localCtx.setParent(app.getContext());
-		  app.getContext().set(WorldWindowGLCanvas.class, wwd);
-		  
 		  
 		//gov.nasa.worldwindx.examples.ApplicationTemplate.insertBeforePlacenames(wwd, new LatLonGraticuleLayer());
-		panel.add(wwd, java.awt.BorderLayout.CENTER);
+		panel.add(wwj.getWwd(), java.awt.BorderLayout.CENTER);
 
 	}
 

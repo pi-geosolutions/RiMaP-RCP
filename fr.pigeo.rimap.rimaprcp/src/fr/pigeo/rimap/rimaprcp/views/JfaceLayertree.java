@@ -20,20 +20,18 @@ import fr.pigeo.rimap.rimaprcp.catalog.RiskJfaceCatalogImpl;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.AbstractLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.FolderLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.WmsLayer;
+import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.layers.LayerList;
-import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 
 public class JfaceLayertree {
 	private TreeViewer viewer;
 	private Tree tree;
 
 	@PostConstruct
-	public void postConstruct(Composite parent, final IEclipseContext ctx) {
+	public void postConstruct(Composite parent, final IEclipseContext ctx, final WwjInstance wwj) {
 		// new Button(parent, SWT.CHECK);
 
-		String url = "http://ne-risk.pigeo.fr/ne-risk-gn2_10";
-		RiskJfaceCatalogImpl catalog = new RiskJfaceCatalogImpl(url);
+		RiskJfaceCatalogImpl catalog = new RiskJfaceCatalogImpl();
 
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
@@ -63,7 +61,7 @@ public class JfaceLayertree {
 									AbstractLayer layer = (AbstractLayer) item.getData();
 									layer.setChecked();
 									item.setImage(layer.getImage());
-									checkedLayer(layer, ctx);
+									checkedLayer(layer, ctx, wwj);
 								}
 							}
 						}
@@ -113,29 +111,11 @@ public class JfaceLayertree {
 
 	}
 	
-	public void checkedLayer(AbstractLayer layer, IEclipseContext ctx) {
-		WorldWindowGLCanvas wwd = ctx.get(WorldWindowGLCanvas.class);
-		LayerList layers = wwd.getModel().getLayers();
+	public void checkedLayer(AbstractLayer layer, IEclipseContext ctx, WwjInstance wwj) {
+		WorldWindowGLCanvas wwd = wwj.getWwd();
 
 		if (layer instanceof WmsLayer) {
 			layer.addToGlobe(wwd);
-			/*
-			layer  =(WmsLayer) layer;
-			String uri = layer.getWmsUri();
-			String name = layer.getName();
-
-			WMSCapabilities caps;
-
-	        try
-	        {
-	            caps = WMSCapabilities.retrieve(this.serverURI);
-	            caps.parse();
-	        }
-	        catch (Exception e)
-	        {
-	            e.printStackTrace();
-	            return;
-	        }*/
 		}
 	}
 }
