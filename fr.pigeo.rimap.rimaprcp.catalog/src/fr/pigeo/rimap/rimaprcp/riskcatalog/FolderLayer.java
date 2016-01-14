@@ -19,6 +19,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
 import fr.pigeo.rimap.rimaprcp.catalog.RiskJfaceCatalogImpl;
 
 public class FolderLayer extends AbstractLayer {
@@ -35,9 +36,9 @@ public class FolderLayer extends AbstractLayer {
 	private Integer weight = 1;
 	private List<AbstractLayer> children;
 
-	static private String folderImagePath = "icons/folder.gif";
+	static private String folderImagePath = CatalogProperties.getProperty("folders.imagepath");
 	static private Image folderImage;
-	static private String folderExpandedImagePath = "icons/folder-open.gif";
+	static private String folderExpandedImagePath = CatalogProperties.getProperty("folders.expandedimagepath");
 	static private Image folderExpandedImage;
 
 	public FolderLayer(AbstractLayer parent) {
@@ -89,8 +90,8 @@ public class FolderLayer extends AbstractLayer {
 			this.expanded = this.parseBool(node, "expanded", this.expanded);
 			this.lastchanged = this.parseDate(node, "lastchanged");
 		}
-		if (node.has(RiskJfaceCatalogImpl.RIMAP_LAYERTREE_CHILDREN_TAG)) {
-			JsonNode children = node.get(RiskJfaceCatalogImpl.RIMAP_LAYERTREE_CHILDREN_TAG);
+		if (node.has(CatalogProperties.getProperty("layertree.childrentag"))) {
+			JsonNode children = node.get(CatalogProperties.getProperty("layertree.childrentag"));
 			if (children.isArray())
 				this.children = this.loadChildren(children);
 		}

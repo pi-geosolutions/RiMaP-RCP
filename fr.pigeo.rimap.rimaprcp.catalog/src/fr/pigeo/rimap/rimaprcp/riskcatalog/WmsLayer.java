@@ -14,6 +14,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.avlist.AVListImpl;
@@ -66,9 +67,9 @@ public class WmsLayer extends AbstractLayer {
 	private boolean queryable = true;
 	private boolean checked = false;
 
-	static private String wmsImagePath = "icons/wms.png";
-	static private String checkedImagePath = "icons/16px-checkbox-checked.png";
-	static private String uncheckedImagePath = "icons/16px-checkbox-unchecked.png";
+	static private String wmsImagePath = CatalogProperties.getProperty("wmslayer.imagepath");
+	static private String checkedImagePath = CatalogProperties.getProperty("wmslayer.checkedimagepath");
+	static private String uncheckedImagePath = CatalogProperties.getProperty("wmslayer.uncheckedimagepath");
 	static private Image checkedImage;
 	static private Image uncheckedImage;
 	static private Image wmsImage;

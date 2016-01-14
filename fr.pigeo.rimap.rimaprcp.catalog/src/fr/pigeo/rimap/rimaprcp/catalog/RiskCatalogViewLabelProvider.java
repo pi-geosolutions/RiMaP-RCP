@@ -10,31 +10,18 @@ import fr.pigeo.rimap.rimaprcp.riskcatalog.FolderLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.WmsLayer;
 
 public class RiskCatalogViewLabelProvider extends StyledCellLabelProvider {
-	
+
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
 		StyledString text = new StyledString();
-		if (element instanceof FolderLayer) {
-			FolderLayer layer = (FolderLayer) element;
-			//layer.setExpanded(((TreeViewer) this.getViewer()).getExpandedState(layer));
-			//System.out.println(layer.isExpanded());
-			cell.setImage(layer.getImage());
-			text.append(layer.getName());
-		} else if (element instanceof AbstractLayer){
-			//System.out.println(element.getClass().getName());
-			AbstractLayer layer = (AbstractLayer) element;
-			cell.setImage(layer.getImage());
-			text.append(layer.getName());
-		}/*else if (element instanceof WmsLayer){
-			WmsLayer layer = (WmsLayer) element;
-			cell.setImage(layer.getImage());
-			text.append(layer.getName());
-		}*/
+		// System.out.println(element.getClass().getName());
+		AbstractLayer layer = (AbstractLayer) element;
+		cell.setImage(layer.getImage());
+		text.append(layer.getName());
+
 		cell.setText(text.toString());
 		cell.setStyleRanges(text.getStyleRanges());
 		super.update(cell);
 	}
-	
-	
 }
