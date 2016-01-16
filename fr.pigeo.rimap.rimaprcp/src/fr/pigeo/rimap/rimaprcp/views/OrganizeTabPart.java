@@ -11,9 +11,12 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -50,12 +53,15 @@ public class OrganizeTabPart {
 	public void postConstruct(Composite parent, WwjInstance wwjInst) {
 		this.wwj = wwjInst;
 		
+		Composite tableComposite = new Composite(parent, SWT.NONE);
+		TableColumnLayout tableColumnLayout = new TableColumnLayout();
+		tableComposite.setLayout(tableColumnLayout);
 		// define the TableViewer
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
+		viewer = new TableViewer(tableComposite, SWT.MULTI | SWT.H_SCROLL
 		      | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 
 		// create the columns 
-		createColumns(viewer);
+		createColumns(viewer, tableColumnLayout);
 
 		// make lines and header visible
 		/*final Table table = viewer.getTable();
@@ -71,10 +77,9 @@ public class OrganizeTabPart {
 		viewer.setInput(wwj.getModel().getLayers().toArray(new Layer[0])); 
 	}
 
-	private void createColumns(TableViewer tv) {
+	private void createColumns(TableViewer tv, TableColumnLayout tcl) {
 		// create a column for the checkbox
 		TableViewerColumn visibleCol = new TableViewerColumn(tv, SWT.NONE);
-		visibleCol.getColumn().setWidth(20);
 		visibleCol.getColumn().setAlignment(SWT.CENTER);
 		visibleCol.getColumn().setText("x");
 		visibleCol.setEditingSupport(new TableCheckEditingSupport(tv));
@@ -95,7 +100,6 @@ public class OrganizeTabPart {
 		
 		// create a column for the name
 		TableViewerColumn nameCol = new TableViewerColumn(tv, SWT.NONE);
-		nameCol.getColumn().setWidth(200);
 		nameCol.getColumn().setText("Layer name");
 		nameCol.setLabelProvider(new ColumnLabelProvider() {
 		  @Override
@@ -107,7 +111,6 @@ public class OrganizeTabPart {
 		
 		// create a column for the queryable boolean value
 		TableViewerColumn qCol = new TableViewerColumn(tv, SWT.NONE);
-		qCol.getColumn().setWidth(20);
 		//qCol.getColumn().setAlignment(SWT.CENTER);
 		qCol.getColumn().setText("i");
 		qCol.setLabelProvider(new ColumnLabelProvider() {
@@ -129,7 +132,6 @@ public class OrganizeTabPart {
 		
 		// create a column for the polygon_queryable boolean value
 		TableViewerColumn pqCol = new TableViewerColumn(tv, SWT.NONE);
-		pqCol.getColumn().setWidth(20);
 		//pqCol.getColumn().setAlignment(SWT.CENTER);
 		pqCol.getColumn().setText("pq");
 		pqCol.setLabelProvider(new ColumnLabelProvider() {
@@ -151,7 +153,6 @@ public class OrganizeTabPart {
 		
 		// create a column telling if metadata is linked
 		TableViewerColumn mtdCol = new TableViewerColumn(tv, SWT.NONE);
-		mtdCol.getColumn().setWidth(20);
 		//mtdCol.getColumn().setAlignment(SWT.CENTER);
 		mtdCol.getColumn().setText("M");
 		mtdCol.setLabelProvider(new ColumnLabelProvider() {
@@ -170,6 +171,13 @@ public class OrganizeTabPart {
 			  return null;
 			  }
 			}); 
+
+		//sets the width for each column
+		tcl.setColumnData(visibleCol.getColumn(),  new ColumnPixelData(20));
+		tcl.setColumnData(nameCol.getColumn(),  new ColumnWeightData(20, 200, true));
+		tcl.setColumnData(qCol.getColumn(),  new ColumnPixelData(20));
+		tcl.setColumnData(pqCol.getColumn(),  new ColumnPixelData(20));
+		tcl.setColumnData(mtdCol.getColumn(),  new ColumnPixelData(20));
 		
 
 	}
