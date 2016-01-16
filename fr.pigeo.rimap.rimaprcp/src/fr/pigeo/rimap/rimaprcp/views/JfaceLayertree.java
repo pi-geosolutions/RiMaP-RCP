@@ -1,9 +1,13 @@
 
 package fr.pigeo.rimap.rimaprcp.views;
 
+import java.util.HashMap;
+
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -14,6 +18,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import fr.pigeo.rimap.rimaprcp.RimaprcpConstants;
 import fr.pigeo.rimap.rimaprcp.catalog.RiskCatalogViewContentProvider;
 import fr.pigeo.rimap.rimaprcp.catalog.RiskCatalogViewLabelProvider;
 import fr.pigeo.rimap.rimaprcp.catalog.RiskJfaceCatalogImpl;
@@ -24,6 +29,9 @@ import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 
 public class JfaceLayertree {
+	@Inject 
+	private IEventBroker eventBroker;
+	
 	private TreeViewer viewer;
 	private Tree tree;
 
@@ -117,5 +125,6 @@ public class JfaceLayertree {
 		if (layer instanceof WmsLayer) {
 			layer.addToGlobe(wwd);
 		}
+		eventBroker.post(RimaprcpConstants.LAYER_CHECKED, layer ); 
 	}
 }

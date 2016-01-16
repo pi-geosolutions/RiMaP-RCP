@@ -3,7 +3,6 @@ package fr.pigeo.rimap.rimaprcp.riskcatalog;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
-import java.util.Set;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -21,34 +20,12 @@ import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
-import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
-import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
-import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 public class WmsLayer extends AbstractLayer {
-	private WMSTiledImageLayer layer;
-    protected static class LayerInfo
-    {
-        protected WMSCapabilities caps;
-        protected AVListImpl params = new AVListImpl();
+	private RimapWMSTiledImageLayer layer;
 
-        protected String getTitle()
-        {
-            return params.getStringValue(AVKey.DISPLAY_NAME);
-        }
-
-        protected String getName()
-        {
-            return params.getStringValue(AVKey.LAYER_NAMES);
-        }
-
-        protected String getAbstract()
-        {
-            return params.getStringValue(AVKey.LAYER_ABSTRACT);
-        }
-    }
 
 	private LayerType type = LayerType.WMS;
 	private String id;
@@ -63,6 +40,7 @@ public class WmsLayer extends AbstractLayer {
 	private String legendurl;
 	private String metadata_uuid;
 	private String format = "image/png";
+	private String pq_layer;
 	private boolean tiled = true;
 	private boolean queryable = true;
 	private boolean checked = false;
@@ -109,6 +87,8 @@ public class WmsLayer extends AbstractLayer {
 		this.tiled = this.parseBool(node, "TILED", this.tiled);
 		this.queryable = this.parseBool(node, "queryable", this.queryable);
 		this.checked = this.parseBool(node, "checked", this.checked);
+		this.pq_layer = this.parseString(node, "pq_layer", null);
+		
 		// System.out.println("loaded WMS layer parameters " + this.name);
 	}
 
@@ -171,26 +151,14 @@ public class WmsLayer extends AbstractLayer {
 				e.printStackTrace();
 				return;
 			}
-			/*WMSLayerCapabilities layerCaps = caps.getLayerByName(this.layers);
-			System.out.println(layerCaps.getName());*/
-			/*
-			
-			WMSLayerCapabilities layerCaps = caps.getLayerByName(this.getName());
-			Set<WMSLayerStyle> styles = layerCaps.getStyles();
-			WMSLayerStyle style = null;
-			if (styles != null && styles.size() != 0) {
-				style= styles.toArray(new WMSLayerStyle[0])[0];
-			}
-			LayerInfo layerInfo = createLayerInfo(caps, layerCaps, style);
-			AVList layerParams = new AVListImpl();
-	        layerParams.setValue(AVKey.LAYER_NAMES, layerCaps.getName());
-			this.layer = new WMSTiledImageLayer(caps, null);*/
 			AVList layerParams = new AVListImpl();
 			System.out.println(this.layers);
 	        layerParams.setValue(AVKey.LAYER_NAMES, this.layers);
 	        layerParams.setValue(AVKey.DISPLAY_NAME, this.name);
 	        try {
-			this.layer = new WMSTiledImageLayer(caps, layerParams);
+	        	this.layer = new RimapWMSTiledImageLayer(caps, layerParams);
+	        	this.layer.setName(this.name);
+	        	this.layer.setParent(this);
 	        }
 	        catch (Exception e) {
 				e.printStackTrace();
@@ -213,23 +181,39 @@ public class WmsLayer extends AbstractLayer {
 		return;
 	}
 
-    protected LayerInfo createLayerInfo(WMSCapabilities caps, WMSLayerCapabilities layerCaps, WMSLayerStyle style)
-    {
-        // Create the layer info specified by the layer's capabilities entry and the selected style.
+	public LayerType getType() {
+		return type;
+	}
 
-        LayerInfo linfo = new LayerInfo();
-        linfo.caps = caps;
-        linfo.params = new AVListImpl();
-        linfo.params.setValue(AVKey.LAYER_NAMES, layerCaps.getName());
-        if (style != null)
-            linfo.params.setValue(AVKey.STYLE_NAMES, style.getName());
-        String abs = layerCaps.getLayerAbstract();
-        if (!WWUtil.isEmpty(abs))
-            linfo.params.setValue(AVKey.LAYER_ABSTRACT, abs);
+	public String getId() {
+		return id;
+	}
 
-        linfo.params.setValue(AVKey.DISPLAY_NAME, this.getName());
+	public String getComments() {
+		return comments;
+	}
 
-        return linfo;
-    }
+	public Double getOpacity() {
+		return opacity;
+	}
 
+	public String getUrl() {
+		return url;
+	}
+
+	public String getLegendurl() {
+		return legendurl;
+	}
+
+	public String getMetadata_uuid() {
+		return metadata_uuid;
+	}
+
+	public boolean isQueryable() {
+		return queryable;
+	}
+
+	public String getPq_layer() {
+		return pq_layer;
+	}
 }
