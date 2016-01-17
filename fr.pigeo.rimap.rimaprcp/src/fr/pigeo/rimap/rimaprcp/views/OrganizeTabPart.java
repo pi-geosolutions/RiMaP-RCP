@@ -26,6 +26,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import fr.pigeo.rimap.rimaprcp.RimaprcpConstants;
+import fr.pigeo.rimap.rimaprcp.jface.RimapFilterByKeyFilter;
 import fr.pigeo.rimap.rimaprcp.jface.TableCheckEditingSupport;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.AbstractLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.RimapWMSTiledImageLayer;
@@ -75,6 +76,7 @@ public class OrganizeTabPart {
 		// setInput() calls getElements() on the 
 		// content provider instance
 		viewer.setInput(wwj.getModel().getLayers().toArray(new Layer[0])); 
+		//viewer.addFilter(new RimapFilterByKeyFilter("isRimapLayer"));
 	}
 
 	private void createColumns(TableViewer tv, TableColumnLayout tcl) {
@@ -165,7 +167,7 @@ public class OrganizeTabPart {
 			public Image getImage(Object element) {
 				if (element instanceof RimapWMSTiledImageLayer) {
 					RimapWMSTiledImageLayer l = (RimapWMSTiledImageLayer) element;
-				    if (l.getParent().getMetadata_uuid()!=null)
+				    if (l.getParent().getMetadata_uuid()!="")
 				    	return METADATA;
 			  }
 			  return null;

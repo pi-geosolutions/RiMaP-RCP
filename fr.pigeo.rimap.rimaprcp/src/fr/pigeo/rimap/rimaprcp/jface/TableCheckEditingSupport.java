@@ -6,6 +6,7 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.TiledImageLayer;
 
 public class TableCheckEditingSupport extends EditingSupport {
 
@@ -37,6 +38,7 @@ public class TableCheckEditingSupport extends EditingSupport {
 	protected void setValue(Object element, Object value) {
 	    ((Layer) element).setEnabled((boolean) value);
 	    viewer.update(element, null);
+	    System.out.println("is rimap layer : "+((Layer) element).getStringValue("isRimapLayer"));
 	}
 
 }

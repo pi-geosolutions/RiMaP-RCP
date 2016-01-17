@@ -159,6 +159,7 @@ public class WmsLayer extends AbstractLayer {
 	        	this.layer = new RimapWMSTiledImageLayer(caps, layerParams);
 	        	this.layer.setName(this.name);
 	        	this.layer.setParent(this);
+	        	this.layer.setValue("isRimapLayer", true);
 	        }
 	        catch (Exception e) {
 				e.printStackTrace();
