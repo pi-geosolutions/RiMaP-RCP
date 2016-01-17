@@ -7,8 +7,6 @@
           <children xsi:type="basic:PartStack" xmi:id="_s2bXYJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partstack.controlstack" containerData="300" selectedElement="_eQ228KPdEeWES4bRRX2C7A">
             <children xsi:type="basic:Part" xmi:id="_eQ228KPdEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.jfacelayertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.JfaceLayertree" label="%part.label.1"/>
             <children xsi:type="basic:Part" xmi:id="_5mi3MLiNEeWNs8HUC5fhyg" elementId="fr.pigeo.rimap.rimaprcp.part.organize" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.OrganizeTabPart" label="%part.label.2"/>
-            <children xsi:type="basic:Part" xmi:id="_xZkycJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.layertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.Layertree" label="%part.label.3" iconURI=""/>
-            <children xsi:type="basic:Part" xmi:id="_CQ5JUKQjEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.filebrowser" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.FileBrowserPart" label="%part.label.4"/>
           </children>
           <children xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.WWJView" label="%part.label.5"/>
         </children>
