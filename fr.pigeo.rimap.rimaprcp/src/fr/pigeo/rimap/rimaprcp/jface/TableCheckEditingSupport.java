@@ -38,7 +38,7 @@ public class TableCheckEditingSupport extends EditingSupport {
 	protected void setValue(Object element, Object value) {
 	    ((Layer) element).setEnabled((boolean) value);
 	    viewer.update(element, null);
-	    System.out.println("is rimap layer : "+((Layer) element).getStringValue("isRimapLayer"));
+	    //System.out.println("is rimap layer : "+((Layer) element).getStringValue("isRimapLayer"));
 	}
 
 }

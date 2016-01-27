@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -20,13 +21,17 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import fr.pigeo.rimap.rimaprcp.RimaprcpConstants;
-import fr.pigeo.rimap.rimaprcp.jface.RimapFilterByKeyFilter;
+import fr.pigeo.rimap.rimaprcp.dnd.LayerDragListener;
+import fr.pigeo.rimap.rimaprcp.dnd.LayerDropListener;
 import fr.pigeo.rimap.rimaprcp.jface.TableCheckEditingSupport;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.AbstractLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.RimapWMSTiledImageLayer;
@@ -69,13 +74,17 @@ public class OrganizeTabPart {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true); 
 		*/
+	    int operations = DND.DROP_MOVE;
+	    Transfer[] transferTypes = new Transfer[]{TextTransfer.getInstance()};
+	    viewer.addDragSupport(operations, transferTypes , new LayerDragListener(viewer, wwjInst));
+	    viewer.addDropSupport(operations, transferTypes, new LayerDropListener(viewer, wwjInst));
 		// set the content provider
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		// provide the input to the viewer
 		// setInput() calls getElements() on the 
 		// content provider instance
-		viewer.setInput(wwj.getModel().getLayers().toArray(new Layer[0])); 
+		viewer.setInput(wwj.getLayersList()); 
 		//viewer.addFilter(new RimapFilterByKeyFilter("isRimapLayer"));
 	}
 
@@ -202,6 +211,15 @@ public class OrganizeTabPart {
 		this.viewer.refresh();
 		
 	}
+	
+	@Inject
+	@Optional
+	private void subscribeEventLayerDropped(
+			@UIEventTopic("dropped_layer") int index) {
+		System.out.println("dropped at index "+index);;
+		
+	}
+
 	
 	@PreDestroy
 	private void dispose() {
