@@ -19,23 +19,19 @@ public class LayerDragListener implements DragSourceListener {
 
 	@Override
 	public void dragFinished(DragSourceEvent event) {
-		System.out.println("Finshed Drag");
 	}
 
 	@Override
 	public void dragSetData(DragSourceEvent event) {
-		// Here you do the convertion to the type which is expected.
+		//we send the layer's position (index) in the layerlist
 		IStructuredSelection selection = viewer.getStructuredSelection();
 		Layer firstElement = (Layer) selection.getFirstElement();
-
-		//event.data = String.valueOf(firstElement.hashCode());
+		
 		event.data = String.valueOf(this.wwj.getPositionInLayerlist(firstElement));
-
 	}
 
 	@Override
 	public void dragStart(DragSourceEvent event) {
-		System.out.println("Start Drag");
 	}
 
 }

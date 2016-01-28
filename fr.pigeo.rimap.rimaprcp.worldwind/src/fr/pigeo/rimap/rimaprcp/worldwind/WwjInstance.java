@@ -11,6 +11,11 @@ import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
 
+/**
+ * @author jean.pommier@pi-geosolutions.fr
+ *
+ *	Intermediary class between Worldwind internal structure and the RCP application
+ */
 @Creatable
 @Singleton
 public class WwjInstance {
@@ -41,47 +46,25 @@ public class WwjInstance {
 		return model;
 	}
 	
+	/**
+	 * @param oldPos
+	 * @param destPos
+	 * Moves a Layer from oldPos to destPos
+	 */
 	public void moveLayer(int oldPos, int destPos) {
+		if (destPos<0)
+			return;
 		LayerList list = this.getModel().getLayers();
 		Layer dndedLayer=list.get(oldPos);
 		list.remove(dndedLayer);
-		if (destPos <0) {
-			//something wrong happened. We will restore the previous state and issue an error.
-			list.add(oldPos,dndedLayer);
-			System.out.println("Error while dropping the layer \n Restored previous state.");
-			
-		} else {
-			list.add(destPos, dndedLayer);
-		}
+		list.add(destPos, dndedLayer);
 		this.getWwd().redraw();
-		/*Layer dndedLayer=null;
-		if (wwj !=null && this.dropTarget!=null) {
-			System.out.println("drop performed");
-			LayerList list = wwj.getModel().getLayers();
-			dndedLayer=list.get(dragPos);
-			list.remove(dndedLayer);
-			int destIndex = this.computeDropPos(list, this.dropTarget);
-			if (destIndex <0) {
-				//something wrong happened. We will restore the previous state and issue an error.
-				list.add(dragPos,dndedLayer);
-				System.out.println("Error while dropping the layer \n Restored previous state.");
-				
-			} else {
-				list.add(destIndex, dndedLayer);
-			}
-		}*/
-		/*
-		 * ContentProviderTree.INSTANCE.getModel().add(data.toString());
-		 * viewer.setInput(ContentProviderTree.INSTANCE.getModel());
-		 */
-		/*try {
-			System.out.println("dropped " + ((Layer) data).getName());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
 	}
 
-
+	/**
+	 * @param dropTarget
+	 * @return the position (index) of a Layer in the WWJ LayersList
+	 */
 	public int getPositionInLayerlist(Object dropTarget) {
 		LayerList list = this.getModel().getLayers();
 		return list.indexOf(dropTarget);
