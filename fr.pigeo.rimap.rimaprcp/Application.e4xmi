@@ -12,15 +12,13 @@
         </children>
       </children>
     </children>
-    <handlers xmi:id="_Zoqv8MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handler.show.compass" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.handlers.showCompass" command="_NRVm4MZwEeWTGLqWyfJYDw">
-      <persistedState key="showcompass" value="true"/>
-    </handlers>
+    <handlers xmi:id="_Zoqv8MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handler.show.compass" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.handlers.showCompass" command="_NRVm4MZwEeWTGLqWyfJYDw"/>
     <mainMenu xmi:id="_qcxpQKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.0">
       <children xsi:type="menu:Menu" xmi:id="_sfbdgKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.io" label="%menu.label.1">
         <children xsi:type="menu:DirectMenuItem" xmi:id="_wAE5wKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menus.io.directmenuitem.load" label="%directmenuitem.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.menus.load"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_CrNVsMZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.menu.display" label="Display">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_qwPYEMZ0EeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compass" label="Show Compass" tooltip="Show/Hide compass in the 3D view" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_qwPYEMZ0EeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compass" label="Show Compass" tooltip="Show/Hide compass in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
           <persistedState key="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compassState" value="true"/>
         </children>
       </children>
