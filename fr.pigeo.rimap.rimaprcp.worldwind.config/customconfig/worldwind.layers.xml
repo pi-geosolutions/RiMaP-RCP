@@ -13,9 +13,11 @@
 <LayerList>
     <Layer className="gov.nasa.worldwind.layers.StarsLayer">
         <!--Individual properties can be specified within Layer entries, like this:-->
-        <Property name="Name" value="Stars"/>
+        <Property name="Name" value="StarsWidget"/>
     </Layer>
-    <Layer className="gov.nasa.worldwind.layers.SkyGradientLayer"/>
+    <Layer className="gov.nasa.worldwind.layers.SkyGradientLayer">
+        <Property name="Name" value="SkyGradientWidget"/>
+    </Layer>
     <Layer className="gov.nasa.worldwind.layers.Earth.BMNGOneImage">
         <Property name="MinActiveAltitude" value="3e6"/>
     </Layer>
@@ -27,7 +29,13 @@
     <Layer href="customconfig/Earth/OpenStreetMap.xml" actuate="onRequest"/>
     <Layer href="customconfig/Earth/EarthAtNightLayer.xml" actuate="onRequest"/>
     <Layer className="gov.nasa.worldwind.layers.Earth.NASAWFSPlaceNameLayer"/>
-    <Layer className="gov.nasa.worldwind.layers.WorldMapLayer"/>
-    <Layer className="gov.nasa.worldwind.layers.ScalebarLayer"/>
-    <Layer className="gov.nasa.worldwind.layers.CompassLayer"/>
+    <Layer className="gov.nasa.worldwind.layers.WorldMapLayer">
+        <Property name="Name" value="WorldMapWidget"/>
+    </Layer>
+    <Layer className="gov.nasa.worldwind.layers.ScalebarLayer">
+        <Property name="Name" value="ScalebarWidget"/>
+    </Layer>
+	<Layer className="gov.nasa.worldwind.layers.CompassLayer">
+        <Property name="Name" value="CompassWidget"/>
+    </Layer>
 </LayerList>

@@ -24,9 +24,9 @@ public class OrganizeTabPart {
 
 	@PostConstruct
 	public void postConstruct(Composite parent, WwjInstance wwjInst) {
-
 		this.layersListComposite = new LayersListTableComposite(parent, SWT.NONE, wwjInst);
 		this.layersListComposite.addDragnDropSupport();
+		this.layersListComposite.addWidgetFilter(false);
 		//this.layersListComposite.drawTableLines();
 	}
 

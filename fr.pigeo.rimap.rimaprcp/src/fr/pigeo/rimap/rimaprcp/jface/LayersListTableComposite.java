@@ -178,6 +178,14 @@ public class LayersListTableComposite extends Composite {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 	}
+	
+	/**
+	 * @param filter
+	 * Filters the TableViewer using the provided filter value
+	 */
+	public void addWidgetFilter(boolean keep) {
+		viewer.addFilter(new WidgetsFilter(keep));
+	}
 
 	/**
 	 * Enables layers reordering by drag n drop inside the table view
