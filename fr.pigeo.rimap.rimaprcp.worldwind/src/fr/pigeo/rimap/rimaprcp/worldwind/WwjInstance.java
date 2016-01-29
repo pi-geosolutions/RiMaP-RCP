@@ -80,10 +80,10 @@ public class WwjInstance {
 	}
 
 
-	public void showCompass(boolean show) {
+	public void showWidget(boolean show, String widgetRef) {
 		LayerList ll = this.getModel().getLayers();
 		try {
-			List<Layer> layers = ll.getLayersByClass(Class.forName("gov.nasa.worldwind.layers.CompassLayer"));
+			List<Layer> layers = ll.getLayersByClass(Class.forName(widgetRef));
 			Iterator<Layer> layersIterator = layers.iterator();
 			if (layersIterator.hasNext()) {
 			    Layer l = layersIterator.next();
@@ -96,8 +96,19 @@ public class WwjInstance {
 
 
 	public void initialize(IEclipsePreferences prefs) {
-		System.out.println("TODO : code initialize WWJ/prefs setup");
-		boolean showcompass = prefs.getBoolean("showcompass", true);
-		this.showCompass(showcompass);
+		//Compass
+		this.initializeWidget(prefs, "gov.nasa.worldwind.layers.CompassLayer");
+		//OverviewMap
+		this.initializeWidget(prefs, "gov.nasa.worldwind.layers.WorldMapLayer");
+		//Scalebar
+		this.initializeWidget(prefs, "gov.nasa.worldwind.layers.ScalebarLayer");
+		//Stars
+		this.initializeWidget(prefs, "gov.nasa.worldwind.layers.StarsLayer");
+		//Atmosphere
+		this.initializeWidget(prefs, "gov.nasa.worldwind.layers.SkyGradientLayer");
+	}
+	private void initializeWidget(IEclipsePreferences prefs, String classRef) {
+		boolean show = prefs.getBoolean("show_"+classRef, true);
+		this.showWidget(show, classRef);
 	}
 }

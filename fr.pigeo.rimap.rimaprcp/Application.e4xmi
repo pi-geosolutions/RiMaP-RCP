@@ -12,7 +12,7 @@
         </children>
       </children>
     </children>
-    <handlers xmi:id="_Zoqv8MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handler.show.compass" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.handlers.showCompass" command="_NRVm4MZwEeWTGLqWyfJYDw"/>
+    <handlers xmi:id="_3ibNIMagEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handler.show.widget" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.handlers.ShowWidget" command="_NRVm4MZwEeWTGLqWyfJYDw"/>
     <mainMenu xmi:id="_qcxpQKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.0">
       <children xsi:type="menu:Menu" xmi:id="_sfbdgKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.io" label="%menu.label.1">
         <children xsi:type="menu:DirectMenuItem" xmi:id="_wAE5wKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menus.io.directmenuitem.load" label="%directmenuitem.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.menus.load"/>
@@ -20,11 +20,26 @@
       <children xsi:type="menu:Menu" xmi:id="_CrNVsMZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.menu.display" label="Display">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_qwPYEMZ0EeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compass" label="Show Compass" tooltip="Show/Hide compass in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
           <persistedState key="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compassState" value="true"/>
+          <parameters xmi:id="_r999YMaeEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.0" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.CompassLayer"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_qtbtIMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.overviewmap" label="Show OverView Map" tooltip="Show/Hide OverView Map in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+          <parameters xmi:id="_zZxLIMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.1" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.WorldMapLayer"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_-ydhsMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.scalebar" label="Show Scale Bar" tooltip="Show/Hide Scale Bar in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+          <parameters xmi:id="_-ydhscafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.2" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.ScalebarLayer"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_d-A3YMajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.stars" label="Show Stars" tooltip="Show/Hide Stars background in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+          <parameters xmi:id="_d-A3YcajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.3" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.StarsLayer"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_ubYowMajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.atmosphere" label="Show Atmosphere" tooltip="Show/Hide Atmosphere halo in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+          <parameters xmi:id="_ubYowcajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.4" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.SkyGradientLayer"/>
         </children>
       </children>
     </mainMenu>
   </children>
-  <commands xmi:id="_NRVm4MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.command.show.compass" commandName="showCompass" description="Show/Hide WWJ compass widget"/>
+  <commands xmi:id="_NRVm4MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.command.showWidget" commandName="showWidget" description="Show/Hide WWJ widget (the widget class is expected as parameter)">
+    <parameters xmi:id="_SKPgoMaeEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" name="Reference to the WWJ widget to show/hide" typeId="" optional="false"/>
+  </commands>
   <addons xmi:id="_o0Uz4ZzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_o0Uz4pzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_o0Uz45zFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
