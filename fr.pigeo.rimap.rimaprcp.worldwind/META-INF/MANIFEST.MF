@@ -7,5 +7,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.e4.core.di.annotations,
  javax.inject,
- gov.nasa.worldwind
+ gov.nasa.worldwind,
+ org.eclipse.equinox.preferences
 Export-Package: fr.pigeo.rimap.rimaprcp.worldwind

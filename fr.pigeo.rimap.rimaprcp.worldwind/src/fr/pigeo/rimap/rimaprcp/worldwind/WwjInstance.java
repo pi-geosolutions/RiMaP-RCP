@@ -1,7 +1,11 @@
 package fr.pigeo.rimap.rimaprcp.worldwind;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.inject.Singleton;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Creatable;
 
 import gov.nasa.worldwind.Model;
@@ -73,5 +77,27 @@ public class WwjInstance {
 
 	public Layer[] getLayersList() {
 		return this.getModel().getLayers().toArray(new Layer[0]);
+	}
+
+
+	public void showCompass(boolean show) {
+		LayerList ll = this.getModel().getLayers();
+		try {
+			List<Layer> layers = ll.getLayersByClass(Class.forName("gov.nasa.worldwind.layers.CompassLayer"));
+			Iterator<Layer> layersIterator = layers.iterator();
+			if (layersIterator.hasNext()) {
+			    Layer l = layersIterator.next();
+			    l.setEnabled(show);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public void initialize(IEclipsePreferences prefs) {
+		System.out.println("TODO : code initialize WWJ/prefs setup");
+		boolean showcompass = prefs.getBoolean("showcompass", true);
+		this.showCompass(showcompass);
 	}
 }
