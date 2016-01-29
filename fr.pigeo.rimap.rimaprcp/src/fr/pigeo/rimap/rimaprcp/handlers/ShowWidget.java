@@ -25,7 +25,7 @@ public class ShowWidget {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("setting "+widgetRef+" visibility to "+!show);
+		//System.out.println("setting "+widgetRef+" visibility to "+!show);
 	}
 		
 }

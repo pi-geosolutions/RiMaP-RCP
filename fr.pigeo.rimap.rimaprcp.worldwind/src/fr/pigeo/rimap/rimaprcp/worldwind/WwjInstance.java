@@ -18,48 +18,44 @@ import gov.nasa.worldwind.layers.LayerList;
 /**
  * @author jean.pommier@pi-geosolutions.fr
  *
- *	Intermediary class between Worldwind internal structure and the RCP application
+ *         Intermediary class between Worldwind internal structure and the RCP
+ *         application
  */
 @Creatable
 @Singleton
 public class WwjInstance {
 	private WorldWindowGLCanvas wwd;
 	private Model model;
-	
 
-	public WwjInstance () {
-		System.setProperty(
-	            "gov.nasa.worldwind.app.config.document",
-	            "customconfig/worldwind.xml");
-//        Configuration.setValue(
-//        		"gov.nasa.worldwind.config.file",
-//	            "fr/pigeo/rimap/rimaprcp/config/wwj/worldwind.xml");
-		
+	public WwjInstance() {
+		System.setProperty("gov.nasa.worldwind.app.config.document", "customconfig/worldwind.xml");
+		// Configuration.setValue(
+		// "gov.nasa.worldwind.config.file",
+		// "fr/pigeo/rimap/rimaprcp/config/wwj/worldwind.xml");
+
 		this.wwd = new WorldWindowGLCanvas();
 		model = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
 		wwd.setModel(model);
 	}
 
-
 	public WorldWindowGLCanvas getWwd() {
 		return wwd;
 	}
 
-
 	public Model getModel() {
 		return model;
 	}
-	
+
 	/**
 	 * @param oldPos
 	 * @param destPos
-	 * Moves a Layer from oldPos to destPos
+	 *            Moves a Layer from oldPos to destPos
 	 */
 	public void moveLayer(int oldPos, int destPos) {
-		if (destPos<0)
+		if (destPos < 0)
 			return;
 		LayerList list = this.getModel().getLayers();
-		Layer dndedLayer=list.get(oldPos);
+		Layer dndedLayer = list.get(oldPos);
 		list.remove(dndedLayer);
 		list.add(destPos, dndedLayer);
 		this.getWwd().redraw();
@@ -74,11 +70,9 @@ public class WwjInstance {
 		return list.indexOf(dropTarget);
 	}
 
-
 	public Layer[] getLayersList() {
 		return this.getModel().getLayers().toArray(new Layer[0]);
 	}
-
 
 	public void showWidget(boolean show, String widgetRef) {
 		LayerList ll = this.getModel().getLayers();
@@ -86,29 +80,36 @@ public class WwjInstance {
 			List<Layer> layers = ll.getLayersByClass(Class.forName(widgetRef));
 			Iterator<Layer> layersIterator = layers.iterator();
 			if (layersIterator.hasNext()) {
-			    Layer l = layersIterator.next();
-			    l.setEnabled(show);
+				Layer l = layersIterator.next();
+				l.setEnabled(show);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-
 	public void initialize(IEclipsePreferences prefs) {
-		//Compass
-		this.initializeWidget(prefs, "gov.nasa.worldwind.layers.CompassLayer");
-		//OverviewMap
-		this.initializeWidget(prefs, "gov.nasa.worldwind.layers.WorldMapLayer");
-		//Scalebar
-		this.initializeWidget(prefs, "gov.nasa.worldwind.layers.ScalebarLayer");
-		//Stars
-		this.initializeWidget(prefs, "gov.nasa.worldwind.layers.StarsLayer");
-		//Atmosphere
-		this.initializeWidget(prefs, "gov.nasa.worldwind.layers.SkyGradientLayer");
+		this.initializeWidgets(prefs);
 	}
-	private void initializeWidget(IEclipsePreferences prefs, String classRef) {
-		boolean show = prefs.getBoolean("show_"+classRef, true);
-		this.showWidget(show, classRef);
+
+	/**
+	 * @param prefs
+	 * Finds all the layers whose name ends with "Widget" and reads the prefs for everyone of them
+	 * TODO : generate the menu entries from there
+	 */
+	private void initializeWidgets(IEclipsePreferences prefs) {
+		LayerList ll = this.getModel().getLayers();
+		Iterator<Layer> layersIterator = ll.iterator();
+		while (layersIterator.hasNext()) {
+			Layer l = layersIterator.next();
+			if (l.getName().endsWith("Widget")) {
+				this.initializeWidget(prefs, l);
+			}
+		}
+	}
+
+	private void initializeWidget(IEclipsePreferences prefs, Layer l) {
+		boolean show = prefs.getBoolean("show_" + l.getClass().getName(), true);
+		l.setEnabled(show);
 	}
 }
