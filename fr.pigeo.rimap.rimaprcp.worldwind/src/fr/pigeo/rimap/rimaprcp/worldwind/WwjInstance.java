@@ -1,5 +1,6 @@
 package fr.pigeo.rimap.rimaprcp.worldwind;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,8 +25,11 @@ import gov.nasa.worldwind.layers.LayerList;
 @Creatable
 @Singleton
 public class WwjInstance {
+	private final String WIDGET_PREF_PREFIX = "show_";
+	
 	private WorldWindowGLCanvas wwd;
 	private Model model;
+	private List<Widget> widgetList = new ArrayList<Widget>();
 
 	public WwjInstance() {
 		System.setProperty("gov.nasa.worldwind.app.config.document", "customconfig/worldwind.xml");
@@ -102,14 +106,25 @@ public class WwjInstance {
 		Iterator<Layer> layersIterator = ll.iterator();
 		while (layersIterator.hasNext()) {
 			Layer l = layersIterator.next();
-			if (l.getName().endsWith("Widget")) {
-				this.initializeWidget(prefs, l);
+			if (Widget.isWidget(l)) {
+				Widget w = new Widget(l);
+				w.initialize(prefs.getBoolean(WIDGET_PREF_PREFIX + w.getWidgetClassName(), true));
+				widgetList.add(w);
+				//this.initializeWidget(prefs, l);
 			}
 		}
 	}
 
-	private void initializeWidget(IEclipsePreferences prefs, Layer l) {
-		boolean show = prefs.getBoolean("show_" + l.getClass().getName(), true);
+	
+	/*private void initializeWidget(IEclipsePreferences prefs, Layer l ) {
+		boolean show = prefs.getBoolean(WIDGET_PREF_PREFIX + l.getClass().getName(), true);
 		l.setEnabled(show);
+		
+		//create the menu entry
+		//IMenuManager displayMenu = 
+	}*/
+
+	public List<Widget> getWidgetsClassLists() {
+		return this.widgetList;
 	}
 }

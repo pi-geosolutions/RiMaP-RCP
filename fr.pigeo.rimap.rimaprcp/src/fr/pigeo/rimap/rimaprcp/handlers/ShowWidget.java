@@ -14,7 +14,7 @@ public class ShowWidget {
 	public void execute(@Preference(nodePath = "fr.pigeo.rimap.rimaprcp") IEclipsePreferences prefs,
 			WwjInstance wwj,
 			@Named("fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref") String widgetRef) {
-		System.out.println("current widget : "+widgetRef);
+		//System.out.println("current widget : "+widgetRef);
 		boolean show = prefs.getBoolean("show_"+widgetRef, true);
 		
 		wwj.showWidget(!show, widgetRef);
