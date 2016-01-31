@@ -93,7 +93,7 @@ public class JfaceLayertree {
 		});
 		this.tree.addListener(SWT.Expand, new Listener() {
 		      public void handleEvent(Event e) {
-		        System.out.println("Expand={" + e.item + "}");
+		        //System.out.println("Expand={" + e.item + "}");
 		      //Deals with folder expanded/folded image on expand/fold
 		        TreeItem item = (TreeItem) e.item;
 				if (item.getData() instanceof FolderLayer){
@@ -105,7 +105,7 @@ public class JfaceLayertree {
 		});
 		this.tree.addListener(SWT.Collapse, new Listener() {
 		      public void handleEvent(Event e) {
-		        System.out.println("Collapse={" + e.item + "}");
+		       // System.out.println("Collapse={" + e.item + "}");
 		      //Deals with folder expanded/folded image on expand/fold
 		        TreeItem item = (TreeItem) e.item;
 				if (item.getData() instanceof FolderLayer){

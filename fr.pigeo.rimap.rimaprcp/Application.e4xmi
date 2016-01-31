@@ -18,22 +18,23 @@
         <children xsi:type="menu:DirectMenuItem" xmi:id="_wAE5wKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menus.io.directmenuitem.load" label="%directmenuitem.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.menus.load"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_CrNVsMZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.menu.display" label="Display">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_qwPYEMZ0EeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compass" label="Show Compass" tooltip="Show/Hide compass in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_qwPYEMZ0EeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compass" toBeRendered="false" visible="false" label="Show Compass" tooltip="Show/Hide compass in the 3D view" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
           <persistedState key="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compassState" value="true"/>
           <parameters xmi:id="_r999YMaeEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.0" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.CompassLayer"/>
         </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_qtbtIMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.overviewmap" label="Show OverView Map" tooltip="Show/Hide OverView Map in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_qtbtIMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.overviewmap" toBeRendered="false" visible="false" label="Show OverView Map" tooltip="Show/Hide OverView Map in the 3D view" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
           <parameters xmi:id="_zZxLIMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.1" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.WorldMapLayer"/>
         </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_-ydhsMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.scalebar" label="Show Scale Bar" tooltip="Show/Hide Scale Bar in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_-ydhsMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.scalebar" toBeRendered="false" visible="false" label="Show Scale Bar" tooltip="Show/Hide Scale Bar in the 3D view" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
           <parameters xmi:id="_-ydhscafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.2" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.ScalebarLayer"/>
         </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_d-A3YMajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.stars" label="Show Stars" tooltip="Show/Hide Stars background in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_d-A3YMajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.stars" toBeRendered="false" visible="false" label="Show Stars" tooltip="Show/Hide Stars background in the 3D view" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
           <parameters xmi:id="_d-A3YcajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.3" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.StarsLayer"/>
         </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_ubYowMajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.atmosphere" label="Show Atmosphere" tooltip="Show/Hide Atmosphere halo in the 3D view" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_ubYowMajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.atmosphere" toBeRendered="false" visible="false" label="Show Atmosphere" tooltip="Show/Hide Atmosphere halo in the 3D view" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
           <parameters xmi:id="_ubYowcajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.4" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.SkyGradientLayer"/>
         </children>
+        <children xsi:type="menu:DynamicMenuContribution" xmi:id="_xWlnkMgBEeWZzdusKGuDEw" elementId="fr.pigeo.rimap.rimaprcp.dynamicmenucontribution.0" label="dyn widgets" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.menus.WidgetMenuItem"/>
       </children>
     </mainMenu>
   </children>
