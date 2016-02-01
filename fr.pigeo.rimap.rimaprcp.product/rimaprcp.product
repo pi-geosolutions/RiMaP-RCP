@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="RiMaP RCP" uid="fr.pigeo.rimap.rimaprcp.product" id="fr.pigeo.rimap.rimaprcp.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" useFeatures="true" includeLaunchers="true">
+<product name="RiMaP RCP" uid="fr.pigeo.rimap.rimaprcp.product" id="fr.pigeo.rimap.rimaprcp.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.1" useFeatures="true" includeLaunchers="true">
+
 
    <configIni use="default">
    </configIni>
@@ -11,16 +12,24 @@
       </vmArgsMac>
    </launcherArgs>
 
-   <windowImages/>
+   <windowImages i16="/fr.pigeo.rimap.rimaprcp.product/icons/icon-16.png" i32="/fr.pigeo.rimap.rimaprcp.product/icons/icon-32.png" i48="/fr.pigeo.rimap.rimaprcp.product/icons/icon-48.png" i64="/fr.pigeo.rimap.rimaprcp.product/icons/icon-64.png" i128="/fr.pigeo.rimap.rimaprcp.product/icons/icon-128.png" i256="/fr.pigeo.rimap.rimaprcp.product/icons/icon-256.png"/>
 
-   <launcher>
+   <splash
+      location="fr.pigeo.rimap.rimaprcp" />
+   <launcher name="RiMaP-rcp-v0.1">
+      <linux icon="/fr.pigeo.rimap.rimaprcp/icons/app/icon.xpm"/>
       <solaris/>
-      <win useIco="false">
+      <win useIco="true">
+         <ico path="/fr.pigeo.rimap.rimaprcp/icons/app/icon.ico"/>
          <bmp/>
       </win>
    </launcher>
 
+
    <vm>
+      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</macos>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
    </vm>
 
    <plugins>

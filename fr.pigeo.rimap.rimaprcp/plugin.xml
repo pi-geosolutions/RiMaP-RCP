@@ -3,7 +3,8 @@
 <plugin>
 
    <extension
-         id="rimaprcp"
+         id="product"
+         name="RimapRCP"
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.e4.ui.workbench.swt.E4Application"
@@ -12,17 +13,9 @@
                name="appName"
                value="RiMaP RCP">
          </property>
-      </product>
-   </extension>
-   <extension
-         id="product"
-         point="org.eclipse.core.runtime.products">
-      <product
-            application="org.eclipse.e4.ui.workbench.swt.E4Application"
-            name="RiMaP RCP">
          <property
-               name="appName"
-               value="RiMaP RCP">
+               name="windowImages"
+               value="/fr.pigeo.rimap.rimaprcp.product/icons/icon-16.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-32.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-48.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-64.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-128.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-256.png">
          </property>
       </product>
    </extension>
