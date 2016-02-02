@@ -4,12 +4,16 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -22,6 +26,7 @@ import org.eclipse.swt.widgets.Table;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+import fr.pigeo.rimap.rimaprcp.RimaprcpConstants;
 import fr.pigeo.rimap.rimaprcp.dnd.LayerDragListener;
 import fr.pigeo.rimap.rimaprcp.dnd.LayerDropListener;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.RimapWMSTiledImageLayer;
@@ -36,6 +41,7 @@ import gov.nasa.worldwind.layers.Layer;
 public class LayersListTableComposite extends Composite {
 	private TableViewer viewer;
 	private WwjInstance wwj;
+	private IEventBroker eventBroker;
 
 	private final Image CHECKED = getImage("checked.png");
 	private final Image UNCHECKED = getImage("unchecked.png");
@@ -50,7 +56,7 @@ public class LayersListTableComposite extends Composite {
 		this.setLayout(tableColumnLayout);
 
 		// define the TableViewer
-		viewer = new TableViewer(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		viewer = new TableViewer(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.NONE);
 
 		// create the columns
 		createColumns(viewer, tableColumnLayout);
@@ -221,5 +227,21 @@ public class LayersListTableComposite extends Composite {
 		this.METADATA.dispose();
 		this.PQUERY.dispose();
 		super.dispose();
+	}
+
+	public void setEventBroker(IEventBroker broker) {
+		this.eventBroker = broker;
+		this.viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = viewer.getStructuredSelection();
+				Object item = selection.getFirstElement();
+				if (item instanceof Layer) {
+					eventBroker.post(RimaprcpConstants.LAYER_SELECTED, (Layer) item);
+				}
+				
+			}
+		});
 	}
 }
