@@ -95,6 +95,7 @@ public class LayerDetailsImpl extends LayerDetails {
 		if (this.m_bindingContext != null)
 			this.m_bindingContext.dispose();
 		this.initComponents();
+		this.updateLegendShell(layer);
 		m_bindingContext = initDataBindings();
 	}
 
@@ -175,7 +176,7 @@ public class LayerDetailsImpl extends LayerDetails {
 					if (legendDialog==null)
 						legendDialog = new LayerLegendDialog(parent.getShell(), wms);
 					legendDialog.setLayer(wms);
-					int result = legendDialog.open();
+					legendDialog.open();
 				}
 			};
 			this.btnShowLegend.addSelectionListener(this.btnLegendSelectionAdapter);
@@ -186,6 +187,21 @@ public class LayerDetailsImpl extends LayerDetails {
 			});
 		}
 
+	}
+	
+
+	private void updateLegendShell(Layer l) {
+		if (legendDialog==null) {
+			System.out.println("Legend dialog is null");
+			return;
+		} else 
+			System.out.println("Legend dialog is "+legendDialog.toString());
+		
+		if (l instanceof RimapWMSTiledImageLayer) {
+			WmsLayer wms = ((RimapWMSTiledImageLayer) l).getParent();
+			legendDialog.setLayer(wms);
+		}
+		
 	}
 
 }

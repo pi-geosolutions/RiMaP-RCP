@@ -35,9 +35,11 @@ public class LayerLegendDialog extends Dialog {
 	private AbstractLayer layer;
 	private Label lblLayerName, imgLabel;
 	private ScrolledComposite scImageComposite;
-	private Image imgLegend;
 	private Composite container;
 	private Display display;
+	private String layerName="";
+	private Image imgLegend;
+	private ImageData imgLegendData;
 
 	public LayerLegendDialog(Shell parentShell, AbstractLayer layer) {
 		super(parentShell);
@@ -59,27 +61,27 @@ public class LayerLegendDialog extends Dialog {
 		lblLayerName = new Label(container, SWT.NONE);
 		lblLayerName.setFont(SWTResourceManager.getFont("Sans", 12, SWT.BOLD));
 		lblLayerName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		lblLayerName.setText("Layer name");
+		lblLayerName.setText(this.layerName);
 		new Label(container, SWT.NONE);
 
 		// Load an image
 		// ImageData imgData = new ImageData( "your image path" );
 		this.display = parent.getDisplay();
-		ImageData imgData = new ImageData("/home/jean/tmp/shutter_Sélection_003.png");
-		imgLegend = new Image(this.display, imgData);
-		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
-		layoutData.grabExcessVerticalSpace = true;
-		layoutData.verticalAlignment = SWT.FILL;
+		if (this.imgLegendData==null)
+			imgLegendData = new ImageData("/home/jean/tmp/shutter_Sélection_003.png");
+		imgLegend = new Image(this.display, imgLegendData);
 		// The scrolled composite
-		scImageComposite = new ScrolledComposite(container, SWT.H_SCROLL | SWT.V_SCROLL);
-		scImageComposite.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
-		scImageComposite.setLayoutData(layoutData);
+		scImageComposite = new ScrolledComposite(container, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		scImageComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		scImageComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		imgLabel = new Label(scImageComposite, SWT.NONE);
 		imgLabel.setImage(imgLegend);
 		imgLabel.setSize(imgLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		scImageComposite.setContent(imgLabel);
 
+		this.updateDisplay();
+		
 		m_bindingContext = initDataBindings();
 
 		return container;
@@ -111,10 +113,13 @@ public class LayerLegendDialog extends Dialog {
 
 	public void setLayer(AbstractLayer wms) {
 		this.layer = wms;
+		this.layerName = wms.getName();
 		System.out.println("AbstractLayername : " + wms.getName());
-		/*Image legend = this.getLegendImage();
-		ImageData imgData = new ImageData("/home/jean/tmp/shutter_Sélection_014.png");
-		imgLegend = new Image(this.container.getParent().getDisplay(), imgData);*/
+		
+		this.updateDisplay();
+		/*Image legend = this.getLegendImage();*/
+		this.imgLegendData = new ImageData("/home/jean/tmp/shutter_Sélection_014.png");
+		//this.imgLegend = new Image(this.getShell().getDisplay(), imgData);
 		/*if (legend != null) {
 			if (this.imgLabel != null && this.scImageComposite != null) {
 				this.imgLabel.setImage(legend);
@@ -122,6 +127,20 @@ public class LayerLegendDialog extends Dialog {
 			}
 			getShell().pack();
 		}*/
+	}
+	
+	//updates the display according to the current layer
+	private void updateDisplay() {
+		if (this.container !=null) {
+			this.lblLayerName.setText(this.layer.getName());
+			this.imgLegend = this.getLegendImage();
+			if (this.imgLegend!=null) {
+
+				this.imgLabel.setImage(this.imgLegend);
+				imgLabel.setSize(imgLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				//this.scImageComposite.pack();
+			}
+		}
 	}
 
 	private URL getLegendURL() throws MalformedURLException {
@@ -144,8 +163,8 @@ public class LayerLegendDialog extends Dialog {
 		Image img = null;
 		try {
 			URL url = getLegendURL();
-			if (url != null)
-				img = new Image(this.getParentShell().getDisplay(), url.openStream());
+			if (url != null && this.container!=null)
+				img = new Image(this.container.getDisplay(), url.openStream());
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
