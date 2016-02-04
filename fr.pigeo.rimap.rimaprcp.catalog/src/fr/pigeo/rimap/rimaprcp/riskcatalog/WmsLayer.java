@@ -142,9 +142,9 @@ public class WmsLayer extends AbstractLayer {
 
 	@Override
 	public void addToGlobe(WorldWindowGLCanvas wwd) {
-		System.out.println("adding layer "+this.name+" to globe");
+		//System.out.println("adding layer "+this.name+" to globe");
 		if (this.layer == null) {
-			System.out.println("first, creating layer");
+			//System.out.println("first, creating layer");
 			WMSCapabilities caps;
 
 			try {
@@ -156,7 +156,7 @@ public class WmsLayer extends AbstractLayer {
 				return;
 			}
 			AVList layerParams = new AVListImpl();
-			System.out.println(this.layers);
+			//System.out.println(this.layers);
 	        layerParams.setValue(AVKey.LAYER_NAMES, this.layers);
 	        layerParams.setValue(AVKey.DISPLAY_NAME, this.name);
 	        try {

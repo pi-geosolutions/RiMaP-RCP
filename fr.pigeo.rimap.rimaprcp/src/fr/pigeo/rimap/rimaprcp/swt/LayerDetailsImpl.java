@@ -95,7 +95,7 @@ public class LayerDetailsImpl extends LayerDetails {
 		if (this.m_bindingContext != null)
 			this.m_bindingContext.dispose();
 		this.initComponents();
-		this.updateLegendShell(layer);
+		//this.updateLegendShell(layer);
 		m_bindingContext = initDataBindings();
 	}
 
@@ -171,12 +171,15 @@ public class LayerDetailsImpl extends LayerDetails {
 			this.btnLegendSelectionAdapter = new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					System.out.println("Loading the legend...");
+					//System.out.println("Loading the legend...");
 					
-					if (legendDialog==null)
+					/*if (legendDialog==null)
 						legendDialog = new LayerLegendDialog(parent.getShell(), wms);
 					legendDialog.setLayer(wms);
-					legendDialog.open();
+					legendDialog.open();*/
+					LayerLegendDialog dialog = new LayerLegendDialog(parent.getShell(), wms);
+					dialog.setLayer(wms);
+					dialog.open();
 				}
 			};
 			this.btnShowLegend.addSelectionListener(this.btnLegendSelectionAdapter);
@@ -187,9 +190,14 @@ public class LayerDetailsImpl extends LayerDetails {
 			});
 		}
 
-	}
-	
+	}	
 
+	/*
+	 * Not used. Would be used in case we keep only one legend widget (this.legendDialog) and change its content
+	 * when we select another layer.
+	 * Poses the pb of what happens if the user closes the legend widget : it is then disposed
+	 * and i didn't find how to deal with that.
+	 */
 	private void updateLegendShell(Layer l) {
 		if (legendDialog==null) {
 			System.out.println("Legend dialog is null");

@@ -52,17 +52,20 @@ public class LayerLegendDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		this.container = (Composite) super.createDialogArea(parent);
 		GridLayout gridLayout = (GridLayout) container.getLayout();
-		gridLayout.numColumns = 2;
-
-		Label lblNameLabel = new Label(container, SWT.NONE);
-		lblNameLabel.setFont(SWTResourceManager.getFont("Sans", 12, SWT.ITALIC));
-		lblNameLabel.setText("Layer name:");
-
-		lblLayerName = new Label(container, SWT.NONE);
-		lblLayerName.setFont(SWTResourceManager.getFont("Sans", 12, SWT.BOLD));
-		lblLayerName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		lblLayerName.setText(this.layerName);
-		new Label(container, SWT.NONE);
+		
+				lblLayerName = new Label(container, SWT.NONE);
+				lblLayerName.setFont(SWTResourceManager.getFont("Sans", 10, SWT.BOLD));
+				lblLayerName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+				lblLayerName.setText(this.layerName);
+		// The scrolled composite
+		scImageComposite = new ScrolledComposite(container, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		scImageComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		scImageComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		
+				imgLabel = new Label(scImageComposite, SWT.NONE);
+				imgLabel.setImage(imgLegend);
+				imgLabel.setSize(imgLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				scImageComposite.setContent(imgLabel);
 
 		// Load an image
 		// ImageData imgData = new ImageData( "your image path" );
@@ -70,15 +73,6 @@ public class LayerLegendDialog extends Dialog {
 		if (this.imgLegendData==null)
 			imgLegendData = new ImageData("/home/jean/tmp/shutter_Sélection_003.png");
 		imgLegend = new Image(this.display, imgLegendData);
-		// The scrolled composite
-		scImageComposite = new ScrolledComposite(container, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		scImageComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		scImageComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-
-		imgLabel = new Label(scImageComposite, SWT.NONE);
-		imgLabel.setImage(imgLegend);
-		imgLabel.setSize(imgLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		scImageComposite.setContent(imgLabel);
 
 		this.updateDisplay();
 		
@@ -97,7 +91,7 @@ public class LayerLegendDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(450, 300);
+		return new Point(300, 300);
 	}
 
 	@Override
@@ -114,7 +108,7 @@ public class LayerLegendDialog extends Dialog {
 	public void setLayer(AbstractLayer wms) {
 		this.layer = wms;
 		this.layerName = wms.getName();
-		System.out.println("AbstractLayername : " + wms.getName());
+		//System.out.println("AbstractLayername : " + wms.getName());
 		
 		this.updateDisplay();
 		/*Image legend = this.getLegendImage();*/
@@ -152,7 +146,7 @@ public class LayerLegendDialog extends Dialog {
 			if (path == "") { // then we will get the default geoserver legend
 				path = wms.getUrl() + CatalogProperties.getProperty("catalog.wms_getlegend_relpath") + wms.getLayers();
 			}
-			System.out.println("path : " + path);
+			//System.out.println("path : " + path);
 			url = new URL(path);
 		}
 		return url;
