@@ -96,6 +96,10 @@ public class WmsLayer extends AbstractLayer {
 		return name;
 	}
 
+	public String getLayers() {
+		return layers;
+	}
+
 	@Override
 	public void setName(String name) {
 		this.name = name;

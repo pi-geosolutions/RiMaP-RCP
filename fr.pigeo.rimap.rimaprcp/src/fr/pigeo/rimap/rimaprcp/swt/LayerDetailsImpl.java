@@ -35,19 +35,21 @@ import gov.nasa.worldwind.layers.Layer;
 
 public class LayerDetailsImpl extends LayerDetails {
 	private String isNoLayer = "No Layer selected. Please select a layer to view its related details.";
-	private SelectionAdapter btnMetadataSelectionAdapter, btnExtentSelectionAdapter;
-	
+	private SelectionAdapter btnMetadataSelectionAdapter, btnExtentSelectionAdapter, btnLegendSelectionAdapter;
+
 	private WmsLayer wms;
 	private WwjInstance wwj;
+	private Composite parent;
+	LayerLegendDialog legendDialog;
 
 	public LayerDetailsImpl() {
 
 	}
-	
 
 	@PostConstruct
 	public void getInjections(Composite parent, WwjInstance wwjInst) {
 		this.wwj = wwjInst;
+		this.parent = parent;
 	}
 
 	/*
@@ -105,7 +107,7 @@ public class LayerDetailsImpl extends LayerDetails {
 			this.lblLayerName.setFont(SWTResourceManager.getFont("Sans", 10, SWT.ITALIC));
 		} else {
 			this.lblLayerName.setFont(SWTResourceManager.getFont("Sans", 10, SWT.BOLD));
-			
+
 		}
 		this.btnZoomToExtent.setVisible(isLayer);
 		this.lblOpacity.setVisible(isLayer);
@@ -115,8 +117,6 @@ public class LayerDetailsImpl extends LayerDetails {
 		this.txtLayerDescription.setVisible(isRimapLayer);
 		this.btnShowMetadata.setVisible(isRimapLayer);
 		this.btnShowLegend.setVisible(isRimapLayer);
-		
-		
 
 		if (isRimapLayer) {
 			final RimapWMSTiledImageLayer l = (RimapWMSTiledImageLayer) layer;
@@ -124,45 +124,66 @@ public class LayerDetailsImpl extends LayerDetails {
 			this.txtLayerDescription.setText(wms.getComments());
 
 			this.btnShowMetadata.setEnabled(wms.getMetadata_uuid() != "");
-			this.btnShowLegend.setEnabled(wms.getLegendurl() != "");
+			//this.btnShowLegend.setEnabled(wms.getLegendurl() != "");
 
-			//Show more button events
+			// Show more button events
 			if (this.btnMetadataSelectionAdapter != null)
 				this.btnShowMetadata.removeSelectionListener(this.btnMetadataSelectionAdapter);
-			this.btnMetadataSelectionAdapter = new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					String link = CatalogProperties.getProperty("catalog.baseurl")+CatalogProperties.getProperty("catalog.metadata_relpath")+wms.getMetadata_uuid();
-					Program.launch(link);
-				}
-			};
-			this.btnShowMetadata.addSelectionListener(this.btnMetadataSelectionAdapter);
+			if (wms.getMetadata_uuid() != "") {
+				this.btnMetadataSelectionAdapter = new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						String link = CatalogProperties.getProperty("catalog.baseurl")
+								+ CatalogProperties.getProperty("catalog.metadata_relpath") + wms.getMetadata_uuid();
+						Program.launch(link);
+					}
+				};
+				this.btnShowMetadata.addSelectionListener(this.btnMetadataSelectionAdapter);
+			}
 			
-			//Show extent button events
+			// Show extent button events
 			if (this.btnExtentSelectionAdapter != null)
 				this.btnZoomToExtent.removeSelectionListener(this.btnExtentSelectionAdapter);
 			this.btnExtentSelectionAdapter = new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					System.out.println(l.getRestorableState());
-					if (wwj!=null) {
-						System.out.println("Zooming to extent");
+					if (wwj != null) {
+						// System.out.println("Zooming to extent");
 						Sector sector = (Sector) l.getValue(AVKey.SECTOR);
 						WorldWindowGLCanvas wwd = wwj.getWwd();
 						Extent extent = Sector.computeBoundingCylinder(wwd.getModel().getGlobe(),
-				                wwd.getSceneController().getVerticalExaggeration(), sector);
+								wwd.getSceneController().getVerticalExaggeration(), sector);
 
-				            Angle fov = wwd.getView().getFieldOfView();
-				            Position centerPos = new Position(sector.getCentroid(), 0d);
-				            double zoom = extent.getRadius() / fov.cosHalfAngle() / fov.tanHalfAngle();
+						Angle fov = wwd.getView().getFieldOfView();
+						Position centerPos = new Position(sector.getCentroid(), 0d);
+						double zoom = extent.getRadius() / fov.cosHalfAngle() / fov.tanHalfAngle();
 
-				            wwd.getView().goTo(centerPos, zoom);
-					} else 
-						System.out.println("TODO : zoom to extent");
+						wwd.getView().goTo(centerPos, zoom);
+					}
 				}
 			};
-
 			this.btnZoomToExtent.addSelectionListener(this.btnExtentSelectionAdapter);
+
+			// Show legend button events
+			if (this.btnLegendSelectionAdapter != null)
+				this.btnShowLegend.removeSelectionListener(this.btnLegendSelectionAdapter);
+			this.btnLegendSelectionAdapter = new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					System.out.println("Loading the legend...");
+					
+					if (legendDialog==null)
+						legendDialog = new LayerLegendDialog(parent.getShell(), wms);
+					legendDialog.setLayer(wms);
+					int result = legendDialog.open();
+				}
+			};
+			this.btnShowLegend.addSelectionListener(this.btnLegendSelectionAdapter);
+			btnShowLegend.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+				}
+			});
 		}
 
 	}
