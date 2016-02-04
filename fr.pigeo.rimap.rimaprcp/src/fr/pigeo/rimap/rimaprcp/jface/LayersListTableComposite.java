@@ -48,6 +48,7 @@ public class LayersListTableComposite extends Composite {
 	private final Image FEATUREINFO = getImage("icon_featureinfo_16px.png");
 	private final Image METADATA = getImage("icon_metadata_16px.png");
 	private final Image PQUERY = getImage("polygon_query_16px.png");
+	private final Image WMSICON = getImage("wms.png");
 
 	public LayersListTableComposite(Composite parent, int style, WwjInstance wwjInst) {
 		super(parent, style);
@@ -98,6 +99,13 @@ public class LayersListTableComposite extends Composite {
 			public String getText(Object element) {
 				Layer l = (Layer) element;
 				return l.getName();
+			}
+			@Override
+			public Image getImage(Object element) {
+				if (element instanceof RimapWMSTiledImageLayer) {
+						return WMSICON;
+				}
+				return null;
 			}
 		});
 

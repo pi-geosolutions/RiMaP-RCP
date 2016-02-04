@@ -15,7 +15,7 @@ public class LayerOpacityChangeListener implements IValueChangeListener {
 
 	@Override
 	public void handleValueChange(ValueChangeEvent event) {
-		System.out.println("opacity changed");
+		//System.out.println("opacity changed");
 		if (layer!=null) {
 			layer.firePropertyChange(AVKey.OPACITY, null, event.getObservableValue().getValue());
 		}
