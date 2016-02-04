@@ -15,6 +15,11 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.layers.ViewControlsLayer;
+import gov.nasa.worldwind.layers.ViewControlsSelectListener;
+import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
+import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 
 /**
  * @author jean.pommier@pi-geosolutions.fr
@@ -40,6 +45,10 @@ public class WwjInstance {
 		this.wwd = new WorldWindowGLCanvas();
 		model = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
 		wwd.setModel(model);
+		
+		// Setup a select listener for the worldmap click-and-go feature
+        this.wwd.addSelectListener(new ClickAndGoSelectListener(this.getWwd(), WorldMapLayer.class));
+        this.addViewControls();
 	}
 
 	public WorldWindowGLCanvas getWwd() {
@@ -48,6 +57,14 @@ public class WwjInstance {
 
 	public Model getModel() {
 		return model;
+	}
+	
+	public void addViewControls() {
+		// Create and install the view controls layer and register a controller for it with the World Window.
+        ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
+        viewControlsLayer.setName(viewControlsLayer.getName()+"Widget");
+        ApplicationTemplate.insertBeforeCompass(getWwd(), viewControlsLayer);
+        this.getWwd().addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
 	}
 
 	/**
