@@ -44,15 +44,14 @@ public class WidgetMenuItem {
 			Widget w = iterator.next();
 			MHandledMenuItem mitem = modelService.createModelElement(MHandledMenuItem.class);
 			String label, tooltip="";
-			label = messages.display_show + w.getLabel();
+			label = messages.menu_display_show + w.getLabel();
 			/*Here we try to use the translation service
 			 * For this we need to programmatically construct the names of the fields in the Message class
 			 * and call them. We use Java reflection.
 			 */
 			try {
-				label = (String) messages.getClass().getField("display_show_" + w.getLabel()).get(messages);
-				tooltip = (String) messages.getClass().getField("display_show_" + w.getLabel()+"_tooltip").get(messages);
-				System.out.println("message name is " + label);
+				label = (String) messages.getClass().getField("menu_display_show_" + w.getLabel()).get(messages);
+				tooltip = (String) messages.getClass().getField("menu_display_show_" + w.getLabel()+"_tooltip").get(messages);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
