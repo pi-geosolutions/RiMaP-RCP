@@ -38,7 +38,7 @@ public class LayerLegendDialog extends Dialog {
 	private Composite container;
 	private Display display;
 	private String layerName="";
-	private Image imgLegend;
+	private Image imgLegend=null;
 	private ImageData imgLegendData;
 
 	public LayerLegendDialog(Shell parentShell, AbstractLayer layer) {
@@ -70,9 +70,9 @@ public class LayerLegendDialog extends Dialog {
 		// Load an image
 		// ImageData imgData = new ImageData( "your image path" );
 		this.display = parent.getDisplay();
-		if (this.imgLegendData==null)
+		/*if (this.imgLegendData==null)
 			imgLegendData = new ImageData("/home/jean/tmp/shutter_Sélection_003.png");
-		imgLegend = new Image(this.display, imgLegendData);
+		imgLegend = new Image(this.display, imgLegendData);*/
 
 		this.updateDisplay();
 		
@@ -112,7 +112,7 @@ public class LayerLegendDialog extends Dialog {
 		
 		this.updateDisplay();
 		/*Image legend = this.getLegendImage();*/
-		this.imgLegendData = new ImageData("/home/jean/tmp/shutter_Sélection_014.png");
+		//this.imgLegendData = new ImageData("/home/jean/tmp/shutter_Sélection_014.png");
 		//this.imgLegend = new Image(this.getShell().getDisplay(), imgData);
 		/*if (legend != null) {
 			if (this.imgLabel != null && this.scImageComposite != null) {
@@ -129,7 +129,6 @@ public class LayerLegendDialog extends Dialog {
 			this.lblLayerName.setText(this.layer.getName());
 			this.imgLegend = this.getLegendImage();
 			if (this.imgLegend!=null) {
-
 				this.imgLabel.setImage(this.imgLegend);
 				imgLabel.setSize(imgLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 				//this.scImageComposite.pack();
