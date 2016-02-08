@@ -2,6 +2,8 @@
 package fr.pigeo.rimap.rimaprcp.views;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -17,6 +19,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.pigeo.rimap.rimaprcp.RimaprcpConstants;
 import fr.pigeo.rimap.rimaprcp.catalog.RiskCatalogViewContentProvider;
@@ -46,7 +50,8 @@ public class JfaceLayertree {
 		viewer.setContentProvider(new RiskCatalogViewContentProvider());
 		viewer.setLabelProvider(new RiskCatalogViewLabelProvider());
 		viewer.setInput(catalog.getRoot());
-		viewer.setExpandedElements(FolderLayer.getExpandedFolders());
+		viewer.setExpandedElements(RiskJfaceCatalogImpl.getExpandedFoldersAsArray());
+		this.checkInitialLayers(RiskJfaceCatalogImpl.getInitiallyCheckedLayers(), ctx, wwj);
 		this.tree = viewer.getTree();
 		this.tree.addMouseListener(new MouseListener() {
 
@@ -119,12 +124,22 @@ public class JfaceLayertree {
 
 	}
 	
+	private void checkInitialLayers(List<AbstractLayer> initiallyCheckedLayers, IEclipseContext ctx, WwjInstance wwj) {
+		Iterator<AbstractLayer> itr = initiallyCheckedLayers.iterator();
+		if (wwj==null)
+			System.out.println("Oops, wwj is null !");
+		while (itr.hasNext()) {
+			AbstractLayer layer = itr.next();
+			this.checkedLayer(layer, ctx, wwj);
+		}
+	}
+
 	public void checkedLayer(AbstractLayer layer, IEclipseContext ctx, WwjInstance wwj) {
 		WorldWindowGLCanvas wwd = wwj.getWwd();
 
-		if (layer instanceof WmsLayer) {
+		if (wwd!=null && layer instanceof WmsLayer) {
 			layer.addToGlobe(wwd);
+			eventBroker.post(RimaprcpConstants.LAYER_CHECKED, layer ); 
 		}
-		eventBroker.post(RimaprcpConstants.LAYER_CHECKED, layer ); 
 	}
 }

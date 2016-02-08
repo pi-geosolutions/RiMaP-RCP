@@ -14,6 +14,7 @@ import org.osgi.framework.FrameworkUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
+import fr.pigeo.rimap.rimaprcp.catalog.RiskJfaceCatalogImpl;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.avlist.AVListImpl;
@@ -87,8 +88,15 @@ public class WmsLayer extends AbstractLayer {
 		this.tiled = this.parseBool(node, "TILED", this.tiled);
 		this.queryable = this.parseBool(node, "queryable", this.queryable);
 		this.checked = this.parseBool(node, "checked", this.checked);
-		this.pq_layer = this.parseString(node, "pq_layer", null);
+		this.pq_layer = this.parseString(node, "pq_layer", null);	
 		
+		if (this.checked)
+			RiskJfaceCatalogImpl.addInitiallyCheckedLayer(this);
+		
+		if (Boolean.getBoolean(CatalogProperties.getProperty("catalog.loadcapabilitiesatstartup")))	{
+			RiskJfaceCatalogImpl.addServerCapability(this.url);
+		}
+	
 		// System.out.println("loaded WMS layer parameters " + this.name);
 	}
 
@@ -145,15 +153,16 @@ public class WmsLayer extends AbstractLayer {
 		//System.out.println("adding layer "+this.name+" to globe");
 		if (this.layer == null) {
 			//System.out.println("first, creating layer");
-			WMSCapabilities caps;
-
-			try {
-				URI wmsUri = new URI(this.url);
-				caps = WMSCapabilities.retrieve(wmsUri);
-				caps.parse();
-			} catch (Exception e) {
-				e.printStackTrace();
-				return;
+			WMSCapabilities caps = RiskJfaceCatalogImpl.getServerCapabilities(this.url);
+			if (caps==null) {
+				try {
+					URI wmsUri = new URI(this.url);
+					caps = WMSCapabilities.retrieve(wmsUri);
+					caps.parse();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return;
+				}
 			}
 			AVList layerParams = new AVListImpl();
 			//System.out.println(this.layers);

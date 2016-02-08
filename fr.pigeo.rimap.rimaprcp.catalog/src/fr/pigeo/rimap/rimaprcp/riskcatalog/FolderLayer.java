@@ -23,7 +23,6 @@ import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
 import fr.pigeo.rimap.rimaprcp.catalog.RiskJfaceCatalogImpl;
 
 public class FolderLayer extends AbstractLayer {
-	private static List<FolderLayer> expandedFolders; //used to give initial expanded info to jTreeViewer
 	
 	private boolean isRoot = false;
 	private LayerType type = LayerType.FOLDER;
@@ -43,8 +42,6 @@ public class FolderLayer extends AbstractLayer {
 
 	public FolderLayer(AbstractLayer parent) {
 		this.parent = parent;
-		if (FolderLayer.expandedFolders == null)
-			FolderLayer.expandedFolders = new ArrayList<FolderLayer>();
 	}
 
 	public FolderLayer(AbstractLayer parent, JsonNode node) {
@@ -95,8 +92,9 @@ public class FolderLayer extends AbstractLayer {
 			if (children.isArray())
 				this.children = this.loadChildren(children);
 		}
-		if (this.expanded)
-			FolderLayer.expandedFolders.add(this);
+		if (this.expanded) {
+			RiskJfaceCatalogImpl.addExpandedFolder(this);
+		}
 	}
 
 	private List<AbstractLayer> loadChildren(JsonNode list) {
@@ -223,7 +221,4 @@ public class FolderLayer extends AbstractLayer {
 		}
 	}
 	
-	public static FolderLayer[] getExpandedFolders() {
-		return FolderLayer.expandedFolders.toArray(new FolderLayer[0]);
-	}	
 }

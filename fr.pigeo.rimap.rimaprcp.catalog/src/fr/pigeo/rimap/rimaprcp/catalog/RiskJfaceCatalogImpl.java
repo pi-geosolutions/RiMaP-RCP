@@ -1,14 +1,26 @@
 package fr.pigeo.rimap.rimaprcp.catalog;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.pigeo.rimap.rimaprcp.mapservers.ServerCapability;
+import fr.pigeo.rimap.rimaprcp.riskcatalog.AbstractLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.FolderLayer;
+import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 
 public class RiskJfaceCatalogImpl {
+	private static List<FolderLayer> expandedFolders; //used to give initial expanded info to jTreeViewer
+	private static List<AbstractLayer> initiallyCheckedLayers; //used to give initial layers to check
+	private static Map<String,ServerCapability> serverCapabilitiesList; //used to give initial layers to check
+	
 	private URL baseURL;
 	private JsonNode layertree_json;
 	private FolderLayer root;	
@@ -65,4 +77,74 @@ public class RiskJfaceCatalogImpl {
 	public URL getBaseURL() {
 		return baseURL;
 	}
+
+	
+	/*
+	 * STATIC METHODS
+	 */
+
+	public static List<FolderLayer> getExpandedFolders() {
+		return expandedFolders;
+	}
+	public static FolderLayer[] getExpandedFoldersAsArray() {
+		if (expandedFolders==null)
+			return null;
+		return expandedFolders.toArray(new FolderLayer[0]);
+	}
+
+	public static void addExpandedFolder(FolderLayer folder) {
+		if (RiskJfaceCatalogImpl.expandedFolders==null)
+			RiskJfaceCatalogImpl.expandedFolders = new ArrayList<FolderLayer>();
+		RiskJfaceCatalogImpl.expandedFolders.add(folder);
+	}
+
+	public static List<AbstractLayer> getInitiallyCheckedLayers() {
+		return initiallyCheckedLayers;
+	}
+	public static AbstractLayer[] getInitiallyCheckedLayersAsArray() {
+		if (initiallyCheckedLayers==null)
+			return null;
+		return initiallyCheckedLayers.toArray(new AbstractLayer[0]);
+	}
+
+	public static void addInitiallyCheckedLayer(AbstractLayer layer) {
+		if (RiskJfaceCatalogImpl.initiallyCheckedLayers==null)
+			RiskJfaceCatalogImpl.initiallyCheckedLayers = new ArrayList<AbstractLayer>();
+		RiskJfaceCatalogImpl.initiallyCheckedLayers.add(layer);
+	}
+
+	public static void addServerCapability(String url) {
+		url = RiskJfaceCatalogImpl.cleanURL(url);
+		RiskJfaceCatalogImpl.getServerCapabilities(url);
+		//we don't care about the returned value. Just wanted to add the caps
+	}
+	
+	public static WMSCapabilities getServerCapabilities(String url) {
+		url = RiskJfaceCatalogImpl.cleanURL(url);
+		if (RiskJfaceCatalogImpl.serverCapabilitiesList==null)
+			RiskJfaceCatalogImpl.serverCapabilitiesList = new HashMap<String,ServerCapability>();
+		//returns non-null if already stored in the hash
+		ServerCapability capability = RiskJfaceCatalogImpl.serverCapabilitiesList.get(url.toLowerCase());
+		if (capability==null) {
+			//Else we create the capability object and add it to the hash
+			//System.out.println("Adding capabilities for server "+url+" ");
+			try {
+				URI wmsUri = new URI(url);
+				WMSCapabilities caps = WMSCapabilities.retrieve(wmsUri);
+				caps.parse();
+				capability = new ServerCapability(url,caps);
+				RiskJfaceCatalogImpl.serverCapabilitiesList.put(url.toLowerCase(), capability);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return capability.getCapabilities();
+	}
+	
+	public static String cleanURL(String url) {
+		return url.replaceAll("(?<!(http:|https:))//", "/");
+	}
+	
 }
