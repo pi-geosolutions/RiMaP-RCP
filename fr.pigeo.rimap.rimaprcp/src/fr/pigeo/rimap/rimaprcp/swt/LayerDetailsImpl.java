@@ -8,6 +8,7 @@ import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
@@ -24,6 +25,7 @@ import fr.pigeo.rimap.rimaprcp.riskcatalog.WmsLayer;
 import fr.pigeo.rimap.rimaprcp.swt.bindings.LayerOpacityChangeListener;
 import fr.pigeo.rimap.rimaprcp.swt.bindings.OpacityToScaleConverter;
 import fr.pigeo.rimap.rimaprcp.swt.bindings.ScaleToOpacityConverter;
+import fr.pigeo.rimap.rimaprcp.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
@@ -34,13 +36,17 @@ import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
 
 public class LayerDetailsImpl extends LayerDetails {
-	private String isNoLayer = "No Layer selected. Please select a layer to view its related details.";
 	private SelectionAdapter btnMetadataSelectionAdapter, btnExtentSelectionAdapter, btnLegendSelectionAdapter;
 
 	private WmsLayer wms;
 	private WwjInstance wwj;
 	private Composite parent;
 	LayerLegendDialog legendDialog;
+	
+
+	@Inject
+	@Translation
+	private Messages messages;
 
 	public LayerDetailsImpl() {
 
@@ -50,6 +56,16 @@ public class LayerDetailsImpl extends LayerDetails {
 	public void getInjections(Composite parent, WwjInstance wwjInst) {
 		this.wwj = wwjInst;
 		this.parent = parent;
+
+		grpDetails.setText(messages.parts_layerdetails_title); //$NON-NLS-1$
+		//lblLayerName.setText(messages.parts_layerdetails_layername); //$NON-NLS-1$
+		btnZoomToExtent.setToolTipText(messages.parts_layerdetails_zoomtoextent); //$NON-NLS-1$
+		lblOpacity.setText(messages.parts_layerdetails_opacity); //$NON-NLS-1$
+		lblDescription.setText(messages.parts_layerdetails_description); //$NON-NLS-1$
+		btnShowMetadata.setToolTipText(messages.parts_layerdetails_showmetadata_tooltip); //$NON-NLS-1$
+		btnShowMetadata.setText(messages.parts_layerdetails_showmetadata); //$NON-NLS-1$
+		btnShowLegend.setToolTipText(messages.parts_layerdetails_showlegend_tooltip); //$NON-NLS-1$
+		btnShowLegend.setText(messages.parts_layerdetails_showlegend); //$NON-NLS-1$
 	}
 
 	/*
@@ -104,7 +120,7 @@ public class LayerDetailsImpl extends LayerDetails {
 		boolean isRimapLayer = (layer instanceof RimapWMSTiledImageLayer);
 
 		if (!isLayer) {
-			this.lblLayerName.setText(isNoLayer);
+			this.lblLayerName.setText(messages.parts_layerdetails_isnolayer);
 			this.lblLayerName.setFont(SWTResourceManager.getFont("Sans", 10, SWT.ITALIC));
 		} else {
 			this.lblLayerName.setFont(SWTResourceManager.getFont("Sans", 10, SWT.BOLD));

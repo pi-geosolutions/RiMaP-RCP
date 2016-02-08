@@ -55,8 +55,6 @@ public class LayerDetails {
 		grpDetails.setText("Layer details");
 		grpDetails.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		grpDetails.setLayout(new GridLayout(2, false));
-		new Label(grpDetails, SWT.NONE);
-		new Label(grpDetails, SWT.NONE);
 
 		lblLayerName = new Label(grpDetails, SWT.WRAP);
 		lblLayerName.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));

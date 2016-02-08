@@ -62,7 +62,8 @@ public class WwjInstance {
 	public void addViewControls() {
 		// Create and install the view controls layer and register a controller for it with the World Window.
         ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
-        viewControlsLayer.setName(viewControlsLayer.getName()+"Widget");
+        //viewControlsLayer.setName(viewControlsLayer.getName()+"Widget");
+        viewControlsLayer.setName("ViewControlsWidget");
         ApplicationTemplate.insertBeforeCompass(getWwd(), viewControlsLayer);
         this.getWwd().addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
 	}
