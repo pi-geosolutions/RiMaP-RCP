@@ -32,7 +32,7 @@ public class LayerDetails {
 	protected DataBindingContext m_bindingContext;
 	protected Layer layer;
 	
-	protected Label lblNoLayer, lblLayerName,lblOpacity,lblDescription;
+	protected Label lblLayerName,lblOpacity,lblDescription;
 	protected Scale scaleOpacity;
 	protected Group grpDetails;
 	protected Button btnShowMetadata, btnShowLegend;
@@ -55,18 +55,11 @@ public class LayerDetails {
 		grpDetails.setText("Layer details");
 		grpDetails.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		grpDetails.setLayout(new GridLayout(2, false));
-
-		lblNoLayer = new Label(grpDetails, SWT.WRAP);
-		GridData gd_lblNoLayer = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
-		gd_lblNoLayer.exclude = true;
-		gd_lblNoLayer.widthHint = 350;
-		lblNoLayer.setLayoutData(gd_lblNoLayer);
-		lblNoLayer.setText("No Layer selected. Please select a layer to view its related details.");
+		new Label(grpDetails, SWT.NONE);
+		new Label(grpDetails, SWT.NONE);
 
 		lblLayerName = new Label(grpDetails, SWT.WRAP);
-		GridData gd_lblLayerName = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-		gd_lblLayerName.minimumWidth = 200;
-		lblLayerName.setLayoutData(gd_lblLayerName);
+		lblLayerName.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 		lblLayerName.setFont(SWTResourceManager.getFont("Sans", 10, SWT.BOLD));
 		lblLayerName.setText("Layer name");
 				
@@ -105,8 +98,8 @@ public class LayerDetails {
 		
 		txtLayerDescription = new Text(grpDetails, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
 		txtLayerDescription.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
-		txtLayerDescription.setText("gridData.horizontalSpan = 3;\n    gridData.grabExcessVerticalSpace = true;\n\n    bookAbstract.setLayoutData(gridData);\n\n    // Button.\n    Button enter = new Button(shell, SWT.PUSH);\n    enter.setText(\"Enter\");\n\n    gridData = new GridData();\n    gridData.horizontalSpan = 4;\n    gridData.horizontalAlignment = GridData.END;\n    enter.setLayoutData(gridData);\n\n    // Fill information.\n\n    title.setText(\"Professional Java Interfaces with SWT/JFace\");\n    authors.setText(\"Jack Li Guojie\");\n    pages.setText(\"500pp\");\n    pubisher.setText(\"John Wiley & Sons\");\n    cover.setBackground(new Image(display, \"java2s.gif\"));\n    bookAbstract.setText(\n      \"This book provides a comprehensive guide for \\n\"\n        + \"you to create Java user interfaces with SWT/JFace. \");\n\n    shell.pack();\n    shell.open();");
-		txtLayerDescription.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1));
+		txtLayerDescription.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis fringilla massa, at ullamcorper neque. Integer scelerisque malesuada leo, eget tincidunt ante interdum sed. Morbi non purus vitae sapien fringilla semper in eget velit. Nulla volutpat arcu sed pulvinar aliquet. Praesent lectus nisi, iaculis at commodo sed, auctor eget ipsum. Nulla imperdiet lacus eget libero fermentum, quis placerat metus hendrerit. Nam laoreet lectus eget massa tempor, nec convallis massa sagittis. Curabitur egestas condimentum condimentum. Maecenas porta purus et fermentum gravida. Sed sed velit metus. Sed pretium efficitur arcu ut cursus. Curabitur ornare dolor nec felis fermentum, in eleifend orci maximus. Fusce libero libero, consectetur id finibus et, tristique eu lectus. Quisque justo sapien, rutrum faucibus turpis a, gravida lobortis elit. Vestibulum at metus non turpis aliquam iaculis. ");
+		txtLayerDescription.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
 		btnShowMetadata = new Button(grpDetails, SWT.NONE);
 		btnShowMetadata
