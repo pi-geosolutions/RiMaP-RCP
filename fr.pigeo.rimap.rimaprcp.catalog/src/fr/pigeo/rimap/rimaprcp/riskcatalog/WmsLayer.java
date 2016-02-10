@@ -170,6 +170,7 @@ public class WmsLayer extends AbstractLayer {
 	        layerParams.setValue(AVKey.DISPLAY_NAME, this.name);
 	        layerParams.setValue(AVKey.TILE_WIDTH, 256);
 	        layerParams.setValue(AVKey.TILE_HEIGHT, 256);
+	        layerParams.setValue(AVKey.DETAIL_HINT, Double.parseDouble(CatalogProperties.getProperty("wmslayer.defaultdetailhint")));
 	        try {
 	        	this.layer = new RimapWMSTiledImageLayer(caps, layerParams);
 	        	this.layer.setName(this.name);
