@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_CCjE8NANEeWwWO4XLOgL4g">
-  <imports xsi:type="basic:Part" xmi:id="_QHtSsNAWEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.rimaprcp.part.organize"/>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_i54VENASEeWwWO4XLOgL4g" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.menu.main" positionInList=" ">
-    <elements xsi:type="menu:Menu" xmi:id="_q5IDkNASEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.menu.cache" label="Cache">
-      <children xsi:type="menu:DirectMenuItem" xmi:id="_vQUGQNASEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.directmenuitem.manageconfigurationcache" label="Manage configuration cache"/>
-      <children xsi:type="menu:DirectMenuItem" xmi:id="_rmQ2YNASEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.directmenuitem.managelayerscache" label="Manage Layers' cache" contributionURI="bundleclass://fr.pigeo.rimap.cachemanager.ui/fr.pigeo.rimap.cachemanager.ui.handlers.LayersCache"/>
-      <children xsi:type="menu:DirectMenuItem" xmi:id="_2rmMENASEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.directmenuitem.configure" label="Configure" contributionURI="bundleclass://fr.pigeo.rimap.cachemanager.ui/fr.pigeo.rimap.cachemanager.ui.handlers.Configure"/>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_CCjE8NANEeWwWO4XLOgL4g">
+  <imports xsi:type="basic:Part" xmi:id="_xUiMENCnEeWfp70WsrIskQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview"/>
+  <imports xsi:type="commands:Command" xmi:id="_HigwgNCwEeWlXOx0Xe1shA" elementId="fr.pigeo.rimap.rimaprcp.command.switchperspective"/>
+  <imports xsi:type="commands:CommandParameter" xmi:id="_JTYRMNCwEeWlXOx0Xe1shA" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid"/>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_mG1vINCoEeWfp70WsrIskQ" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.menu.menuwindow" positionInList="after:fr.pigeo.rimap.rimaprcp.handledmenuitem.switchtomainperspective">
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_MOpvgNCwEeWlXOx0Xe1shA" elementId="fr.pigeo.rimap.cachemanager.ui.handledmenuitem.modecachemanager" label="Mode Cache Manager" command="_HigwgNCwEeWlXOx0Xe1shA">
+      <parameters xmi:id="_PKnxYNCwEeWlXOx0Xe1shA" elementId="fr.pigeo.rimap.cachemanager.ui.parameter.0" name="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid" value="fr.pigeo.rimap.cachemanager.ui.perspective.main"/>
     </elements>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_CCjE8dANEeWwWO4XLOgL4g" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.application">
-    <elements xsi:type="basic:TrimmedWindow" xmi:id="_b5YnoNAvEeWL3YDLTkfB9A" elementId="fr.pigeo.rimap.cachemanager.ui.window.main" selectedElement="_CCjE89ANEeWwWO4XLOgL4g" label="Cache Manager" x="700" y="500">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_lakmYNClEeWfp70WsrIskQ" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.perspectivestack.main">
+    <elements xsi:type="advanced:Perspective" xmi:id="_fUKo0NClEeWfp70WsrIskQ" elementId="fr.pigeo.rimap.cachemanager.ui.perspective.main">
       <children xsi:type="basic:PartSashContainer" xmi:id="_CCjE89ANEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.1">
-        <children xsi:type="basic:PartStack" xmi:id="_kTTJoNATEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.partstack.0" containerData="50">
-          <children xsi:type="basic:Part" xmi:id="_kkGlwNATEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.part.0"/>
+        <children xsi:type="basic:PartStack" xmi:id="_VjkcANCmEeWfp70WsrIskQ" elementId="fr.pigeo.rimap.cachemanager.ui.partstack.1" containerData="50">
+          <children xsi:type="basic:Part" xmi:id="_l1XZUNATEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.part.mainview" containerData="50" label="Main view"/>
         </children>
-        <children xsi:type="basic:Part" xmi:id="_l1XZUNATEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.part.1" containerData="50"/>
+        <children xsi:type="basic:PartSashContainer" xmi:id="_TYedcNCmEeWfp70WsrIskQ" elementId="fr.pigeo.rimap.cachemanager.ui.partsashcontainer.0" containerData="50" horizontal="true">
+          <children xsi:type="basic:PartStack" xmi:id="_kTTJoNATEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.partstack.0" containerData="500">
+            <children xsi:type="basic:Part" xmi:id="_kkGlwNATEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.part.firsttab" label="First tab"/>
+            <children xsi:type="basic:Part" xmi:id="_VsQPMNCsEeWfp70WsrIskQ" elementId="fr.pigeo.rimap.cachemanager.ui.part.2ndtab" label="2nd tab"/>
+          </children>
+          <children xsi:type="advanced:Placeholder" xmi:id="_aTrVANCmEeWfp70WsrIskQ" elementId="fr.pigeo.rimap.cachemanager.ui.placeholder.0" containerData="500" ref="_xUiMENCnEeWfp70WsrIskQ"/>
+        </children>
       </children>
-      <mainMenu xmi:id="_fotZENAvEeWL3YDLTkfB9A" elementId="fr.pigeo.rimap.cachemanager.ui.menu.0"/>
     </elements>
   </fragments>
 </fragment:ModelFragments>
