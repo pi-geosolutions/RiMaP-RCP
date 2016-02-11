@@ -20,7 +20,8 @@
       </children>
     </children>
     <handlers xmi:id="_3ibNIMagEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handler.show.widget" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.handlers.ShowWidget" command="_NRVm4MZwEeWTGLqWyfJYDw"/>
-    <mainMenu xmi:id="_qcxpQKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.0">
+    <handlers xmi:id="_dr8ZINApEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.rimaprcp.handler.0" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.handlers.SwitchToMainPerspective" command="_VEnW8NApEeWwWO4XLOgL4g"/>
+    <mainMenu xmi:id="_qcxpQKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.main">
       <children xsi:type="menu:Menu" xmi:id="_sfbdgKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.io" toBeRendered="false" visible="false" label="%menu.label.1">
         <children xsi:type="menu:DirectMenuItem" xmi:id="_wAE5wKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menus.io.directmenuitem.load" label="%directmenuitem.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.menus.load"/>
       </children>
@@ -43,11 +44,17 @@
         </children>
         <children xsi:type="menu:DynamicMenuContribution" xmi:id="_xWlnkMgBEeWZzdusKGuDEw" elementId="fr.pigeo.rimap.rimaprcp.dynamicmenucontribution.0" label="%dynamicmenucontribution.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.menus.WidgetMenuItem"/>
       </children>
+      <children xsi:type="menu:Menu" xmi:id="_H98boNApEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.rimaprcp.menu.menuwindow" label="%menu.window">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_uKFmkNApEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.switchtomainperspective" label="%menu.window.switchperspective.main" command="_VEnW8NApEeWwWO4XLOgL4g"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_NEhT4NApEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.rimaprcp.menuseparator.0"/>
+        <children xsi:type="menu:DirectMenuItem" xmi:id="_KXyn4NApEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.rimaprcp.directmenuitem.preferences" label="Preferences"/>
+      </children>
     </mainMenu>
   </children>
   <commands xmi:id="_NRVm4MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.command.showWidget" commandName="%command.commandname.1" description="%command.description.1">
     <parameters xmi:id="_SKPgoMaeEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" name="Reference to the WWJ widget to show/hide" typeId="" optional="false"/>
   </commands>
+  <commands xmi:id="_VEnW8NApEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.rimaprcp.command.perspective.swicth.main" commandName="Switch to main perspective"/>
   <addons xmi:id="_o0Uz4ZzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_o0Uz4pzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_o0Uz45zFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
