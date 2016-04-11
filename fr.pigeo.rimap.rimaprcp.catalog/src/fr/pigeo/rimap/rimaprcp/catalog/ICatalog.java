@@ -5,5 +5,4 @@ import org.eclipse.swt.widgets.Tree;
 
 public interface ICatalog {
 	
-	Tree getTree(Composite composite);
 }

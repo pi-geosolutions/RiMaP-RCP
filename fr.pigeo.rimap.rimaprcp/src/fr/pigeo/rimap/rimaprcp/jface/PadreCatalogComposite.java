@@ -1,14 +1,8 @@
+package fr.pigeo.rimap.rimaprcp.jface;
 
-package fr.pigeo.rimap.rimaprcp.views;
-
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -20,38 +14,38 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import fr.pigeo.rimap.rimaprcp.RimaprcpConstants;
+import fr.pigeo.rimap.rimaprcp.catalog.ICatalog;
+import fr.pigeo.rimap.rimaprcp.catalog.PadreCatalog;
 import fr.pigeo.rimap.rimaprcp.catalog.RiskCatalogViewContentProvider;
 import fr.pigeo.rimap.rimaprcp.catalog.RiskCatalogViewLabelProvider;
-import fr.pigeo.rimap.rimaprcp.catalog.RiskJfaceCatalogImpl;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.AbstractLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.FolderLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.WmsLayer;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 
-public class JfaceLayertree {
-	@Inject 
+public class PadreCatalogComposite  extends AbstractCatalogComposite  {
 	private IEventBroker eventBroker;
-	
 	private TreeViewer viewer;
 	private Tree tree;
-
-	@PostConstruct
-	public void postConstruct(Composite parent, final IEclipseContext ctx, final WwjInstance wwj) {
-		// new Button(parent, SWT.CHECK);
-
-		RiskJfaceCatalogImpl catalog = new RiskJfaceCatalogImpl();
-
-		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+	private WwjInstance wwj;
+	
+	public PadreCatalogComposite(Composite parent,  int style, String project_url, WwjInstance wwj, IEventBroker eventBroker) {
+		super(parent, style);
+		
+		this.wwj = wwj;
+		this.eventBroker=eventBroker;
+		
+		PadreCatalog catalog = new PadreCatalog(project_url);
+		
+		viewer = new TreeViewer(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
 		viewer.setContentProvider(new RiskCatalogViewContentProvider());
 		viewer.setLabelProvider(new RiskCatalogViewLabelProvider());
 		viewer.setInput(catalog.getRoot());
-		viewer.setExpandedElements(RiskJfaceCatalogImpl.getExpandedFoldersAsArray());
-		this.checkInitialLayers(RiskJfaceCatalogImpl.getInitiallyCheckedLayers(), ctx, wwj);
+		viewer.setExpandedElements(PadreCatalog.getExpandedFoldersAsArray());
+		this.checkInitialLayers(PadreCatalog.getInitiallyCheckedLayers());
 		this.tree = viewer.getTree();
 		this.tree.addMouseListener(new MouseListener() {
 
@@ -74,7 +68,7 @@ public class JfaceLayertree {
 									AbstractLayer layer = (AbstractLayer) item.getData();
 									layer.setChecked();
 									item.setImage(layer.getImage());
-									checkedLayer(layer, ctx, wwj);
+									checkedLayer(layer);
 								}
 							}
 						}
@@ -120,21 +114,25 @@ public class JfaceLayertree {
 				}
 		      }
 		});
-
-
 	}
 	
-	private void checkInitialLayers(List<AbstractLayer> initiallyCheckedLayers, IEclipseContext ctx, WwjInstance wwj) {
-		Iterator<AbstractLayer> itr = initiallyCheckedLayers.iterator();
-		if (wwj==null)
+	private void checkInitialLayers(List<AbstractLayer> initiallyCheckedLayers) {
+		if (wwj==null) {
 			System.out.println("Oops, wwj is null !");
+			return;
+		}
+		Iterator<AbstractLayer> itr = initiallyCheckedLayers.iterator();
 		while (itr.hasNext()) {
 			AbstractLayer layer = itr.next();
-			this.checkedLayer(layer, ctx, wwj);
+			this.checkedLayer(layer);
 		}
 	}
 
-	public void checkedLayer(AbstractLayer layer, IEclipseContext ctx, WwjInstance wwj) {
+	public void checkedLayer(AbstractLayer layer) {
+		if (wwj==null) {
+			System.out.println("Oops, wwj is null !");
+			return;
+		}
 		WorldWindowGLCanvas wwd = wwj.getWwd();
 
 		if (wwd!=null && layer instanceof WmsLayer) {
@@ -142,4 +140,10 @@ public class JfaceLayertree {
 			eventBroker.post(RimaprcpConstants.LAYER_CHECKED, layer ); 
 		}
 	}
+	
+	public void setEventBroker(IEventBroker eventBroker) {
+		this.eventBroker = eventBroker;
+	}
+
+
 }
