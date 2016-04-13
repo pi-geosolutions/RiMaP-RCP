@@ -7,7 +7,7 @@ import fr.pigeo.rimap.rimaprcp.riskcatalog.AbstractLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.FolderLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.LayerType;
 
-public class RiskCatalogViewContentProvider implements ITreeContentProvider{
+public class PadreCatalogViewContentProvider implements ITreeContentProvider{
 	private static Object[] EMPTY_ARRAY = new Object[0];
 	
 	@Override

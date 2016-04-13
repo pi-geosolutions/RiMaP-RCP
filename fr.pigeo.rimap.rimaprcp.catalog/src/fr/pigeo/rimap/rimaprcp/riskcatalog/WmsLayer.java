@@ -14,14 +14,14 @@ import org.osgi.framework.FrameworkUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
-import fr.pigeo.rimap.rimaprcp.catalog.RiskJfaceCatalogImpl;
+import fr.pigeo.rimap.rimaprcp.catalog.PadreCatalog;
+import fr.pigeo.rimap.rimaprcp.catalog.PadreCatalog;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
-import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 public class WmsLayer extends AbstractLayer {
@@ -91,10 +91,10 @@ public class WmsLayer extends AbstractLayer {
 		this.pq_layer = this.parseString(node, "pq_layer", null);	
 		
 		if (this.checked)
-			RiskJfaceCatalogImpl.addInitiallyCheckedLayer(this);
+			PadreCatalog.addInitiallyCheckedLayer(this);
 		
 		if (Boolean.getBoolean(CatalogProperties.getProperty("catalog.loadcapabilitiesatstartup")))	{
-			RiskJfaceCatalogImpl.addServerCapability(this.url);
+			PadreCatalog.addServerCapability(this.url);
 		}
 	
 		// System.out.println("loaded WMS layer parameters " + this.name);
@@ -153,7 +153,7 @@ public class WmsLayer extends AbstractLayer {
 		//System.out.println("adding layer "+this.name+" to globe");
 		if (this.layer == null) {
 			//System.out.println("first, creating layer");
-			WMSCapabilities caps = RiskJfaceCatalogImpl.getServerCapabilities(this.url);
+			WMSCapabilities caps = PadreCatalog.getServerCapabilities(this.url);
 			if (caps==null) {
 				try {
 					URI wmsUri = new URI(this.url);

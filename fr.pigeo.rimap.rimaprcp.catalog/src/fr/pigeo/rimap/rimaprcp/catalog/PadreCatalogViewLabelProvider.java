@@ -9,7 +9,7 @@ import fr.pigeo.rimap.rimaprcp.riskcatalog.AbstractLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.FolderLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.WmsLayer;
 
-public class RiskCatalogViewLabelProvider extends StyledCellLabelProvider {
+public class PadreCatalogViewLabelProvider extends StyledCellLabelProvider {
 
 	@Override
 	public void update(ViewerCell cell) {

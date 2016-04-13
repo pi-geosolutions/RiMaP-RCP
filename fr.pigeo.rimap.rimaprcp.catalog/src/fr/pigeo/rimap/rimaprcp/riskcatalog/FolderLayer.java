@@ -1,11 +1,7 @@
 package fr.pigeo.rimap.rimaprcp.riskcatalog;
 
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +16,7 @@ import org.osgi.framework.FrameworkUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
-import fr.pigeo.rimap.rimaprcp.catalog.RiskJfaceCatalogImpl;
+import fr.pigeo.rimap.rimaprcp.catalog.PadreCatalog;
 
 public class FolderLayer extends AbstractLayer {
 	
@@ -93,7 +89,7 @@ public class FolderLayer extends AbstractLayer {
 				this.children = this.loadChildren(children);
 		}
 		if (this.expanded) {
-			RiskJfaceCatalogImpl.addExpandedFolder(this);
+			PadreCatalog.addExpandedFolder(this);
 		}
 	}
 

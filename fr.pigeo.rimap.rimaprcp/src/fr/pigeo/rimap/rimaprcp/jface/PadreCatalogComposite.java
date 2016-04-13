@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import fr.pigeo.rimap.rimaprcp.RimaprcpConstants;
 import fr.pigeo.rimap.rimaprcp.catalog.ICatalog;
 import fr.pigeo.rimap.rimaprcp.catalog.PadreCatalog;
-import fr.pigeo.rimap.rimaprcp.catalog.RiskCatalogViewContentProvider;
-import fr.pigeo.rimap.rimaprcp.catalog.RiskCatalogViewLabelProvider;
+import fr.pigeo.rimap.rimaprcp.catalog.PadreCatalogViewContentProvider;
+import fr.pigeo.rimap.rimaprcp.catalog.PadreCatalogViewLabelProvider;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.AbstractLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.FolderLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.WmsLayer;
@@ -41,8 +41,8 @@ public class PadreCatalogComposite  extends AbstractCatalogComposite  {
 		
 		viewer = new TreeViewer(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
-		viewer.setContentProvider(new RiskCatalogViewContentProvider());
-		viewer.setLabelProvider(new RiskCatalogViewLabelProvider());
+		viewer.setContentProvider(new PadreCatalogViewContentProvider());
+		viewer.setLabelProvider(new PadreCatalogViewLabelProvider());
 		viewer.setInput(catalog.getRoot());
 		viewer.setExpandedElements(PadreCatalog.getExpandedFoldersAsArray());
 		this.checkInitialLayers(PadreCatalog.getInitiallyCheckedLayers());

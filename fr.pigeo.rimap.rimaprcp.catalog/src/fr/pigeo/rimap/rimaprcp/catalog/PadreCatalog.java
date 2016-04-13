@@ -103,13 +103,13 @@ public class PadreCatalog extends AbstractCatalog{
 	}
 
 	public static void addServerCapability(String url) {
-		url = RiskJfaceCatalogImpl.cleanURL(url);
-		RiskJfaceCatalogImpl.getServerCapabilities(url);
+		url = PadreCatalog.cleanURL(url);
+		PadreCatalog.getServerCapabilities(url);
 		//we don't care about the returned value. Just wanted to add the caps
 	}
 	
 	public static WMSCapabilities getServerCapabilities(String url) {
-		url = RiskJfaceCatalogImpl.cleanURL(url);
+		url = PadreCatalog.cleanURL(url);
 		if (AbstractCatalog.serverCapabilitiesList==null)
 			AbstractCatalog.serverCapabilitiesList = new HashMap<String,ServerCapability>();
 		//returns non-null if already stored in the hash
