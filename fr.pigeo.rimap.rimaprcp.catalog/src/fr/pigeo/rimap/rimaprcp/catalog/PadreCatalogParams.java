@@ -27,7 +27,7 @@ public class PadreCatalogParams implements ICatalogParams {
 		if (path!=null) { 
 			return new PadreCatalog(path);
 		}
-		System.err.println("Could not built PadreCatalog instance: improper Padre Catalog path");
+		System.err.println("Could not build PadreCatalog instance: improper Padre Catalog path");
 		return null;
 	}
 }

@@ -44,7 +44,7 @@ public class PadreCatalogComposite  extends AbstractCatalogComposite  {
 		viewer.setContentProvider(new PadreCatalogViewContentProvider());
 		viewer.setLabelProvider(new PadreCatalogViewLabelProvider());
 		viewer.setInput(catalog.getRoot());
-		viewer.setExpandedElements(PadreCatalog.getExpandedFoldersAsArray());
+		this.setExpandedElements(PadreCatalog.getExpandedFoldersAsArray());
 		this.checkInitialLayers(PadreCatalog.getInitiallyCheckedLayers());
 		this.tree = viewer.getTree();
 		this.tree.addMouseListener(new MouseListener() {
@@ -116,7 +116,18 @@ public class PadreCatalogComposite  extends AbstractCatalogComposite  {
 		});
 	}
 	
+	private void setExpandedElements(FolderLayer[] expandedFoldersAsArray) {
+		if( (expandedFoldersAsArray==null) || (this.viewer==null) ) {
+			return;
+		}
+		this.viewer.setExpandedElements(expandedFoldersAsArray);
+		
+	}
+
 	private void checkInitialLayers(List<AbstractLayer> initiallyCheckedLayers) {
+		if (initiallyCheckedLayers==null) {
+			return;
+		}
 		if (wwj==null) {
 			System.out.println("Oops, wwj is null !");
 			return;

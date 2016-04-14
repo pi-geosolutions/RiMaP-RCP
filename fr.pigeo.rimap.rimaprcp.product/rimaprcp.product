@@ -3,6 +3,7 @@
 
 <product name="RiMaP RCP" uid="fr.pigeo.rimap.rimaprcp.product" id="fr.pigeo.rimap.rimaprcp.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.1" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -26,11 +27,13 @@
       </win>
    </launcher>
 
+
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
       <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</macos>
       <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
    </vm>
+
 
    <plugins>
    </plugins>
@@ -49,6 +52,7 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+      <property name="eclipse.pluginCustomization" value="settings.ini" />
    </configurations>
 
    <preferencesInfo>

@@ -82,8 +82,11 @@ public class FolderLayer extends AbstractLayer {
 			this.name = this.parseString(node, "text", "unnamed folder");
 			this.expanded = this.parseBool(node, "expanded", this.expanded);
 			this.lastchanged = this.parseDate(node, "lastchanged");
+			//System.out.println("Loaded node "+this.name);
 		}
 		if (node.has(CatalogProperties.getProperty("layertree.childrentag"))) {
+
+			//System.out.println("...loading its children");
 			JsonNode children = node.get(CatalogProperties.getProperty("layertree.childrentag"));
 			if (children.isArray())
 				this.children = this.loadChildren(children);
