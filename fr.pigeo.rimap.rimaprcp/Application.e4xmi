@@ -4,20 +4,20 @@
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_59ebQJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspectivestack.main">
       <children xsi:type="advanced:Perspective" xmi:id="_--feEJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspective.main" label="%perspective.label.1">
         <children xsi:type="basic:PartSashContainer" xmi:id="_q4OlUJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.0" horizontal="true">
-          <children xsi:type="basic:PartSashContainer" xmi:id="_bZSToMjOEeWuVM1s5qH7Rw" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.2" containerData="300">
-            <children xsi:type="basic:PartStack" xmi:id="_s2bXYJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partstack.controlstack" containerData="" selectedElement="_eQ228KPdEeWES4bRRX2C7A">
-              <children xsi:type="basic:Part" xmi:id="_eQ228KPdEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.jfacelayertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.CatalogTabPart" label="%part.label.1">
-                <toolbar xmi:id="_KxeZEAJDEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.0"/>
-              </children>
-              <children xsi:type="basic:CompositePart" xmi:id="_QzkIgMmGEeWEb9mxV_lPdQ" elementId="fr.pigeo.rimap.rimaprcp.compositepart.organize" label="%part.label.2" tooltip="%compositepart.tooltip.1">
-                <children xsi:type="basic:PartSashContainer" xmi:id="_c_R3cMmGEeWEb9mxV_lPdQ" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.3" selectedElement="_5mi3MLiNEeWNs8HUC5fhyg">
-                  <children xsi:type="basic:Part" xmi:id="_5mi3MLiNEeWNs8HUC5fhyg" elementId="fr.pigeo.rimap.rimaprcp.part.organize" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.OrganizeTabPart" label="%part.label.2"/>
-                  <children xsi:type="basic:Part" xmi:id="_gMIN8MmGEeWEb9mxV_lPdQ" elementId="fr.pigeo.rimap.rimaprcp.part.details" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.swt.LayerDetailsImpl" label="%parts.layerdetails.label" closeable="true"/>
-                </children>
+          <children xsi:type="basic:PartStack" xmi:id="_s2bXYJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partstack.controlstack" containerData="300" selectedElement="_eQ228KPdEeWES4bRRX2C7A">
+            <children xsi:type="basic:Part" xmi:id="_eQ228KPdEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.jfacelayertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.CatalogTabPart" label="%part.label.1"/>
+            <children xsi:type="basic:CompositePart" xmi:id="_QzkIgMmGEeWEb9mxV_lPdQ" elementId="fr.pigeo.rimap.rimaprcp.compositepart.organize" label="%part.label.2" tooltip="%compositepart.tooltip.1">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_c_R3cMmGEeWEb9mxV_lPdQ" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.3" selectedElement="_5mi3MLiNEeWNs8HUC5fhyg">
+                <children xsi:type="basic:Part" xmi:id="_5mi3MLiNEeWNs8HUC5fhyg" elementId="fr.pigeo.rimap.rimaprcp.part.organize" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.OrganizeTabPart" label="%part.label.2"/>
+                <children xsi:type="basic:Part" xmi:id="_gMIN8MmGEeWEb9mxV_lPdQ" elementId="fr.pigeo.rimap.rimaprcp.part.details" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.swt.LayerDetailsImpl" label="%parts.layerdetails.label" closeable="true"/>
               </children>
             </children>
           </children>
-          <children xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.WWJView" label="%part.label.5"/>
+          <children xsi:type="basic:PartStack" xmi:id="_sWgnQAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.partstack.0" containerData="700">
+            <children xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.WWJView" label="%part.label.5">
+              <toolbar xmi:id="_tezsEAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar"/>
+            </children>
+          </children>
         </children>
       </children>
     </children>
