@@ -11,8 +11,10 @@ import org.eclipse.e4.core.di.annotations.Creatable;
 
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.layers.CompassLayer;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
@@ -41,6 +43,7 @@ public class WwjInstance {
 		// Configuration.setValue(
 		// "gov.nasa.worldwind.config.file",
 		// "fr/pigeo/rimap/rimaprcp/config/wwj/worldwind.xml");
+		
 
 		this.wwd = new WorldWindowGLCanvas();
 		model = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
@@ -49,6 +52,10 @@ public class WwjInstance {
 		// Setup a select listener for the worldmap click-and-go feature
         this.wwd.addSelectListener(new ClickAndGoSelectListener(this.getWwd(), WorldMapLayer.class));
         this.addViewControls();
+        
+
+		this.getCompassLayer(this.wwd).setIconFilePath("customconfig/img/Rose_des_vents.png");
+		this.getCompassLayer(this.wwd).setIconScale(1);
 	}
 
 	public WorldWindowGLCanvas getWwd() {
@@ -132,6 +139,17 @@ public class WwjInstance {
 			}
 		}
 	}
+	
+	private CompassLayer getCompassLayer(WorldWindow wwd)
+    {
+        LayerList layers = wwd.getModel().getLayers();
+        for (Layer l : layers)
+        {
+            if (l instanceof CompassLayer)
+                return (CompassLayer) l;
+        }
+        return null;
+    }
 
 	
 	/*private void initializeWidget(IEclipsePreferences prefs, Layer l ) {
