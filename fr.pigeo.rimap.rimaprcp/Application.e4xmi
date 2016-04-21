@@ -13,7 +13,7 @@
               </children>
             </children>
           </children>
-          <children xsi:type="basic:PartStack" xmi:id="_sWgnQAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.partstack.0" containerData="700">
+          <children xsi:type="basic:PartStack" xmi:id="_sWgnQAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.partstack.0" containerData="700" selectedElement="_uAcTcJzFEeW3eM-i01vfSQ">
             <children xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.views.WWJView" label="%part.label.5">
               <toolbar xmi:id="_tezsEAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar"/>
             </children>

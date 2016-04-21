@@ -2,8 +2,11 @@ package fr.pigeo.rimap.rimaprcp.jface;
 
 import java.net.URL;
 
+import javax.inject.Singleton;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -38,6 +41,9 @@ import gov.nasa.worldwind.layers.Layer;
  * @author jean.pommier@pi-geosolutions.fr
  *
  */
+
+@Creatable
+@Singleton
 public class LayersListTableComposite extends Composite {
 	private TableViewer viewer;
 	private WwjInstance wwj;
@@ -251,5 +257,9 @@ public class LayersListTableComposite extends Composite {
 				
 			}
 		});
+	}
+	
+	public IStructuredSelection getSelectedLayers() {
+		return this.viewer.getStructuredSelection();
 	}
 }

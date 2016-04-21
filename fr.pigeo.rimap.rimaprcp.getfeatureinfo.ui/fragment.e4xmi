@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_IpHPUAJMEeaqnpp0Mlm3BA">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_IpHPUQJMEeaqnpp0Mlm3BA" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar">
+    <elements xsi:type="menu:HandledToolItem" xmi:id="_XZwKIALxEeabqZ-3rtVCCw" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handledtoolitem.featureinfo" label="Get Feature Info (Query)" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/icons/icon_featureinfo_16px.png" type="Check" command="_OTXigALzEeabqZ-3rtVCCw"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_oI59IALzEeabqZ-3rtVCCw" featurename="commands" parentElementId="fr.pigeo.rimap.rimaprcp.application">
+    <elements xsi:type="commands:Command" xmi:id="_OTXigALzEeabqZ-3rtVCCw" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.command.featureinfo" commandName="Activate FeatureInfo Tool"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_LQhnIAL0EeabqZ-3rtVCCw" featurename="handlers" parentElementId="fr.pigeo.rimap.rimaprcp.application">
+    <elements xsi:type="commands:Handler" xmi:id="_OxJOMAL0EeabqZ-3rtVCCw" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handler.featureinfo" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handlers.FeatureInfoCommandHandler" command="_OTXigALzEeabqZ-3rtVCCw"/>
+  </fragments>
+</fragment:ModelFragments>

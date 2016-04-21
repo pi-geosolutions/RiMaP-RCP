@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GetFeatureInfo UI
+Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150407-1430",
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.core.services,
+ fr.pigeo.rimap.rimaprcp.getfeatureinfo.core
+Import-Package: javax.inject;version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
