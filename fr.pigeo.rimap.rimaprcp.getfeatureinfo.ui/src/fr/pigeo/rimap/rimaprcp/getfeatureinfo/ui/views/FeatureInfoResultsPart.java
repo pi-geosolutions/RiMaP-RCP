@@ -94,7 +94,10 @@ public class FeatureInfoResultsPart {
 		browser = new Browser(parent, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		viewer.setInput(targets.toArray());
-		table.select(0); //needed for Windows env. (elsewise, nothing is selected by default)
+		
+		//needed for Windows env. (elsewise, nothing is selected by default):
+		browser.setUrl(targets.get(0).getLayer().buildFeatureInfoRequest(targets.get(0).getPosition()).toString());
+		
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
