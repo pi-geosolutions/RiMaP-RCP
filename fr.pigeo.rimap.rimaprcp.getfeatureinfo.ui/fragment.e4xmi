@@ -10,7 +10,7 @@
     <elements xsi:type="commands:Handler" xmi:id="_OxJOMAL0EeabqZ-3rtVCCw" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handler.featureinfo" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handlers.FeatureInfoCommandHandler" command="_OTXigALzEeabqZ-3rtVCCw"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_2oDkwAfJEeaRbecOnodQ-g" featurename="descriptors" parentElementId="fr.pigeo.rimap.rimaprcp.application">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_87TEcAfJEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.partdescriptor.fi" label="Query result" allowMultiple="true" closeable="true" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views.FeatureInfoResultsPart">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_87TEcAfJEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.partdescriptor.fi" label="Query results" allowMultiple="true" closeable="true" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views.FeatureInfoResultsPart">
       <tags>FeatureInfo</tags>
     </elements>
   </fragments>

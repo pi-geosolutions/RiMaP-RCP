@@ -48,10 +48,12 @@ public class FeatureInfoResultsPart {
 		gl_parent.marginWidth = 0;
 		parent.setLayout(gl_parent);
 
-		Label lblTitle = new Label(parent, SWT.NONE);
-		lblTitle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		lblTitle.setText("Query results");
-
+		/*
+		 * Label lblTitle = new Label(parent, SWT.NONE);
+		 * lblTitle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
+		 * false, 2, 1)); lblTitle.setText("Query results");
+			lblTitle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		 */
 		ArrayList<FeatureInfoTarget> targets = (ArrayList<FeatureInfoTarget>) central
 				.get("fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.FeatureInfoTargets");
 		if (targets == null || targets.size() == 0) {
@@ -60,23 +62,22 @@ public class FeatureInfoResultsPart {
 
 		Label lblPos = new Label(parent, SWT.NONE);
 		lblPos.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		lblTitle.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		lblPos.setText("Position: lat " + targets.get(0).getPosition().getLatitude().toDMSString()
-				+", lon "+targets.get(0).getPosition().getLongitude().toDMSString()
-				+", altitude "+String.format("%.2f", targets.get(0).getPosition().getAltitude())+" m");
+		lblPos.setText("Latitude " + targets.get(0).getPosition().getLatitude().toDMSString() + " | Longitude "
+				+ targets.get(0).getPosition().getLongitude().toDMSString() + " | Altitude "
+				+ String.format("%.2f", targets.get(0).getPosition().getAltitude()) + " m");
 
 		// define the TableViewer
 		viewer = new TableViewer(parent,
-				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER | SWT.SINGLE);
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.SINGLE);
 		// create the columns
 		// not yet implemented
 		// createColumns(viewer);
 
 		// make lines and header visible
 		final Table table = viewer.getTable();
+		table.setLinesVisible(true);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		// create column for the Name of the layers
 		TableViewerColumn colName = new TableViewerColumn(viewer, SWT.NONE);
@@ -93,6 +94,7 @@ public class FeatureInfoResultsPart {
 		browser = new Browser(parent, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		viewer.setInput(targets.toArray());
+		table.select(0); //needed for Windows env. (elsewise, nothing is selected by default)
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
