@@ -9,7 +9,6 @@ import org.w3c.dom.Element;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.geom.Extent;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
@@ -70,19 +69,18 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements Query
 	}
 
 	@Override
-	public String buildFeatureInfoRequest(Position pos) {
+	public URL buildFeatureInfoRequest(Position pos) {
 		RimapWMSTiledImageLayer.URLBuilder builder = new RimapWMSTiledImageLayer.URLBuilder(params);
-		String req=null;
+		URL finfoUrl =null;
 		if (pos != null && levels.getSector().contains(pos)) {
 			try {
-				URL finfoUrl = builder.getFinfoURL(pos, this.currentTopLevelTile.getSector().getDeltaLonDegrees(),
+				finfoUrl = builder.getFinfoURL(pos, this.currentTopLevelTile.getSector().getDeltaLonDegrees(),
 						this.currentTopLevelTile.getWidth());
-				req = finfoUrl.toString();
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
 		}
-		return req;
+		return finfoUrl;
 	}
 
 	/**

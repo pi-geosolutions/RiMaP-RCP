@@ -49,4 +49,15 @@ public class Central {
 		}
 		references.put(key, val);
 	}
+	
+	/**
+	 * See update function
+	 * @param key
+	 */
+	public void forceSet(String key, Object val) {
+		if (references.containsKey(key)) {
+			logger.debug("Key "+key+"entry is already initialized. Replacing value with new one");
+		}
+		references.put(key, val);
+	}
 }

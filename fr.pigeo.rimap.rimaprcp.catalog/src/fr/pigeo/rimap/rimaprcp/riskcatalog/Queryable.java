@@ -1,5 +1,7 @@
 package fr.pigeo.rimap.rimaprcp.riskcatalog;
 
+import java.net.URL;
+
 import org.w3c.dom.Document;
 
 import gov.nasa.worldwind.geom.Position;
@@ -11,5 +13,6 @@ import gov.nasa.worldwind.geom.Position;
 public interface Queryable {
 	public boolean isQueryable();
 	public Document retrieveFeatureInfo(Position pos);
-	public String buildFeatureInfoRequest(Position pos);
+	public URL buildFeatureInfoRequest(Position pos);
+	public String getName();
 }

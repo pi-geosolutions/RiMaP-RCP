@@ -4,6 +4,9 @@ Bundle-Name: RiMaP-RCP
 Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: pi-Geosolutions
+Export-Package: fr.pigeo.rimap.rimaprcp.core,
+ fr.pigeo.rimap.rimaprcp.jface,
+ fr.pigeo.rimap.rimaprcp.views
 Require-Bundle: org.eclipse.swt;bundle-version="3.104.1",
  gov.nasa.worldwind;bundle-version="2.0.0",
  org.eclipse.e4.core.contexts,
@@ -32,6 +35,3 @@ Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0",
  org.eclipse.core.runtime;version="3.5.0"
 Bundle-ActivationPolicy: lazy
-Export-Package: fr.pigeo.rimap.rimaprcp.core,
- fr.pigeo.rimap.rimaprcp.jface,
- fr.pigeo.rimap.rimaprcp.views
