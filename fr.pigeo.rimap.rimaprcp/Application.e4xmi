@@ -19,7 +19,7 @@
                 <toolbar xmi:id="_tezsEAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar"/>
               </children>
             </children>
-            <children xsi:type="basic:PartStack" xmi:id="_RiHUQAfGEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.partstack.bottom" containerData="300"/>
+            <children xsi:type="basic:PartStack" xmi:id="_RiHUQAfGEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.partstack.bottom" visible="false" containerData="300"/>
           </children>
         </children>
       </children>

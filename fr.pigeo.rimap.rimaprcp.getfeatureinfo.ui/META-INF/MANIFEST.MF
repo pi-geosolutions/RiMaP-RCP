@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150
  fr.pigeo.rimap.rimaprcp,
  gov.nasa.worldwind,
  fr.pigeo.rimap.rimaprcp.catalog,
- org.eclipse.jface
+ org.eclipse.jface,
+ org.eclipse.e4.ui.di
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

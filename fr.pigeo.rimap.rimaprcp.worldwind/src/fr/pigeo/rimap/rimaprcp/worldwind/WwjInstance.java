@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.di.annotations.Creatable;
 
+import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
@@ -32,21 +35,34 @@ import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 @Creatable
 @Singleton
 public class WwjInstance {
+	
 	private final String WIDGET_PREF_PREFIX = "show_";
 	
 	private WorldWindowGLCanvas wwd;
 	private Model model;
 	private List<Widget> widgetList = new ArrayList<Widget>();
 
-	public WwjInstance() {
+	@Inject
+	public WwjInstance(IPreferencesService prefs) {
 		System.setProperty("gov.nasa.worldwind.app.config.document", "customconfig/worldwind.xml");
 		// Configuration.setValue(
 		// "gov.nasa.worldwind.config.file",
 		// "fr/pigeo/rimap/rimaprcp/config/wwj/worldwind.xml");
+		double lat = prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_LATITUDE", 0, null);
+		double lon = prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_LONGITUDE", 0, null);
+		double alt = prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_ALTITUDE", 19.07e6, null);
 		
+		Configuration.setValue(AVKey.INITIAL_LATITUDE, prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_LATITUDE", 0, null));
+		Configuration.setValue(AVKey.INITIAL_LONGITUDE, prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_LONGITUDE", 0, null));
+		Configuration.setValue(AVKey.INITIAL_ALTITUDE, prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_ALTITUDE", 19.07e6, null));
 
 		this.wwd = new WorldWindowGLCanvas();
 		model = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
+		System.out.println(WorldWind.getValue(AVKey.INITIAL_LATITUDE));
+		Iterator it = model.getValues().iterator();
+		while (it.hasNext()) {
+			System.out.println(it.next().toString());
+		}
 		wwd.setModel(model);
 		
 		// Setup a select listener for the worldmap click-and-go feature
@@ -56,6 +72,12 @@ public class WwjInstance {
 
 		this.getCompassLayer(this.wwd).setIconFilePath("customconfig/img/Rose_des_vents.png");
 		this.getCompassLayer(this.wwd).setIconScale(1);
+/*
+		double minlat = prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "START_BBOX_MINLAT", -90, null);
+		double minlon = prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "START_BBOX_MINLON", -180, null);
+		double maxlat = prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "START_BBOX_MAXLAT", 90, null);
+		double maxlon = prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "START_BBOX_MAXLON", 180, null);*/
+		
 	}
 
 	public WorldWindowGLCanvas getWwd() {
