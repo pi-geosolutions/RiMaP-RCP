@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GetFeatureInfo Core
+Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.getfeatureinfo.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: pi-Geosolutions
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: fr.pigeo.rimap.rimaprcp.catalog,
+ javax.inject,
+ org.eclipse.e4.core.di.annotations,
+ fr.pigeo.rimap.rimaprcp.worldwind,
+ gov.nasa.worldwind,
+ org.eclipse.e4.core.services,
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.e4.ui.model.workbench,
+ fr.pigeo.rimap.rimaprcp,
+ org.eclipse.jface
+Export-Package: fr.pigeo.rimap.rimaprcp.getfeatureinfo.core
