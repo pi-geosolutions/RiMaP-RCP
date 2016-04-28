@@ -13,6 +13,6 @@ import gov.nasa.worldwind.geom.Position;
 public interface Queryable {
 	public boolean isQueryable();
 	public Document retrieveFeatureInfo(Position pos);
-	public URL buildFeatureInfoRequest(Position pos);
+	public URL buildFeatureInfoRequest(Position pos, String locale);
 	public String getName();
 }

@@ -56,10 +56,17 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements Query
 		this.parent = parent;
 	}
 
-	// TODO: Check the queryable attribute from layertree + from Capabilities.
+	// TODO: Check the queryable attribute from Capabilities too.
 	@Override
 	public boolean isQueryable() {
-		return true;
+		//default
+		boolean isqueryable=true; 
+		
+		//check on parent (layertree) settings
+		if (this.parent!=null) {
+			isqueryable = isqueryable && this.parent.isQueryable();
+		}
+		return isqueryable;
 	}
 
 	@Override
@@ -69,13 +76,13 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements Query
 	}
 
 	@Override
-	public URL buildFeatureInfoRequest(Position pos) {
+	public URL buildFeatureInfoRequest(Position pos, String locale) {
 		RimapWMSTiledImageLayer.URLBuilder builder = new RimapWMSTiledImageLayer.URLBuilder(params);
 		URL finfoUrl =null;
 		if (pos != null && levels.getSector().contains(pos)) {
 			try {
 				finfoUrl = builder.getFinfoURL(pos, this.currentTopLevelTile.getSector().getDeltaLonDegrees(),
-						this.currentTopLevelTile.getWidth());
+						this.currentTopLevelTile.getWidth(), locale.toLowerCase());
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
@@ -132,7 +139,7 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements Query
 		 * Srs=EPSG%3A4326&Layers=ECOBASE%3AS15_1990_2009_GEOM&Styles
 		 * =&WIDTH=512&HEIGHT=399&format=image%2Fpng
 		 */
-		public URL getFinfoURL(Position pos, double delta, int width) throws MalformedURLException {
+		public URL getFinfoURL(Position pos, double delta, int width, String locale) throws MalformedURLException {
 			// Buffer position
 			final double eps = delta;
 			final double lat = pos.getLatitude().degrees;
@@ -145,6 +152,7 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements Query
 			StringBuffer sb = new StringBuffer(wmsGetMap);
 			sb.append("?service=wms");
 			sb.append("&request=GetFeatureInfo");
+			sb.append("&lang="+locale); //custom parameter to enable locale-sensible query results
 			sb.append("&version=").append(this.wmsVersion);
 			sb.append(this.crs);
 			sb.append("&info_format=text/html");
