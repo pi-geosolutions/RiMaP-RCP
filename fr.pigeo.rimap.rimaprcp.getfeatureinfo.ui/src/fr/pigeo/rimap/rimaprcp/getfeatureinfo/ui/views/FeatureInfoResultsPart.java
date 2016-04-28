@@ -3,10 +3,13 @@ package fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -30,6 +33,7 @@ import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.FeatureInfoTarget;
 public class FeatureInfoResultsPart {
 	private TableViewer viewer;
 	private Browser browser;
+	private Locale locale;
 
 	@Inject
 	public FeatureInfoResultsPart() {
@@ -37,9 +41,11 @@ public class FeatureInfoResultsPart {
 	}
 
 	@PostConstruct
-	public void postConstruct(Composite parent, Central central, MPart part) {
+	public void postConstruct(Composite parent, Central central, MPart part, IEclipseContext context) {
+		if(locale==null) {
+			locale = (Locale) context.get(TranslationService.LOCALE);
+		}
 		part.setIconURI("platform:/plugin/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/icons/icon_featureinfo_16px.png");
-		System.out.println("OK");
 		GridLayout gl_parent = new GridLayout(2, false);
 		/*
 		 * gl_parent.marginRight = 5; gl_parent.marginLeft = 5;
@@ -96,7 +102,7 @@ public class FeatureInfoResultsPart {
 		viewer.setInput(targets.toArray());
 		
 		//needed for Windows env. (elsewise, nothing is selected by default):
-		browser.setUrl(targets.get(0).getLayer().buildFeatureInfoRequest(targets.get(0).getPosition()).toString());
+		browser.setUrl(targets.get(0).getLayer().buildFeatureInfoRequest(targets.get(0).getPosition(), locale.getISO3Country()).toString());
 		
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -105,7 +111,7 @@ public class FeatureInfoResultsPart {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				if (selection.size() > 0) {
 					FeatureInfoTarget target = (FeatureInfoTarget) selection.getFirstElement();
-					URL fiurl = target.getLayer().buildFeatureInfoRequest(target.getPosition());
+					URL fiurl = target.getLayer().buildFeatureInfoRequest(target.getPosition(), locale.getISO3Country());
 					System.out.println(fiurl.toString());
 					browser.setUrl(fiurl.toString());
 				}

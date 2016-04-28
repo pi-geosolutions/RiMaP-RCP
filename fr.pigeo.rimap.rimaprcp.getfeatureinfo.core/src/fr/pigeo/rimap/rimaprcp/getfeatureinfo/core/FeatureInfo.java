@@ -4,24 +4,24 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 
 import fr.pigeo.rimap.rimaprcp.core.Central;
-import fr.pigeo.rimap.rimaprcp.jface.LayersListTableComposite;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.Queryable;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.RimapWMSTiledImageLayer;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
@@ -47,8 +47,11 @@ public class FeatureInfo {
 	private RimapWMSTiledImageLayer[] layers;
 	private boolean enabled;
 	private MouseAdapter clickListener;
+	private Locale locale = Locale.ENGLISH;
 
-	public FeatureInfo() {
+	@Inject
+	public FeatureInfo(IEclipseContext context) {
+		locale = (Locale) context.get(TranslationService.LOCALE);
 	}
 
 	/**
@@ -110,7 +113,7 @@ public class FeatureInfo {
 
 	private void getFeatureInfo() {
 		final Position pos = wwj.getWwd().getCurrentPosition();
-		logger.info("TODO: retrieve FI at pos " + pos.toString());
+		//logger.info("TODO: retrieve FI at pos " + pos.toString());
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					ArrayList<FeatureInfoTarget> targets = new ArrayList<FeatureInfoTarget>();
@@ -118,10 +121,12 @@ public class FeatureInfo {
 					for (Layer layer : wwjlayers) {
 						if (layer instanceof Queryable) {
 							Queryable qlayer = (Queryable) layer;
-							URL req = qlayer.buildFeatureInfoRequest(pos);
-							if (req != null) {
-								System.out.println(req.toString());
-								targets.add(new FeatureInfoTarget(qlayer, pos));
+							if (qlayer.isQueryable()) {
+								URL req = qlayer.buildFeatureInfoRequest(pos, locale.getISO3Country());
+								if (req != null) {
+									logger.debug("GetFeatureInfoURL: "+req.toString());
+									targets.add(new FeatureInfoTarget(qlayer, pos));
+								}
 							}
 						}
 					}
