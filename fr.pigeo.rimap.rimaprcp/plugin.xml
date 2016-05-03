@@ -17,6 +17,10 @@
                name="windowImages"
                value="/fr.pigeo.rimap.rimaprcp.product/icons/icon-16.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-32.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-48.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-64.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-128.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-256.png">
          </property>
+         <property
+               name="lifeCycleURI"
+               value="bundleclass://fr.pigeo.rimap.rimaprcp/fr.pigeo.rimap.rimaprcp.lifecycle.LifeCycleManager">
+         </property>
       </product>
    </extension>
 

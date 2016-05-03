@@ -29,7 +29,8 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.104.1",
  org.eclipse.core.databinding.observable,
  org.eclipse.core.databinding.property,
  org.eclipse.jface.databinding,
- com.ibm.icu
+ com.ibm.icu,
+ org.eclipse.equinox.app
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0",

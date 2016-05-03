@@ -28,20 +28,13 @@ public class CatalogTabPart {
 	public void postConstruct(//@Preference IEclipsePreferences prefs, 
 			Composite parent, final IEclipseContext ctx, final WwjInstance wwj,
 			IPreferencesService prefService) {
-		/*String project_url = prefs.get("project_url", null);
-		if (project_url==null) {
-			System.out.println("Project URL preference was null");
-			prefs.put("project_url", "http://gm-risk.pigeo.fr/gm-risk-gn2_10/srv/fre/pigeo.layertree.get");
-			project_url = "http://gm-risk.pigeo.fr/gm-risk-gn2_10/srv/fre/pigeo.layertree.get";
-			prefs.flush();
-		}*/
-		String project_url = prefService.getString("fr.pigeo.rimap.rimaprcp", "project_url", "not set", null);
-		logger.info("Preference project url: "+project_url);
+		
+		String project_url = prefService.getString("fr.pigeo.rimap.rimaprcp", "project.url", "not set", null);
+		int web_usage_level = prefService.getInt("fr.pigeo.rimap.rimaprcp", "web.usage.level", 0, null);
+		logger.info("Preference project url: "+project_url+" (web usage level is "+web_usage_level+")");
 		//System.out.println("Preference project url: "+project_url);
 		
-		//PadreCatalogParams params = new PadreCatalogParams(project_url);
-		
-		catalog = new PadreCatalogComposite(parent, SWT.BORDER_SOLID, project_url, wwj, eventBroker);
+		catalog = new PadreCatalogComposite(parent, SWT.BORDER_SOLID, project_url, web_usage_level, wwj, eventBroker);
 		catalog.setLayout(new FillLayout());
 
 

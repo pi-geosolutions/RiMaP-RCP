@@ -5,8 +5,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.swt.SWT;
@@ -14,10 +12,6 @@ import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.widgets.Composite;
 
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
-import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 
 public class WWJView {
 	/**
@@ -46,7 +40,7 @@ public class WWJView {
 		//gov.nasa.worldwindx.examples.ApplicationTemplate.insertBeforePlacenames(wwd, new LatLonGraticuleLayer());
 		wwj.initialize(prefs);
 		panel.add(wwj.getWwd(), java.awt.BorderLayout.CENTER);
-
+		
 	}
 
 }

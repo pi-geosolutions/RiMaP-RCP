@@ -10,6 +10,12 @@ import org.eclipse.e4.core.services.log.Logger;
 
 @Singleton
 @Creatable
+/**
+ * Handles centralized storage for things I don't want to put through the Preferences system.
+ * 
+ * @author jean.pommier@pi-geosolutions.fr
+ *
+ */
 public class Central {
 	@Inject Logger logger;
 	

@@ -4,6 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="jackson-annotations-2.7.0-rc1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jackson-core-2.7.0-rc1.jar"/>
-	<classpathentry exported="true" kind="lib" path="jackson-databind-2.7.0-rc1.jar"/>
+	<classpathentry exported="true" kind="lib" path="jackson-databind-2.7.0-rc1.jar" sourcepath="jackson-databind-2.7.3-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

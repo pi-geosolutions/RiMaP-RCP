@@ -31,13 +31,14 @@ public class PadreCatalogComposite  extends AbstractCatalogComposite  {
 	private Tree tree;
 	private WwjInstance wwj;
 	
-	public PadreCatalogComposite(Composite parent,  int style, String project_url, WwjInstance wwj, IEventBroker eventBroker) {
+	public PadreCatalogComposite(Composite parent,  int style, String project_url, int web_usage_level, WwjInstance wwj, IEventBroker eventBroker) {
 		super(parent, style);
 		
 		this.wwj = wwj;
 		this.eventBroker=eventBroker;
 		
-		PadreCatalog catalog = new PadreCatalog(project_url);
+		PadreCatalog catalog = new PadreCatalog(web_usage_level);
+		catalog.load(project_url);
 		
 		viewer = new TreeViewer(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
