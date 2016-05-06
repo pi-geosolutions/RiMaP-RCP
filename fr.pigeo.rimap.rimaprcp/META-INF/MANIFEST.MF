@@ -30,7 +30,9 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.104.1",
  org.eclipse.core.databinding.property,
  org.eclipse.jface.databinding,
  com.ibm.icu,
- org.eclipse.equinox.app
+ org.eclipse.equinox.app,
+ fr.pigeo.externals.org.jdom;bundle-version="2.0.2",
+ fr.pigeo.externals.org.apache.commons
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0",
