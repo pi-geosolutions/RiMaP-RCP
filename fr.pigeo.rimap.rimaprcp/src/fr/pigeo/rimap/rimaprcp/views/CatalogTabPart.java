@@ -28,13 +28,15 @@ public class CatalogTabPart {
 	public void postConstruct(//@Preference IEclipsePreferences prefs, 
 			Composite parent, final IEclipseContext ctx, final WwjInstance wwj,
 			IPreferencesService prefService) {
-		
-		String project_url = prefService.getString("fr.pigeo.rimap.rimaprcp", "project.url", "not set", null);
+
+		String baseurl = prefService.getString("fr.pigeo.rimap.rimaprcp", "project.baseurl", null, null);
+		String layertreeService = prefService.getString("fr.pigeo.rimap.rimaprcp", "project.services.layertree", "not set", null);
+		String layertree_service_url = baseurl + layertreeService;
 		int web_usage_level = prefService.getInt("fr.pigeo.rimap.rimaprcp", "web.usage.level", 0, null);
-		logger.info("Preference project url: "+project_url+" (web usage level is "+web_usage_level+")");
+		logger.info("Preference layertree service url: "+layertree_service_url+" (web usage level is "+web_usage_level+")");
 		//System.out.println("Preference project url: "+project_url);
 		
-		catalog = new PadreCatalogComposite(parent, SWT.BORDER_SOLID, project_url, web_usage_level, wwj, eventBroker);
+		catalog = new PadreCatalogComposite(parent, SWT.BORDER_SOLID, layertree_service_url, web_usage_level, wwj, eventBroker);
 		catalog.setLayout(new FillLayout());
 
 
