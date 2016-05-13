@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Cache Utils
+Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.cache.utils
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: pi-Geosolutions
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: fr.pigeo.rimap.rimaprcp.cache.utils
+Require-Bundle: fr.pigeo.externals.org.apache.commons

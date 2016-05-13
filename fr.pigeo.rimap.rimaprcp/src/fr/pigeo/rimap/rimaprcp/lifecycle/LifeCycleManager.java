@@ -3,18 +3,17 @@ package fr.pigeo.rimap.rimaprcp.lifecycle;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -116,7 +115,7 @@ public class LifeCycleManager {
 		switch (geonetworkSessionID) {
 		case "":
 			logger.warn("Returned sessionID is empty String. This shouldn't occur");
-			OpenNoConnectionMessage();
+			OpenNoConnectionMessage(username, password);
 			break;
 		case "authFailure":
 			MessageDialog.openError(shell, "Wrong credentials",
@@ -125,7 +124,7 @@ public class LifeCycleManager {
 			break;
 		case "IOException":
 		case "ClientProtocolException":
-			OpenNoConnectionMessage();
+			OpenNoConnectionMessage(username, password);
 			break;
 		default:
 			// Means it worked
@@ -133,18 +132,19 @@ public class LifeCycleManager {
 			storeAuth(username, password, geonetworkSessionID);
 		}
 	}
-	
-	private void OpenNoConnectionMessage() {
+
+	private void OpenNoConnectionMessage(String user, String pwd) {
 		MessageDialog d = new MessageDialog(shell, "Unable to connect", null,
 				"Could not reach the server for authentification. "
 						+ "It is probable that your internet connection or the server is down. ",
-				MessageDialog.ERROR, new String[] { "Try again", "Use local cache files only", "Abort" }, 0);
+				MessageDialog.WARNING, new String[] { "Try again", "Use local cache files only", "Abort" }, 0);
 		int result = d.open();
 		switch (result) {
 		case 0:
 			this.askForLogin();
 			break;
 		case 1: // TODO : load locally using credentials
+			storeAuth(user, pwd, null);
 			break;
 		case 2:
 			System.exit(0);
@@ -159,7 +159,9 @@ public class LifeCycleManager {
 		Preferences user = preferences.node("user");
 		user.put("name", username);
 		user.put("password", password);
-		user.put("JSESSIONID", geonetworkSessionID);
+		if (geonetworkSessionID != null) {
+			user.put("JSESSIONID", geonetworkSessionID);
+		}
 		try {
 			// forces the application to save the preferences
 			preferences.flush();
@@ -186,14 +188,15 @@ public class LifeCycleManager {
 
 			// Execute and get the response.
 			CloseableHttpResponse response = httpclient.execute(httppost);
-			/*Header[] headers = response.getAllHeaders();
-			for (Header h : headers) {
-				System.out.println(h.getName() + ": " + h.getValue());
-			}*/
+			/*
+			 * Header[] headers = response.getAllHeaders(); for (Header h :
+			 * headers) { System.out.println(h.getName() + ": " + h.getValue());
+			 * }
+			 */
 			if (response.getHeaders("Location")[0].getValue().endsWith("?failure=true")) {
 				return "authFailure";
 			} else {
-				//return JSESSIONID value
+				// return JSESSIONID value
 				String cookieChain = response.getHeaders("Set-Cookie")[0].getValue();
 				String[] chunks = cookieChain.split(";");
 				for (String chunk : chunks) {
@@ -202,26 +205,27 @@ public class LifeCycleManager {
 						return jsessionid;
 					}
 				}
-				
+
 			}
-			//response.close();
-			//httpclient.close();
+			// response.close();
+			// httpclient.close();
 			httppost.releaseConnection();
-		} catch (ClientProtocolException e) {
-			logger.error("Could not reach the server for authentification. "
+		} catch (ClientProtocolException | UnknownHostException e) {
+			logger.error(e.getClass()+": Could not reach the server for authentification. "
 					+ "It is probable that your internet connection or the server is down. ");
-			logger.error(e);
+			//logger.error(e);
 			return "ClientProtocolException";
 		} catch (IOException e) {
-			logger.error("Error while getting authentification from the server. "
+			logger.error("IOException: Error while getting authentification from the server. "
 					+ "It is probable that your internet connection or the server is down. ");
-			logger.error(e);
+			//logger.error(e);
 			return "IOException";
 		} finally {
-			//TODO : check if we can close response and httpclient without loosing the session
-			//response.close();
+			// TODO : check if we can close response and httpclient without
+			// loosing the session
+			// response.close();
 			httppost.releaseConnection();
-			//httpclient.close();
+			// httpclient.close();
 		}
 		return ""; // shouldn't occur
 	}

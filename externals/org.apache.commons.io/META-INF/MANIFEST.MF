@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.apache.commons.io
+Bundle-Name: org.apache.commons
 Bundle-SymbolicName: fr.pigeo.externals.org.apache.commons
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: commons-io-2.4.jar,
  .,

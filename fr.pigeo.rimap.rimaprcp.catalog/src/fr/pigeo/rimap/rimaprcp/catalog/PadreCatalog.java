@@ -1,17 +1,15 @@
 package fr.pigeo.rimap.rimaprcp.catalog;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
 
@@ -20,13 +18,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.pigeo.rimap.rimaprcp.cache.utils.IOCacheUtil;
 import fr.pigeo.rimap.rimaprcp.mapservers.ServerCapability;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.AbstractLayer;
 import fr.pigeo.rimap.rimaprcp.riskcatalog.FolderLayer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 
 public class PadreCatalog extends AbstractCatalog {
-	protected String layertreeFileName = "layertree.txt";
+	protected String layertreeFileName = "layertree";
 
 	private URL baseURL;
 	private JsonNode layertree_json;
@@ -34,8 +33,9 @@ public class PadreCatalog extends AbstractCatalog {
 
 	private int web_connect_timeout = 2000;
 	private int web_read_timeout = 10000;
-	private String username = "";
-	private String userpassword = "";
+	private String username = null;
+	private String userpassword = null;
+	private String usersessionid = null;
 	private String cachePath = "";
 	private int web_usage_level = 9;
 
@@ -47,8 +47,9 @@ public class PadreCatalog extends AbstractCatalog {
 	public PadreCatalog(int web_usage_level) {
 		Preferences preferences = InstanceScope.INSTANCE.getNode("fr.pigeo.rimap.rimaprcp");
 		Preferences user = preferences.node("user");
-		username = user.get("name", "");
-		userpassword = user.get("password", "");
+		username = user.get("name", null);
+		userpassword = user.get("password", null);
+		usersessionid = user.get("JSESSIONID", null);
 		Preferences configPref = preferences.node("config");
 		cachePath = configPref.get("cachePath", "");
 
@@ -77,7 +78,7 @@ public class PadreCatalog extends AbstractCatalog {
 
 		File cachedLayertreeFile = new File(getLocalLayertreeFilePath(cachePath, user));
 		boolean isLtCached = cachedLayertreeFile.isFile();
-		if (web_usage_level > 1 || !isLtCached) {
+		if ((web_usage_level > 1) || !isLtCached) {
 			// Load from URL
 			node = getLayertreeFromURL(path, user, pwd, cachedLayertreeFile);
 		} else {
@@ -91,12 +92,15 @@ public class PadreCatalog extends AbstractCatalog {
 	private JsonNode getLayertreeFromFile(File cachedLayertreeFile, String user, String pwd) {
 		// TODO Deal with data encryption if user & pwd are set
 
+		System.out.println("Loading layertree from file");
+		String lt = IOCacheUtil.retrieve(cachedLayertreeFile, pwd);
+		
 		// load from File into a JsonNode (Jackson lib) object
 		JsonNode node = null;
 		// We create the JsonParser using Jackson
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			node = objectMapper.readValue(cachedLayertreeFile, JsonNode.class);
+			node = objectMapper.readValue(lt, JsonNode.class);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -112,41 +116,68 @@ public class PadreCatalog extends AbstractCatalog {
 	}
 
 	private JsonNode getLayertreeFromURL(String path, String user, String pwd, File cacheDestination) {
+		System.out.println("Loading layertree from URL");
+		// try {
+		// FileUtils.copyURLToFile(new URL(path), cacheDestination,
+		// this.web_connect_timeout, this.web_read_timeout);
+		// if (!cacheDestination.isFile()) {
+		// return null;
+		// }
+		//
+		// System.out.println("Saved to file "+cacheDestination);
+		// return getLayertreeFromFile(cacheDestination, user, pwd);
+		// } catch (IOException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// }
+		// return null;
+
+		JsonNode node = null; // load from URL into a JsonNode (Jackson lib)
+								// object
+		String lt = "";
 		try {
-			FileUtils.copyURLToFile(new URL(path), cacheDestination, this.web_connect_timeout, this.web_read_timeout);
-			if (!cacheDestination.isFile()) {
+			this.baseURL = new URL(path);
+			/*
+			 * BufferedReader in = new BufferedReader(new
+			 * InputStreamReader(baseURL.openStream())); String input; while
+			 * ((input = in.readLine()) != null) { lt += input; } in.close();
+			 */
+			lt = IOUtils.toString(this.baseURL, StandardCharsets.UTF_8);
+			if ((lt == null) || (lt.equalsIgnoreCase(""))) {
+				System.out.println("Empty layertree / layertree loading failure");
 				return null;
 			}
-			return getLayertreeFromFile(cacheDestination, user, pwd);
-		} catch (IOException e1) {
+			node = this.stringToJson(lt);
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			//e.printStackTrace();
+			System.out.println(e.getClass().toString()+": Couldn't load layertree from server. Trying to fallback on cached file.");
+			return this.getLayertreeFromFile(cacheDestination, user, pwd);
 		}
-		return null;
-		/*
-		 * JsonNode node = null; // load from URL into a JsonNode (Jackson lib)
-		 * object try { this.baseURL = new URL(path); BufferedReader in = new
-		 * BufferedReader(new InputStreamReader(baseURL.openStream())); String
-		 * lt = "", input; while ((input = in.readLine()) != null) { lt +=
-		 * input; } in.close(); if ((lt == null) || (lt.equalsIgnoreCase(""))) {
-		 * System.out.println("Empty layertree / layertree loading failure");
-		 * return null; }
-		 * 
-		 * // We create the JsonParser using Jackson ObjectMapper objectMapper =
-		 * new ObjectMapper(); node = objectMapper.readValue(lt,
-		 * JsonNode.class);
-		 * 
-		 * //save it on disk (in cache location) this.cacheLayertree(lt,
-		 * cacheDestination); } catch (MalformedURLException e) { // TODO maybe
-		 * try if it is not a file path instead of URL e.printStackTrace(); }
-		 * catch (Exception e) { e.printStackTrace(); }
-		 * 
-		 * // if null, then it failed. We exit the function. if (node == null) {
-		 * System.err.println("ERROR parsing layertree (" +
-		 * this.getClass().getName() + ") from URL " + path); }
-		 * 
-		 * System.out.println("Loaded layertree from URL "+path); return node;
-		 */
+
+		// if null, then it failed. We exit the function.
+		if (node == null) {
+			System.err.println("ERROR parsing layertree (" + this.getClass().getName() + ") from URL " + path);
+		}
+		System.out.println("Loaded layertree from URL " + path);
+
+		// save it on disk (in cache location)
+		IOCacheUtil.store(lt, cacheDestination, pwd);
+		return node;
+
+	}
+
+	private JsonNode stringToJson(String str) {
+		JsonNode node = null;
+		// We create the JsonParser using Jackson
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			node = objectMapper.readValue(str, JsonNode.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return node;
 	}
 
 	private void cacheLayertree(String lt, File destination)
@@ -159,8 +190,12 @@ public class PadreCatalog extends AbstractCatalog {
 	}
 
 	private String getLocalLayertreeFilePath(String cachePath, String user) {
-		// if user name is set, introduces intermediary folder
-		String path = cachePath + File.separator + user + File.separator + layertreeFileName;
+		String path = cachePath + File.separator;
+		if (user != null) {
+			// if user name is set, introduces intermediary folder
+			path += user + File.separator;
+		} 
+		path += layertreeFileName;
 		System.out.println("Local cached LT path is " + path);
 		return path;
 	}
