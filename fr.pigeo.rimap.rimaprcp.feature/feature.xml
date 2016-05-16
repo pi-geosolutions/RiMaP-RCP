@@ -41,13 +41,6 @@
          unpack="false"/>
 
    <plugin
-         id="fr.pigeo.rimap.rimaprcp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="fr.pigeo.rimap.rimaprcp.catalog"
          download-size="0"
          install-size="0"
@@ -118,6 +111,27 @@
 
    <plugin
          id="fr.pigeo.externals.org.apache.commons"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="fr.pigeo.rimap.rimaprcp.core.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="fr.pigeo.rimap.rimaprcp.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="fr.pigeo.rimap.rimaprcp.core.services.session"
          download-size="0"
          install-size="0"
          version="0.0.0"

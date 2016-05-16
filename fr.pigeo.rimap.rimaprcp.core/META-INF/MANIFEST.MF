@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: RiMaP RCP core plugin
+Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: fr.pigeo.rimap.rimaprcp.core.catalog,
+ fr.pigeo.rimap.rimaprcp.core.events,
+ fr.pigeo.rimap.rimaprcp.core.security
+Service-Component: OSGI-INF/session-component.xml

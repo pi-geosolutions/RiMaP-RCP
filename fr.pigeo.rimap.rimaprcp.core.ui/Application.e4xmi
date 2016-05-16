@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_o0Uz4JzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.application">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_qDDQ0JzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.trimmedwindow.rimap3d" label="%trimmedwindow.label.1">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_59ebQJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspectivestack.main">
+      <children xsi:type="advanced:Perspective" xmi:id="_--feEJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspective.main" label="%perspective.label.1">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_q4OlUJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.0" horizontal="true">
+          <children xsi:type="basic:PartStack" xmi:id="_s2bXYJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partstack.controlstack" containerData="300" selectedElement="_eQ228KPdEeWES4bRRX2C7A">
+            <children xsi:type="basic:Part" xmi:id="_eQ228KPdEeWES4bRRX2C7A" elementId="fr.pigeo.rimap.rimaprcp.part.jfacelayertree" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.views.CatalogTabPart" label="%part.label.1"/>
+            <children xsi:type="basic:CompositePart" xmi:id="_QzkIgMmGEeWEb9mxV_lPdQ" elementId="fr.pigeo.rimap.rimaprcp.compositepart.organize" label="%part.label.2" tooltip="%compositepart.tooltip.1">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_c_R3cMmGEeWEb9mxV_lPdQ" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.3" selectedElement="_5mi3MLiNEeWNs8HUC5fhyg">
+                <children xsi:type="basic:Part" xmi:id="_5mi3MLiNEeWNs8HUC5fhyg" elementId="fr.pigeo.rimap.rimaprcp.part.organize" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.views.OrganizeTabPart" label="%part.label.2"/>
+                <children xsi:type="basic:Part" xmi:id="_gMIN8MmGEeWEb9mxV_lPdQ" elementId="fr.pigeo.rimap.rimaprcp.part.details" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.swt.LayerDetailsImpl" label="%parts.layerdetails.label" closeable="true"/>
+              </children>
+            </children>
+          </children>
+          <children xsi:type="basic:PartSashContainer" xmi:id="_0AJrMAfFEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.1" containerData="700">
+            <children xsi:type="basic:PartStack" xmi:id="_sWgnQAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.partstack.0" containerData="700" selectedElement="_uAcTcJzFEeW3eM-i01vfSQ">
+              <children xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.views.WWJView" label="%part.label.5">
+                <toolbar xmi:id="_tezsEAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar"/>
+              </children>
+            </children>
+            <children xsi:type="basic:PartStack" xmi:id="_RiHUQAfGEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.partstack.bottom" visible="false" containerData="300"/>
+          </children>
+        </children>
+      </children>
+    </children>
+    <handlers xmi:id="_3ibNIMagEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handler.show.widget" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.handlers.ShowWidget" command="_NRVm4MZwEeWTGLqWyfJYDw"/>
+    <mainMenu xmi:id="_qcxpQKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.0">
+      <children xsi:type="menu:Menu" xmi:id="_sfbdgKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.io" toBeRendered="false" visible="false" label="%menu.label.1">
+        <children xsi:type="menu:DirectMenuItem" xmi:id="_wAE5wKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menus.io.directmenuitem.load" label="%directmenuitem.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.menus.load"/>
+      </children>
+      <children xsi:type="menu:Menu" xmi:id="_CrNVsMZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.menu.display" label="%menu.display.label">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_qwPYEMZ0EeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compass" toBeRendered="false" visible="false" label="%handledmenuitem.label.1" tooltip="%handledmenuitem.tooltip.1" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+          <persistedState key="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compassState" value="true"/>
+          <parameters xmi:id="_r999YMaeEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.0" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.CompassLayer"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_qtbtIMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.overviewmap" toBeRendered="false" visible="false" label="%handledmenuitem.label.2" tooltip="%handledmenuitem.tooltip.2" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+          <parameters xmi:id="_zZxLIMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.1" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.WorldMapLayer"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_-ydhsMafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.scalebar" toBeRendered="false" visible="false" label="%handledmenuitem.label.3" tooltip="%handledmenuitem.tooltip.3" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+          <parameters xmi:id="_-ydhscafEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.2" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.ScalebarLayer"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_d-A3YMajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.stars" toBeRendered="false" visible="false" label="%handledmenuitem.label.4" tooltip="%handledmenuitem.tooltip.4" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+          <parameters xmi:id="_d-A3YcajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.3" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.StarsLayer"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_ubYowMajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.atmosphere" toBeRendered="false" visible="false" label="%handledmenuitem.label.5" tooltip="%handledmenuitem.tooltip.5" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
+          <parameters xmi:id="_ubYowcajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.4" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.SkyGradientLayer"/>
+        </children>
+        <children xsi:type="menu:DynamicMenuContribution" xmi:id="_xWlnkMgBEeWZzdusKGuDEw" elementId="fr.pigeo.rimap.rimaprcp.dynamicmenucontribution.0" label="%dynamicmenucontribution.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.menus.WidgetMenuItem"/>
+      </children>
+    </mainMenu>
+  </children>
+  <commands xmi:id="_NRVm4MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.command.showWidget" commandName="%command.commandname.1" description="%command.description.1">
+    <parameters xmi:id="_SKPgoMaeEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" name="Reference to the WWJ widget to show/hide" typeId="" optional="false"/>
+  </commands>
+  <addons xmi:id="_o0Uz4ZzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_o0Uz4pzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_o0Uz45zFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_o0Uz5JzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_o0Uz5ZzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_o0Uz5pzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_o0Uz55zFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+</application:Application>

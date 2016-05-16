@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="product"
+         name="RimapRCP"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.e4.ui.workbench.swt.E4Application"
+            name="PADRE2 3D">
+         <property
+               name="appName"
+               value="PADRE2 3D">
+         </property>
+         <property
+               name="windowImages"
+               value="/fr.pigeo.rimap.rimaprcp.product/icons/icon-16.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-32.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-48.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-64.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-128.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-256.png">
+         </property>
+         <property
+               name="lifeCycleURI"
+               value="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.lifecycle.LifeCycleManager">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="RiMaP_RCP_3D_product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.e4.ui.workbench.swt.E4Application"
+            name="PADRE2 3D">
+         <property
+               name="windowImages"
+               value="/fr.pigeo.rimap.rimaprcp.product/icons/icon-16.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-32.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-48.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-64.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-128.png,/fr.pigeo.rimap.rimaprcp.product/icons/icon-256.png">
+         </property>
+      </product>
+   </extension>
+
+</plugin>

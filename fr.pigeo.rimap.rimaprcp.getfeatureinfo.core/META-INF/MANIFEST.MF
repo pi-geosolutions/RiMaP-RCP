@@ -13,7 +13,7 @@ Require-Bundle: fr.pigeo.rimap.rimaprcp.catalog,
  org.eclipse.e4.core.services,
  org.eclipse.e4.ui.workbench,
  org.eclipse.e4.ui.model.workbench,
- fr.pigeo.rimap.rimaprcp,
+ fr.pigeo.rimap.rimaprcp.core.ui,
  org.eclipse.jface,
  org.eclipse.e4.core.contexts
 Export-Package: fr.pigeo.rimap.rimaprcp.getfeatureinfo.core
