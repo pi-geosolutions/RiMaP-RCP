@@ -111,11 +111,11 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 	public boolean currentSessionCanDecrypt(String resourcePath, String resourceName) {
 		Path encPath = getResourcePath(resourcePath, resourceName + SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
 		String key = getKey();
-		if (key==null) {
+		if (key == null) {
 			return false;
 		}
-		return (getEncodedResourceAsByteArray(encPath, key)!=null);
-		
+		return (getEncodedResourceAsByteArray(encPath, key) != null);
+
 	}
 
 	@Override
@@ -173,6 +173,12 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 			return false;
 		}
 
+	}
+
+	@Override
+	public boolean isResourceAvailable(String resourcePath, String resourceName) {
+		Path path = getResourcePath(resourcePath, resourceName);
+		return (Files.exists(path) && Files.isRegularFile(path));
 	}
 
 	/**

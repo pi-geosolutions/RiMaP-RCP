@@ -9,7 +9,14 @@ package fr.pigeo.rimap.rimaprcp.core.events;
  *
  */
 public interface RiMaPEventConstants {
-	String LAYER_ALLEVENTS="fr/pigeo/rimap/rimaprcp/Layer/*" ;
-	String LAYER_CHECKED="fr/pigeo/rimap/rimaprcp/Layer/Checked" ;
-	String LAYER_SELECTED="fr/pigeo/rimap/rimaprcp/Layer/Selected" ;
+	//Layer related
+	String LAYER_ALLEVENTS="fr/pigeo/rimap/rimaprcp/layer/*" ;
+	String LAYER_CHECKED="fr/pigeo/rimap/rimaprcp/layer/checked" ;
+	String LAYER_SELECTED="fr/pigeo/rimap/rimaprcp/layer/selected" ;
+	
+	//Session related
+	String SESSION_CHANGED="fr/pigeo/rimap/rimaprcp/session/*";
+	String SESSION_GUEST="fr/pigeo/rimap/rimaprcp/session/guest";
+	String SESSION_SERVER_VALIDATED="fr/pigeo/rimap/rimaprcp/session/servervalidated";
+	String SESSION_LOCALLY_VALIDATED="fr/pigeo/rimap/rimaprcp/session/locallyvalidated";
 }

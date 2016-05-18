@@ -29,4 +29,6 @@ public interface ISecureResourceService {
 	public boolean isResourceEncrypted(String resourcePath, String resourceName);
 
 	public boolean currentSessionCanDecrypt(String resourcePath, String resourceName);
+	
+	public boolean isResourceAvailable(String resourcePath, String resourceName);
 }

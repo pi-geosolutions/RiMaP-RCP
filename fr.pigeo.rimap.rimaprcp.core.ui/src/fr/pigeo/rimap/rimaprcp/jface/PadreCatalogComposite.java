@@ -37,7 +37,7 @@ public class PadreCatalogComposite  extends AbstractCatalogComposite  {
 		this.eventBroker=eventBroker;
 		
 		PadreCatalog catalog = new PadreCatalog(web_usage_level);
-		catalog.load(project_url);
+		//catalog.load(project_url);
 		
 		viewer = new TreeViewer(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 

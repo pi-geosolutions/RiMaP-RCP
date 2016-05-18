@@ -3,6 +3,7 @@ package fr.pigeo.rimap.rimaprcp.core.services.session.internal;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,14 +20,17 @@ import org.apache.http.message.BasicNameValuePair;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.service.event.Event;
 
 import dialogs.LoginDialog;
+import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.core.security.Session;
 
@@ -49,6 +53,9 @@ public class DefaultSessionServiceImpl implements ISessionService {
 
 	@Inject
 	Logger logger;
+
+	@Inject
+	IEventBroker eventBroker;
 
 	public DefaultSessionServiceImpl() {
 	}
@@ -78,14 +85,15 @@ public class DefaultSessionServiceImpl implements ISessionService {
 			logger.info("Session service full URL : %s", session.getAuthentificationURL());
 			askForLogin();
 
-			//TODO: check session is validated then send session_validated event
+			// TODO: check session is validated then send session_validated
+			// event
 		}
 		return session;
-	}	
+	}
 
 	@Override
 	public boolean closeSession() {
-		//TODO: send session_closed event
+		// TODO: send session_closed event
 		session = null;
 		return true;
 	}
@@ -142,14 +150,14 @@ public class DefaultSessionServiceImpl implements ISessionService {
 			logger.info("Authentification is valid (server-checked)");
 			session.setSessionID(geonetworkSessionID);
 			session.setCredsCheckLevel(SessionConstants.CREDS_LEVEL_WEB_VALIDATED);
+			eventBroker.send(RiMaPEventConstants.SESSION_SERVER_VALIDATED, session);
 		}
 	}
 
 	private void OpenNoConnectionMessage(Session session) {
 		MessageDialog d = new MessageDialog(shell, messages.noConnectionMessageDialogTitle, null,
 				messages.noConnectionMessageDialogMsg, MessageDialog.WARNING,
-				new String[] { messages.noConnectionMessageDialogTryAgain, 
-						messages.noConnectionMessageDialogGoLocal,
+				new String[] { messages.noConnectionMessageDialogTryAgain, messages.noConnectionMessageDialogGoLocal,
 						messages.noConnectionMessageDialogAbort },
 				0);
 		int result = d.open();
@@ -157,7 +165,8 @@ public class DefaultSessionServiceImpl implements ISessionService {
 		case 0:
 			this.askForLogin();
 			break;
-		case 1: // TODO : check credentials locally (ie can decrypt the layertree) 
+		case 1: // TODO : check credentials locally (ie can decrypt the
+				// layertree)
 			checkCredentialsLocally();
 			// storeAuth(user, pwd, null);
 			break;
@@ -168,7 +177,7 @@ public class DefaultSessionServiceImpl implements ISessionService {
 	}
 
 	private void checkCredentialsLocally() {
-		//TODO: Use SecureFilesIOService to check if the credentials are OK
+		// TODO: Use SecureFilesIOService to check if the credentials are OK
 	}
 
 	private String getGeonetworkSessionID() {
