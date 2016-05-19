@@ -11,16 +11,26 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.swt.graphics.Image;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
+import fr.pigeo.rimap.rimaprcp.core.catalog.IExpandable;
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
+import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.CatalogConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
 
-public class FolderNode extends AbstractNode {
+public class FolderNode extends AbstractNode implements IExpandable {
+	private static String IMAGE_FOLDERICON = "icons/folder.gif";
+	private static String IMAGE_FOLDERICON_OPEN = "icons/folder-open.gif";
+
+	public static Image foldedImage;
+	public static Image unfoldedImage;
+	
+	protected LayerType type = LayerType.FOLDER;
 	private INode parent = null;
 	private List<INode> leaves = null;
 	private String id;
@@ -33,11 +43,15 @@ public class FolderNode extends AbstractNode {
 
 	@Inject
 	@Optional
-	private IPreferencesService prefsService;
+	IPreferencesService prefsService;
 	
 	@Inject
 	@Optional
 	IEclipseContext context;
+	
+	@Inject
+	@Optional
+	IEventBroker eventBroker;
 	
 	private String childrentag = "children";
 
@@ -54,25 +68,18 @@ public class FolderNode extends AbstractNode {
 	public FolderNode() {
 		
 	}
-
+	
 	@Override
 	public void loadFromJson(JsonNode node) {
-		// TODO Auto-generated method stub
-		if (node == null) {
+		if (!NodeUtils.isValid(node, this.type)) {
 			System.out.println("ERROR: error parsing JsonNode in " + this.getClass().getName());
 			return;
 		}
 		if (!this.isRootNode()) {
-			if (!node.get("type").asText().equalsIgnoreCase(LayerType.FOLDER.toString())) {
-				System.out.println("ERROR: wrong node type encountered while parsing JsonNode in "
-						+ this.getClass().getName() + ".(type is " + node.get("type").asText() + ")");
-				return;
-			}
-
-			this.id = this.parseString(node, "id", null);
-			this.name = this.parseString(node, "text", "unnamed folder");
-			this.expanded = this.parseBool(node, "expanded", this.expanded);
-			this.lastchanged = this.parseDate(node, "lastchanged");
+			this.id = NodeUtils.parseString(node, "id", null);
+			this.name = NodeUtils.parseString(node, "text", "unnamed folder");
+			this.expanded = NodeUtils.parseBool(node, "expanded", this.expanded);
+			this.lastchanged = NodeUtils.parseDate(node, "lastchanged");
 			// System.out.println("Loaded node "+this.name);
 		}
 		if (node.has(CatalogProperties.getProperty("layertree.childrentag"))) {
@@ -108,8 +115,10 @@ public class FolderNode extends AbstractNode {
 				layers.add(layer);
 				break;
 			case WMS:
-				// layer = new WmsLayer(this, child);
-				// layers.add(layer);
+				layer = ContextInjectionFactory.make(WmsNode.class, context);
+				layer.setParent(this);
+				layer.loadFromJson(child);
+				layers.add(layer);
 				break;
 			case CHART:
 
@@ -161,8 +170,45 @@ public class FolderNode extends AbstractNode {
 
 	@Override
 	public Image getImage() {
-		// TODO Auto-generated method stub
-		return null;
+		//return NodeUtils.getImage(FolderNode.IMAGE_FOLDERICON);
+		if (this.expanded) {
+			if (FolderNode.unfoldedImage == null) {
+				FolderNode.unfoldedImage = NodeUtils.getImage(FolderNode.IMAGE_FOLDERICON_OPEN);
+			}
+			return FolderNode.unfoldedImage;
+		} else {
+			if (FolderNode.foldedImage == null) {
+				FolderNode.foldedImage = NodeUtils.getImage(FolderNode.IMAGE_FOLDERICON);
+			}
+			return FolderNode.foldedImage;
+		}
+	}
+	@Override
+	public void setExpanded(boolean expand) {
+		if (expand == this.expanded) {
+			return;
+		}
+		this.expanded = expand;
+		if (eventBroker != null) {
+			eventBroker.post(RiMaPEventConstants.FOLDERNODE_EXPANDCHANGE, this);
+		}
+	}
+	
+	@Override
+	public void toggleExpanded() {
+		setExpanded(!expanded);
+	}
+	
+
+	@Override
+	public void changeState() {
+		System.out.println("State changed for node "+this.getName());
+		toggleExpanded();
+	}
+
+	@Override
+	public boolean getExpanded() {
+		return expanded;
 	}
 
 }

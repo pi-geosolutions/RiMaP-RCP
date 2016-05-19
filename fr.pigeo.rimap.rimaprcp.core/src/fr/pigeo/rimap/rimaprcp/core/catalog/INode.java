@@ -16,4 +16,5 @@ public interface INode {
 	public boolean isRootNode();
 	public String getName();
 	public Image getImage();
+	public void changeState();
 }

@@ -10,13 +10,18 @@ package fr.pigeo.rimap.rimaprcp.core.events;
  */
 public interface RiMaPEventConstants {
 	//Layer related
-	String LAYER_ALLEVENTS="fr/pigeo/rimap/rimaprcp/layer/*" ;
-	String LAYER_CHECKED="fr/pigeo/rimap/rimaprcp/layer/checked" ;
-	String LAYER_SELECTED="fr/pigeo/rimap/rimaprcp/layer/selected" ;
+	String LAYER_ALLEVENTS			="fr/pigeo/rimap/rimaprcp/layer/*" ;
+	String LAYER_CHECKED			="fr/pigeo/rimap/rimaprcp/layer/checked" ;
+	String LAYER_CHECKCHANGE		="fr/pigeo/rimap/rimaprcp/layer/checkchange" ;
+	String LAYER_SELECTED			="fr/pigeo/rimap/rimaprcp/layer/selected" ;
+	
+	//INode related
+	String FOLDERNODE_EXPANDCHANGE	="fr/pigeo/rimap/rimaprcp/inode/folder/folderchange";
+	String WMSNODE_CHECKCHANGE		="fr/pigeo/rimap/rimaprcp/inode/wms/checkchange";
 	
 	//Session related
-	String SESSION_CHANGED="fr/pigeo/rimap/rimaprcp/session/*";
-	String SESSION_GUEST="fr/pigeo/rimap/rimaprcp/session/guest";
-	String SESSION_SERVER_VALIDATED="fr/pigeo/rimap/rimaprcp/session/servervalidated";
+	String SESSION_CHANGED			="fr/pigeo/rimap/rimaprcp/session/*";
+	String SESSION_GUEST			="fr/pigeo/rimap/rimaprcp/session/guest";
+	String SESSION_SERVER_VALIDATED	="fr/pigeo/rimap/rimaprcp/session/servervalidated";
 	String SESSION_LOCALLY_VALIDATED="fr/pigeo/rimap/rimaprcp/session/locallyvalidated";
 }
