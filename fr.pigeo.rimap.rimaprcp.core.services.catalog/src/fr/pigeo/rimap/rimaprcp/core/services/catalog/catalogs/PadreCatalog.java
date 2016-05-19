@@ -1,20 +1,24 @@
 package fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs;
 
-import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.ui.di.UIEventTopic;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalog;
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
-import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.security.ISecureResourceService;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.core.security.Session;
@@ -22,9 +26,15 @@ import fr.pigeo.rimap.rimaprcp.core.security.Session;
 public class PadreCatalog implements ICatalog {
 
 	@Inject
+	@Optional
 	ISessionService sessionService;
+	
+	@Inject
+	@Optional
+	IEclipseContext context;
 
 	@Inject
+	@Optional
 	ISecureResourceService resourceService;
 
 	@Inject
@@ -36,7 +46,9 @@ public class PadreCatalog implements ICatalog {
 	@Inject
 	CatalogParams params;
 
-	private JsonNode layertree_json;
+	private URL baseURL;
+	private JsonNode layertreeAsJsonNode;
+	private INode rootNode; 
 
 	/*
 	 * @Inject @Optional
@@ -51,11 +63,12 @@ public class PadreCatalog implements ICatalog {
 
 	@Inject
 	public PadreCatalog(CatalogParams params, ISessionService sessionService, Logger logger,
-			ISecureResourceService resourceService) {
+			ISecureResourceService resourceService, IEclipseContext context) {
 		this.params = params;
 		this.sessionService = sessionService;
 		this.logger = logger;
 		this.resourceService = resourceService;
+		this.context = context;
 		load();
 	}
 
@@ -68,23 +81,25 @@ public class PadreCatalog implements ICatalog {
 		Session session = sessionService.getSession();
 		logger.info("[PadreCatalog] Session service instanciated. Session username is "
 				+ sessionService.getSession().getUsername());
-		this.layertree_json = getLayertree();
+		this.layertreeAsJsonNode = getLayertree();
 
 		// if null, then it failed. We exit the function.
-		if (this.layertree_json == null) {
+		if (this.layertreeAsJsonNode == null) {
 			logger.error("ERROR parsing layertree (" + this.getClass().getName() + ")");
 			return false;
 		}
 
-		logger.info("Loading Padre Catalog version service");
-		/*
-		 * this.root = new FolderLayer(null, true); // null -> root layer has no
-		 * // parents. Snif !
-		 * this.root.loadFromJson(this.layertree_json);
-		 * if (this.root == null) {
-		 * return false;
-		 * }
-		 */
+		this.rootNode = ContextInjectionFactory.make(FolderNode.class, context);
+		//this.rootNode = new FolderNode();
+		this.rootNode.loadFromJson(this.layertreeAsJsonNode);
+		
+		// this.root = new FolderLayer(null, true); // null -> root layer has no
+		// // parents. Snif !
+		// this.root.loadFromJson(this.layertreeAsJsonNode);
+		// if (this.root == null) {
+		// return false;
+		// }
+
 		return true;
 	}
 
@@ -95,41 +110,125 @@ public class PadreCatalog implements ICatalog {
 				|| !resourceService.isResourceAvailable(params.getCachePath(), params.getName())) {
 			// Load from URL
 			logger.info("Should load layertree from URL");
-			//node = getLayertreeFromURL(path, user, pwd, cachedLayertreeFile);
+			node = getLayertreeFromURL();
 		} else {
 			// Load from file
 			logger.info("Should load layertree from file");
-			//node = getLayertreeFromFile(cachedLayertreeFile, user, pwd);
+			node = getLayertreeFromFile();
 		}
 
 		return node;
 	}
 
-	protected JsonNode getLayertree(String path, int web_usage_level, String user, String pwd, String cachePath) {
+	private JsonNode getLayertreeFromURL() {
+		return getLayertreeFromURL(false);
+	}
 
-		/*
-		 * JsonNode node;
-		 * 
-		 * File cachedLayertreeFile = new
-		 * File(getLocalLayertreeFilePath(cachePath, user));
-		 * boolean isLtCached = cachedLayertreeFile.isFile();
-		 * if ((web_usage_level > 1) || !isLtCached) {
-		 * // Load from URL
-		 * node = getLayertreeFromURL(path, user, pwd, cachedLayertreeFile);
-		 * } else {
-		 * // Load from file
-		 * node = getLayertreeFromFile(cachedLayertreeFile, user, pwd);
-		 * }
-		 * 
-		 * return node;
-		 */
-		return null;
+	private JsonNode getLayertreeFromFile() {
+		return getLayertreeFromFile(false);
+	}
+
+	/**
+	 * 
+	 * @param isFallback
+	 *            Tells if this is already the fallback method (i.e. we won't
+	 *            fallback on the getFromFile method if this one fails)
+	 * @return
+	 */
+	private JsonNode getLayertreeFromURL(boolean isFallback) {
+		logger.info("Loading layertree from URL");
+		JsonNode node = null; // load from URL into a JsonNode (Jackson lib)
+		// object
+		String lt = "";
+		try {
+			this.baseURL = new URL(params.getUrl());
+			/*
+			 * BufferedReader in = new BufferedReader(new
+			 * InputStreamReader(baseURL.openStream())); String input; while
+			 * ((input = in.readLine()) != null) { lt += input; } in.close();
+			 */
+			lt = IOUtils.toString(this.baseURL, StandardCharsets.UTF_8);
+			if ((lt == null) || (lt.equalsIgnoreCase(""))) {
+				logger.error("Empty layertree / layertree loading failure");
+				return null;
+			}
+			node = this.stringToJson(lt);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			String msg = e.getClass().toString() + ": Couldn't load layertree from server.";
+			if (isFallback) {
+				logger.warn(msg);
+				return null;
+			} else {
+				msg += " Trying to fallback on cached file.";
+				logger.warn(msg);
+				return this.getLayertreeFromFile(true);
+			}
+		}
+		System.out.println("Loaded layertree from URL " + params.getUrl());
+
+		// save it on disk (in cache location)
+		// IOCacheUtil.store(lt, cacheDestination, pwd);
+		resourceService.setResource(lt, params.getCachePath(), params.getName());
+		return node;
+	}
+
+	/**
+	 * 
+	 * @param isFallback
+	 *            Tells if this is already the fallback method (i.e. we won't
+	 *            fallback on the getFromURL method if this one fails)
+	 * @return
+	 */
+	private JsonNode getLayertreeFromFile(boolean isFallback) {
+		System.out.println("Loading layertree from file");
+		String lt = resourceService.getResourceAsString(params.getCachePath(), params.getName());
+
+		// load from File into a JsonNode (Jackson lib) object
+		JsonNode node = null;
+		// We create the JsonParser using Jackson
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			node = objectMapper.readValue(lt, JsonNode.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// if null, then it failed. We exit the function.
+		if (node == null) {
+			String msg = "Couldn't load layertree from local file "+params.getCachePath()+"/"+params.getName();
+			if (isFallback) {
+				logger.warn(msg);
+				return null;
+			} else {
+				msg += " Trying to fallback on the server.";
+				logger.warn(msg);
+				return this.getLayertreeFromURL(true);
+			}
+			
+		}
+		logger.info("Loaded layertree from file " + params.getCachePath()+"/"+params.getName());
+		return node;
+	}
+
+	private JsonNode stringToJson(String str) {
+		JsonNode node = null;
+		// We create the JsonParser using Jackson
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			node = objectMapper.readValue(str, JsonNode.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return node;
 	}
 
 	@Override
 	public INode getRootNode() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.rootNode;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: pi-Geosolutions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.e4.core.contexts,
+ org.eclipse.swt;bundle-version="3.104.1",
  fr.pigeo.rimap.rimaprcp.core,
  org.eclipse.core.runtime;bundle-version="3.11.1",
  org.eclipse.e4.core.services;bundle-version="2.0.0",
@@ -14,6 +15,10 @@ Require-Bundle: org.eclipse.e4.core.contexts,
  org.eclipse.osgi.services;bundle-version="3.5.0",
  fr.pigeo.externals.com.fasterxml.jackson.core,
  org.eclipse.e4.ui.services,
- org.eclipse.e4.ui.di
+ org.eclipse.e4.ui.di,
+ fr.pigeo.rimap.rimaprcp.core.services.security;bundle-version="1.0.0",
+ fr.pigeo.rimap.rimaprcp.core.services.session;bundle-version="1.0.0",
+ fr.pigeo.externals.org.apache.commons,
+ fr.pigeo.rimap.rimaprcp.catalog
 Service-Component: OSGI-INF/catalog-service.xml
 Bundle-ActivationPolicy: lazy

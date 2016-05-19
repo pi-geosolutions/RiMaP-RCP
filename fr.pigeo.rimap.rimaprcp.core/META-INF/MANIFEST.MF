@@ -8,3 +8,5 @@ Export-Package: fr.pigeo.rimap.rimaprcp.core.catalog,
  fr.pigeo.rimap.rimaprcp.core.events,
  fr.pigeo.rimap.rimaprcp.core.security
 Service-Component: OSGI-INF/session-component.xml
+Require-Bundle: fr.pigeo.externals.com.fasterxml.jackson.core,
+ org.eclipse.jface

@@ -27,9 +27,10 @@ public class CatalogServiceImpl implements ICatalogService {
 
 	@Inject
 	IEclipseContext context;
-	
-	@Inject ISessionService sessionService;
-	
+
+	@Inject
+	ISessionService sessionService;
+
 	ICatalog mainCatalog;
 
 	@Override
@@ -38,11 +39,11 @@ public class CatalogServiceImpl implements ICatalogService {
 		if (sessionService == null) {
 			logger.info("[CatalogService] Session service is null");
 		} else {
-			logger.info(
-					"[CatalogService] Session service instanciated. Session username is " + sessionService.getSession().getUsername());
+			logger.info("[CatalogService] Session service instanciated. Session username is "
+					+ sessionService.getSession().getUsername());
 		}
-		
-		if (mainCatalog!=null) {
+
+		if (mainCatalog != null) {
 			return mainCatalog;
 		}
 		String baseurl = prefService.getString("fr.pigeo.rimap.rimaprcp", "project.baseurl", null, null);
@@ -52,21 +53,22 @@ public class CatalogServiceImpl implements ICatalogService {
 		int web_usage_level = prefService.getInt("fr.pigeo.rimap.rimaprcp", "web.usage.level", 0, null);
 		logger.info("Preference layertree service url: " + layertree_service_url + " (web usage level is "
 				+ web_usage_level + ")");
-		
+
 		Preferences preferences = InstanceScope.INSTANCE.getNode("fr.pigeo.rimap.rimaprcp");
 		Preferences config = preferences.node("config");
 		String cachePath = config.get("cachePath", "RiMaP");
 
-		CatalogParams params = new CatalogParams(layertree_service_url, "Layertree", "PadreCatalog", web_usage_level, cachePath);
-		 // create new context
-	    IEclipseContext catCtx = context.createChild();
-	    
-	    // add vars in local context
-	    catCtx.set(CatalogParams.class, params);
+		CatalogParams params = new CatalogParams(layertree_service_url, "layertree", "PadreCatalog", web_usage_level,
+				cachePath);
+		// create new context
+		IEclipseContext catCtx = context.createChild();
 
-	    // create WizardPages via CIF
+		// add vars in local context
+		catCtx.set(CatalogParams.class, params);
+
+		// create WizardPages via CIF
 		mainCatalog = ContextInjectionFactory.make(PadreCatalog.class, catCtx);
-		
+
 		return mainCatalog;
 	}
 

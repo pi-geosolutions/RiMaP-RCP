@@ -31,13 +31,13 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 	@Inject
 	Logger logger;
 	@Inject
-	ISessionService sessionService;
+	ISessionService sessionService = null;
 	Charset charset = StandardCharsets.UTF_8;
 
 	@Override
 	public byte[] getResourceAsByteArray(String resourcePath, String resourceName) {
 		Path rawPath = getResourcePath(resourcePath, resourceName);
-		Path encPath = getResourcePath(resourcePath, resourceName + SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
+		Path encPath = getEncodedResourcePath(resourcePath, resourceName);
 		String key = getKey();
 
 		if (key != null && Files.isRegularFile(encPath)) {
@@ -103,13 +103,13 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 	@Override
 	public boolean isResourceEncrypted(String resourcePath, String resourceName) {
 		// Path unencodedPath = getResourcePath(resourcePath, resourceName);
-		Path encodedPath = getResourcePath(resourcePath, resourceName + SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
+		Path encodedPath = getEncodedResourcePath(resourcePath, resourceName);
 		return Files.isRegularFile(encodedPath);
 	}
 
 	@Override
 	public boolean currentSessionCanDecrypt(String resourcePath, String resourceName) {
-		Path encPath = getResourcePath(resourcePath, resourceName + SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
+		Path encPath = getEncodedResourcePath(resourcePath, resourceName);
 		String key = getKey();
 		if (key == null) {
 			return false;
@@ -120,7 +120,7 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 
 	@Override
 	public boolean setResource(byte[] input, String resourcePath, String resourceName) {
-		Path destPath = getResourcePath(resourcePath, resourceName);
+		Path destPath = null;
 		String key = getKey();
 
 		byte[] outputBytes;
@@ -139,9 +139,10 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 			if (cipher != null) {
 				outputBytes = cipher.doFinal(input);
 				// add extension to tell the file is encrypted
-				destPath = Paths.get(destPath.getParent().toString(),
-						destPath.getFileName().toString() + SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
+				//destPath = Paths.get(destPath.getParent().toString(),	destPath.getFileName().toString() + SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
+				destPath = getEncodedResourcePath(resourcePath, resourceName);
 			} else {
+				destPath = getResourcePath(resourcePath, resourceName);
 				outputBytes = input;
 			}
 			// Create parent folder if necessary
@@ -178,7 +179,11 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 	@Override
 	public boolean isResourceAvailable(String resourcePath, String resourceName) {
 		Path path = getResourcePath(resourcePath, resourceName);
-		return (Files.exists(path) && Files.isRegularFile(path));
+		boolean isAvailableUnencoded = (Files.exists(path) && Files.isRegularFile(path));
+		Path encpath = getEncodedResourcePath(resourcePath, resourceName);
+		boolean isAvailableEncoded = (Files.exists(encpath) && Files.isRegularFile(encpath));
+		logger.info("Checking availability for file: \n"+path+"="+isAvailableUnencoded+" \n"+ encpath+"="+isAvailableEncoded);
+		return (isAvailableUnencoded || isAvailableEncoded);
 	}
 
 	/**
@@ -203,6 +208,10 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 		}
 		return path;
 	}
+	
+	private Path getEncodedResourcePath(String resourcePath, String resourceName) {
+		return getResourcePath(resourcePath, resourceName+SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
+	}
 
 	/**
 	 * @return the current Session's password, used as key for the encryption
@@ -212,5 +221,4 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 		String key = session.getPassword();
 		return key;
 	}
-
 }

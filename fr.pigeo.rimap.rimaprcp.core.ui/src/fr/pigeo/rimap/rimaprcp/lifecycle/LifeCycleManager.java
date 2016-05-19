@@ -9,11 +9,13 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.workbench.lifecycle.PostContextCreate;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
+import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
+import fr.pigeo.rimap.rimaprcp.core.security.ISecureResourceService;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.cache.BasicDataFileStore;
@@ -60,7 +62,14 @@ public class LifeCycleManager {
 
 	@ProcessAdditions
 	void processAdditions(ISessionService sessionService) {
+		logger.info("[LIFECYCLEMANAGER] : open session ! ");
 		sessionService.openSession(true);
+	}
+	
+	@ProcessRemovals
+	void ProcessRemovals(ISecureResourceService resourceService) {
+		//TODO: remove next line
+		logger.info("[LIFECYCLEMANAGER] : Secure Resource Service loaded");
 	}
 
 
