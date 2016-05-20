@@ -1,5 +1,6 @@
 package fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.List;
 
@@ -13,13 +14,21 @@ import org.eclipse.swt.graphics.Image;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckable;
+import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
+import fr.pigeo.rimap.rimaprcp.catalog.PadreCatalog;
+import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
-import fr.pigeo.rimap.rimaprcp.riskcatalog.RimapWMSTiledImageLayer;
+import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
-public class WmsNode extends AbstractNode implements ICheckable {
+public class WmsNode extends AbstractNode implements ICheckableNode {
 	private static String IMAGE_WMSICON = "icons/wms.png";
 	private static String IMAGE_CHECKED = "icons/16px-checkbox-checked.png";
 	private static String IMAGE_UNCHECKED = "icons/16px-checkbox-unchecked.png";
@@ -29,7 +38,7 @@ public class WmsNode extends AbstractNode implements ICheckable {
 	public static Image wmsImage;
 
 	protected LayerType type = LayerType.WMS;
-	protected RimapWMSTiledImageLayer layer;
+	protected WMSTiledImageLayer layer;
 	protected INode parent = null;
 	protected String id;
 	protected String name = "unnamed wms layer";
@@ -59,6 +68,11 @@ public class WmsNode extends AbstractNode implements ICheckable {
 	@Inject
 	@Optional
 	IEventBroker eventBroker;
+	
+	// Custom injected resource
+	@Inject
+	@Optional
+	PadreCatalogState catalogState;
 
 	@Override
 	public void loadFromJson(JsonNode node) {
@@ -93,6 +107,14 @@ public class WmsNode extends AbstractNode implements ICheckable {
 		 * PadreCatalog.addServerCapability(this.url);
 		 * }
 		 */
+
+		if (catalogState != null) {
+			if (this.checked) {
+				catalogState.addCheckedNode(this);
+			}
+		} else {
+			System.out.println("################ catalogState context var is null #################");
+		}
 
 	}
 
@@ -153,8 +175,11 @@ public class WmsNode extends AbstractNode implements ICheckable {
 			return;
 		}
 		this.checked = check;
+		if (this.layer!=null) {
+			this.layer.setEnabled(check);
+		}
 		if (eventBroker != null) {
-			eventBroker.post(RiMaPEventConstants.WMSNODE_CHECKCHANGE, this);
+			eventBroker.post(RiMaPEventConstants.CHECKABLENODE_CHECKCHANGE, this);
 		}
 	}
 
@@ -162,7 +187,7 @@ public class WmsNode extends AbstractNode implements ICheckable {
 	public void toggleChecked() {
 		setChecked(!this.checked);
 	}
-	
+
 	@Override
 	public void changeState() {
 		toggleChecked();
@@ -173,4 +198,41 @@ public class WmsNode extends AbstractNode implements ICheckable {
 		return checked;
 	}
 
+	//TODO: purge old code from this (capabilities, RIMAPSWMSLayer)
+	@Override
+	public Layer getLayer() {
+		if (this.layer == null) {
+			//System.out.println("first, creating layer");
+			WMSCapabilities caps = PadreCatalog.getServerCapabilities(this.url);
+			if (caps==null) {
+				try {
+					URI wmsUri = new URI(this.url);
+					caps = WMSCapabilities.retrieve(wmsUri);
+					caps.parse();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			AVList layerParams = new AVListImpl();
+			//System.out.println(this.layers);
+	        layerParams.setValue(AVKey.LAYER_NAMES, this.layers);
+	        layerParams.setValue(AVKey.DISPLAY_NAME, this.name);
+	        layerParams.setValue(AVKey.TILE_WIDTH, 256);
+	        layerParams.setValue(AVKey.TILE_HEIGHT, 256);
+	        layerParams.setValue(AVKey.DETAIL_HINT, Double.parseDouble(CatalogProperties.getProperty("wmslayer.defaultdetailhint")));
+	        try {
+	        	this.layer = new WMSTiledImageLayer(caps, layerParams);
+	        	this.layer.setName(this.name);
+	        	this.layer.setValue(RimapAVKey.LAYER_PARENTNODE, this);
+	        	this.layer.setValue(RimapAVKey.HAS_RIMAP_EXTENSIONS, true);
+	        }
+	        catch (Exception e) {
+				e.printStackTrace();
+	        }
+		}
+		
+		layer.setEnabled(this.checked);
+		return this.layer;
+	}
 }

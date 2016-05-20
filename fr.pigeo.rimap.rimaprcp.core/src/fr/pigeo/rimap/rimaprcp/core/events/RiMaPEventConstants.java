@@ -17,7 +17,7 @@ public interface RiMaPEventConstants {
 	
 	//INode related
 	String FOLDERNODE_EXPANDCHANGE	="fr/pigeo/rimap/rimaprcp/inode/folder/folderchange";
-	String WMSNODE_CHECKCHANGE		="fr/pigeo/rimap/rimaprcp/inode/wms/checkchange";
+	String CHECKABLENODE_CHECKCHANGE		="fr/pigeo/rimap/rimaprcp/inode/wms/checkchange";
 	
 	//Session related
 	String SESSION_CHANGED			="fr/pigeo/rimap/rimaprcp/session/*";

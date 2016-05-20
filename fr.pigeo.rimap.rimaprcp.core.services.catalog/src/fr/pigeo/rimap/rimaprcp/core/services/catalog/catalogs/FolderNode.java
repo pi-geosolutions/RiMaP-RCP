@@ -17,13 +17,13 @@ import org.eclipse.swt.graphics.Image;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
-import fr.pigeo.rimap.rimaprcp.core.catalog.IExpandable;
+import fr.pigeo.rimap.rimaprcp.core.catalog.IExpandableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.CatalogConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
 
-public class FolderNode extends AbstractNode implements IExpandable {
+public class FolderNode extends AbstractNode implements IExpandableNode {
 	private static String IMAGE_FOLDERICON = "icons/folder.gif";
 	private static String IMAGE_FOLDERICON_OPEN = "icons/folder-open.gif";
 
@@ -48,10 +48,15 @@ public class FolderNode extends AbstractNode implements IExpandable {
 	@Inject
 	@Optional
 	IEclipseContext context;
-	
+
 	@Inject
 	@Optional
 	IEventBroker eventBroker;
+	
+	//Custom injected resource
+	@Inject
+	@Optional
+	PadreCatalogState catalogState;
 	
 	private String childrentag = "children";
 
@@ -93,6 +98,13 @@ public class FolderNode extends AbstractNode implements IExpandable {
 		// if (this.expanded) {
 		// PadreCatalog.addExpandedFolder(this);
 		// }
+		if (catalogState!=null) {
+			if (this.expanded) {
+				catalogState.addExpandedNode(this);
+			}
+		} else {
+			System.out.println("################ catalogState context var is null #################");
+		}
 	}
 
 	private List<INode> loadLeaves(JsonNode list) {

@@ -42,8 +42,6 @@ import gov.nasa.worldwind.layers.Layer;
  *
  */
 
-@Creatable
-@Singleton
 public class LayersListTableComposite extends Composite {
 	private TableViewer viewer;
 	private WwjInstance wwj;

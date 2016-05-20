@@ -10,7 +10,11 @@ import javax.inject.Singleton;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 
+import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
+import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.WorldWind;
@@ -35,9 +39,9 @@ import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 @Creatable
 @Singleton
 public class WwjInstance {
-	
+
 	private final String WIDGET_PREF_PREFIX = "show_";
-	
+
 	private WorldWindowGLCanvas wwd;
 	private Model model;
 	private List<Widget> widgetList = new ArrayList<Widget>();
@@ -51,10 +55,13 @@ public class WwjInstance {
 		double lat = prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_LATITUDE", 0, null);
 		double lon = prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_LONGITUDE", 0, null);
 		double alt = prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_ALTITUDE", 19.07e6, null);
-		
-		Configuration.setValue(AVKey.INITIAL_LATITUDE, prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_LATITUDE", 0, null));
-		Configuration.setValue(AVKey.INITIAL_LONGITUDE, prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_LONGITUDE", 0, null));
-		Configuration.setValue(AVKey.INITIAL_ALTITUDE, prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_ALTITUDE", 19.07e6, null));
+
+		Configuration.setValue(AVKey.INITIAL_LATITUDE,
+				prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_LATITUDE", 0, null));
+		Configuration.setValue(AVKey.INITIAL_LONGITUDE,
+				prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_LONGITUDE", 0, null));
+		Configuration.setValue(AVKey.INITIAL_ALTITUDE,
+				prefs.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "INITIAL_ALTITUDE", 19.07e6, null));
 
 		this.wwd = new WorldWindowGLCanvas();
 		model = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
@@ -64,20 +71,28 @@ public class WwjInstance {
 			System.out.println(it.next().toString());
 		}
 		wwd.setModel(model);
-		
+
 		// Setup a select listener for the worldmap click-and-go feature
-        this.wwd.addSelectListener(new ClickAndGoSelectListener(this.getWwd(), WorldMapLayer.class));
-        this.addViewControls();
-        
+		this.wwd.addSelectListener(new ClickAndGoSelectListener(this.getWwd(), WorldMapLayer.class));
+		this.addViewControls();
 
 		this.getCompassLayer(this.wwd).setIconFilePath("customconfig/img/Rose_des_vents.png");
 		this.getCompassLayer(this.wwd).setIconScale(1);
-/*
-		double minlat = prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "START_BBOX_MINLAT", -90, null);
-		double minlon = prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "START_BBOX_MINLON", -180, null);
-		double maxlat = prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "START_BBOX_MAXLAT", 90, null);
-		double maxlon = prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind", "START_BBOX_MAXLON", 180, null);*/
-		
+		/*
+		 * double minlat =
+		 * prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind",
+		 * "START_BBOX_MINLAT", -90, null);
+		 * double minlon =
+		 * prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind",
+		 * "START_BBOX_MINLON", -180, null);
+		 * double maxlat =
+		 * prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind",
+		 * "START_BBOX_MAXLAT", 90, null);
+		 * double maxlon =
+		 * prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind",
+		 * "START_BBOX_MAXLON", 180, null);
+		 */
+
 	}
 
 	public WorldWindowGLCanvas getWwd() {
@@ -87,29 +102,15 @@ public class WwjInstance {
 	public Model getModel() {
 		return model;
 	}
-	
-	public void addViewControls() {
-		// Create and install the view controls layer and register a controller for it with the World Window.
-        ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
-        //viewControlsLayer.setName(viewControlsLayer.getName()+"Widget");
-        viewControlsLayer.setName("ViewControlsWidget");
-        ApplicationTemplate.insertBeforeCompass(getWwd(), viewControlsLayer);
-        this.getWwd().addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
-	}
 
-	/**
-	 * @param oldPos
-	 * @param destPos
-	 *            Moves a Layer from oldPos to destPos
-	 */
-	public void moveLayer(int oldPos, int destPos) {
-		if (destPos < 0)
-			return;
-		LayerList list = this.getModel().getLayers();
-		Layer dndedLayer = list.get(oldPos);
-		list.remove(dndedLayer);
-		list.add(destPos, dndedLayer);
-		this.getWwd().redraw();
+	public void addViewControls() {
+		// Create and install the view controls layer and register a controller
+		// for it with the World Window.
+		ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
+		// viewControlsLayer.setName(viewControlsLayer.getName()+"Widget");
+		viewControlsLayer.setName("ViewControlsWidget");
+		ApplicationTemplate.insertBeforeCompass(getWwd(), viewControlsLayer);
+		this.getWwd().addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
 	}
 
 	/**
@@ -145,8 +146,9 @@ public class WwjInstance {
 
 	/**
 	 * @param prefs
-	 * Finds all the layers whose name ends with "Widget" and reads the prefs for everyone of them
-	 * TODO : generate the menu entries from there
+	 *            Finds all the layers whose name ends with "Widget" and reads
+	 *            the prefs for everyone of them
+	 *            TODO : generate the menu entries from there
 	 */
 	private void initializeWidgets(IEclipsePreferences prefs) {
 		LayerList ll = this.getModel().getLayers();
@@ -157,32 +159,71 @@ public class WwjInstance {
 				Widget w = new Widget(l);
 				w.initialize(prefs.getBoolean(WIDGET_PREF_PREFIX + w.getWidgetClassName(), true));
 				widgetList.add(w);
-				//this.initializeWidget(prefs, l);
+				// this.initializeWidget(prefs, l);
 			}
 		}
 	}
-	
-	private CompassLayer getCompassLayer(WorldWindow wwd)
-    {
-        LayerList layers = wwd.getModel().getLayers();
-        for (Layer l : layers)
-        {
-            if (l instanceof CompassLayer)
-                return (CompassLayer) l;
-        }
-        return null;
-    }
 
-	
-	/*private void initializeWidget(IEclipsePreferences prefs, Layer l ) {
-		boolean show = prefs.getBoolean(WIDGET_PREF_PREFIX + l.getClass().getName(), true);
-		l.setEnabled(show);
-		
-		//create the menu entry
-		//IMenuManager displayMenu = 
-	}*/
+	private CompassLayer getCompassLayer(WorldWindow wwd) {
+		LayerList layers = wwd.getModel().getLayers();
+		for (Layer l : layers) {
+			if (l instanceof CompassLayer)
+				return (CompassLayer) l;
+		}
+		return null;
+	}
+
+	/*
+	 * private void initializeWidget(IEclipsePreferences prefs, Layer l ) {
+	 * boolean show = prefs.getBoolean(WIDGET_PREF_PREFIX +
+	 * l.getClass().getName(), true);
+	 * l.setEnabled(show);
+	 * 
+	 * //create the menu entry
+	 * //IMenuManager displayMenu =
+	 * }
+	 */
 
 	public List<Widget> getWidgetsClassLists() {
 		return this.widgetList;
+	}
+
+	@Inject
+	@Optional
+	void checkHandler(@UIEventTopic(RiMaPEventConstants.CHECKABLENODE_CHECKCHANGE) ICheckableNode node) {
+		Layer layer = node.getLayer();
+		if (layer != null) {
+			updateLayer(layer, true);
+		}
+	}
+
+	/**
+	 * @param oldPos
+	 * @param destPos
+	 *            Moves a Layer from oldPos to destPos
+	 */
+	public void moveLayer(int oldPos, int destPos) {
+		if (destPos < 0)
+			return;
+		LayerList list = this.getModel().getLayers();
+		Layer dndedLayer = list.get(oldPos);
+		list.remove(dndedLayer);
+		list.add(destPos, dndedLayer);
+		this.getWwd().redraw();
+	}
+
+	public void addLayer(Layer layer) {
+		updateLayer(layer, true);
+	}
+
+	private void updateLayer(Layer layer, boolean removeIfDisabled) {
+		LayerList layers = wwd.getModel().getLayers();
+		if (layer.isEnabled()) {
+			if (!layers.contains(layer)) {
+				ApplicationTemplate.insertBeforePlacenames(wwd, layer);
+			}
+		} else if (removeIfDisabled) {
+			layers.remove(layer);
+		}
 	}
 }

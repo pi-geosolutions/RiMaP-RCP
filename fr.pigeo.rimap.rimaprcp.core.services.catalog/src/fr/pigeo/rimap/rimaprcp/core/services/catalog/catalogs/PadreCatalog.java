@@ -3,39 +3,49 @@ package fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalog;
+import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
+import fr.pigeo.rimap.rimaprcp.core.catalog.IExpandableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
 import fr.pigeo.rimap.rimaprcp.core.security.ISecureResourceService;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.core.security.Session;
+import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 
 public class PadreCatalog implements ICatalog {
 
 	@Inject
-	@Optional
 	ISessionService sessionService;
-	
+
 	@Inject
-	@Optional
 	IEclipseContext context;
 
 	@Inject
-	@Optional
 	ISecureResourceService resourceService;
+
+	@Inject
+	WwjInstance wwj;
 
 	@Inject
 	Logger logger;
@@ -48,7 +58,8 @@ public class PadreCatalog implements ICatalog {
 
 	private URL baseURL;
 	private JsonNode layertreeAsJsonNode;
-	private INode rootNode; 
+	private INode rootNode;
+	private PadreCatalogState catalogState;
 
 	/*
 	 * @Inject @Optional
@@ -63,15 +74,18 @@ public class PadreCatalog implements ICatalog {
 
 	@Inject
 	public PadreCatalog(CatalogParams params, ISessionService sessionService, Logger logger,
-			ISecureResourceService resourceService, IEclipseContext context) {
+			ISecureResourceService resourceService, IEclipseContext context, WwjInstance wwj) {
 		this.params = params;
 		this.sessionService = sessionService;
 		this.logger = logger;
 		this.resourceService = resourceService;
 		this.context = context;
-		load();
+		this.wwj = wwj;
+		// load();
+
 	}
 
+	@Override
 	public boolean load() {
 		if (sessionService == null) {
 			// we abort
@@ -89,16 +103,19 @@ public class PadreCatalog implements ICatalog {
 			return false;
 		}
 
-		this.rootNode = ContextInjectionFactory.make(FolderNode.class, context);
-		//this.rootNode = new FolderNode();
+		// create a new local_ context
+		IEclipseContext catalogContext = EclipseContextFactory.create();
+		catalogState = new PadreCatalogState();
+		catalogContext.set(PadreCatalogState.class, catalogState);
+
+		// connect new local context with context hierarchy
+		catalogContext.setParent(context);
+
+		this.rootNode = ContextInjectionFactory.make(FolderNode.class, catalogContext);
+		// this.rootNode = new FolderNode();
 		this.rootNode.loadFromJson(this.layertreeAsJsonNode);
-		
-		// this.root = new FolderLayer(null, true); // null -> root layer has no
-		// // parents. Snif !
-		// this.root.loadFromJson(this.layertreeAsJsonNode);
-		// if (this.root == null) {
-		// return false;
-		// }
+
+		this.checkInitialNodes(this.catalogState.getCheckedNodes());
 
 		return true;
 	}
@@ -154,8 +171,6 @@ public class PadreCatalog implements ICatalog {
 			}
 			node = this.stringToJson(lt);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
 			String msg = e.getClass().toString() + ": Couldn't load layertree from server.";
 			if (isFallback) {
 				logger.warn(msg);
@@ -198,7 +213,7 @@ public class PadreCatalog implements ICatalog {
 
 		// if null, then it failed. We exit the function.
 		if (node == null) {
-			String msg = "Couldn't load layertree from local file "+params.getCachePath()+"/"+params.getName();
+			String msg = "Couldn't load layertree from local file " + params.getCachePath() + "/" + params.getName();
 			if (isFallback) {
 				logger.warn(msg);
 				return null;
@@ -207,9 +222,9 @@ public class PadreCatalog implements ICatalog {
 				logger.warn(msg);
 				return this.getLayertreeFromURL(true);
 			}
-			
+
 		}
-		logger.info("Loaded layertree from file " + params.getCachePath()+"/"+params.getName());
+		logger.info("Loaded layertree from file " + params.getCachePath() + "/" + params.getName());
 		return node;
 	}
 
@@ -249,21 +264,37 @@ public class PadreCatalog implements ICatalog {
 	}
 
 	@Override
-	public List<INode> getCheckedNodes() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ICheckableNode> getCheckedNodes() {
+		return this.catalogState.getCheckedNodes();
 	}
 
 	@Override
-	public List<INode> getOpenFolders() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<IExpandableNode> getOpenFolders() {
+		return getExpandedNodes();
 	}
 
 	@Override
-	public List<INode> getUnfoldedNodes() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<IExpandableNode> getExpandedNodes() {
+		return this.catalogState.getExpandedNodes();
+	}
+
+	public void checkInitialNodes(List<ICheckableNode> initiallyCheckedNodes) {
+		if (catalogState == null || catalogState.getCheckedNodes() == null) {
+			return;
+		}
+		if (wwj == null) {
+			System.out.println("Oops, wwj is null !");
+			return;
+		}
+		Iterator<ICheckableNode> itr = catalogState.getCheckedNodes().iterator();
+		while (itr.hasNext()) {
+			ICheckableNode node = itr.next();
+			wwj.addLayer(node.getLayer());
+		}
+	}
+	
+	@Override public void sync() {
+		this.checkInitialNodes(this.getCheckedNodes());
 	}
 
 }
