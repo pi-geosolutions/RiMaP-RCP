@@ -58,7 +58,7 @@ public class PadreCatalog implements ICatalog {
 
 	private URL baseURL;
 	private JsonNode layertreeAsJsonNode;
-	private INode rootNode;
+	private IExpandableNode rootNode;
 	private PadreCatalogState catalogState;
 
 	/*
@@ -113,7 +113,10 @@ public class PadreCatalog implements ICatalog {
 
 		this.rootNode = ContextInjectionFactory.make(FolderNode.class, catalogContext);
 		// this.rootNode = new FolderNode();
+		this.rootNode.setName(params.getName());
+		this.catalogState.addExpandedNode(this.rootNode);
 		this.rootNode.loadFromJson(this.layertreeAsJsonNode);
+		
 
 		this.checkInitialNodes(this.catalogState.getCheckedNodes());
 

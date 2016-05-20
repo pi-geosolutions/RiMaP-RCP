@@ -15,6 +15,7 @@ public interface INode {
 	public List<INode> getLeaves();
 	public boolean isRootNode();
 	public String getName();
+	public void setName(String name);
 	public Image getImage();
 	public void changeState();
 }

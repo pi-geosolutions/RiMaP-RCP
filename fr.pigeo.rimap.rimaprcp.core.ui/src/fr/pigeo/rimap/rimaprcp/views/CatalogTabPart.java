@@ -33,6 +33,8 @@ import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalog;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalogService;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.IExpandableNode;
+import fr.pigeo.rimap.rimaprcp.core.catalog.LoadingMessageNode;
+import fr.pigeo.rimap.rimaprcp.core.catalog.RootNode;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 
@@ -47,11 +49,14 @@ public class CatalogTabPart {
 
 	private TreeViewer viewer;
 	private Tree tree;
+	private RootNode root;
+	private LoadingMessageNode loading;
 
 	@PostConstruct
 	public void postConstruct(// @Preference IEclipsePreferences prefs,
 			Composite parent, final IEclipseContext ctx, final WwjInstance wwj, IPreferencesService prefService,
-			ICatalogService catalogService, ISessionService sessionService, Display display, final UISynchronize synch) {
+			ICatalogService catalogService, ISessionService sessionService, Display display,
+			final UISynchronize synch) {
 		this.disp = display;
 
 		final ICatalog mainCatalog = catalogService.getMainCatalog();
@@ -68,7 +73,7 @@ public class CatalogTabPart {
 		TreeViewerColumn mainColumn = new TreeViewerColumn(viewer, SWT.NONE);
 		mainColumn.getColumn().setWidth(300);
 		mainColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(new CatalogViewNodenameProvider()));
-		
+
 		this.tree = viewer.getTree();
 		this.tree.addMouseListener(new MouseAdapter() {
 			@Override
@@ -138,7 +143,19 @@ public class CatalogTabPart {
 		};
 
 		this.tree.addListener(SWT.Expand, packListener);
-		
+		root = new RootNode();
+		loading = new LoadingMessageNode();
+		root.addLeaf(loading);
+		viewer.setInput(root);
+		disp.timerExec(500, new Runnable() {
+			public void run() {
+				if (loading != null) {
+					loading.setName(loading.getName() + ".");
+					viewer.refresh();
+					disp.timerExec(500, this);
+				}
+			}
+		});
 		Job job = new Job("My Job") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -147,10 +164,12 @@ public class CatalogTabPart {
 				synch.asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						viewer.setInput(mainCatalog.getRootNode());
-						viewer.setExpandedElements(mainCatalog.getExpandedNodes().toArray());
+						loading=null;
+						root.clear();
+						root.addLeaf(mainCatalog.getRootNode());
 						mainCatalog.sync();
 						viewer.refresh();
+						viewer.setExpandedElements(mainCatalog.getExpandedNodes().toArray());
 					}
 				});
 				return Status.OK_STATUS;

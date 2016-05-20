@@ -68,7 +68,7 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	@Inject
 	@Optional
 	IEventBroker eventBroker;
-	
+
 	// Custom injected resource
 	@Inject
 	@Optional
@@ -154,6 +154,11 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	}
 
 	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
 	public Image getImage() {
 		// return NodeUtils.getImage(WmsNode.IMAGE_WMSICON);
 		if (this.checked) {
@@ -175,7 +180,7 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 			return;
 		}
 		this.checked = check;
-		if (this.layer!=null) {
+		if (this.layer != null) {
 			this.layer.setEnabled(check);
 		}
 		if (eventBroker != null) {
@@ -198,13 +203,13 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		return checked;
 	}
 
-	//TODO: purge old code from this (capabilities, RIMAPSWMSLayer)
+	// TODO: purge old code from this (capabilities, RIMAPSWMSLayer)
 	@Override
 	public Layer getLayer() {
 		if (this.layer == null) {
-			//System.out.println("first, creating layer");
+			// System.out.println("first, creating layer");
 			WMSCapabilities caps = PadreCatalog.getServerCapabilities(this.url);
-			if (caps==null) {
+			if (caps == null) {
 				try {
 					URI wmsUri = new URI(this.url);
 					caps = WMSCapabilities.retrieve(wmsUri);
@@ -215,23 +220,23 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 				}
 			}
 			AVList layerParams = new AVListImpl();
-			//System.out.println(this.layers);
-	        layerParams.setValue(AVKey.LAYER_NAMES, this.layers);
-	        layerParams.setValue(AVKey.DISPLAY_NAME, this.name);
-	        layerParams.setValue(AVKey.TILE_WIDTH, 256);
-	        layerParams.setValue(AVKey.TILE_HEIGHT, 256);
-	        layerParams.setValue(AVKey.DETAIL_HINT, Double.parseDouble(CatalogProperties.getProperty("wmslayer.defaultdetailhint")));
-	        try {
-	        	this.layer = new WMSTiledImageLayer(caps, layerParams);
-	        	this.layer.setName(this.name);
-	        	this.layer.setValue(RimapAVKey.LAYER_PARENTNODE, this);
-	        	this.layer.setValue(RimapAVKey.HAS_RIMAP_EXTENSIONS, true);
-	        }
-	        catch (Exception e) {
+			// System.out.println(this.layers);
+			layerParams.setValue(AVKey.LAYER_NAMES, this.layers);
+			layerParams.setValue(AVKey.DISPLAY_NAME, this.name);
+			layerParams.setValue(AVKey.TILE_WIDTH, 256);
+			layerParams.setValue(AVKey.TILE_HEIGHT, 256);
+			layerParams.setValue(AVKey.DETAIL_HINT,
+					Double.parseDouble(CatalogProperties.getProperty("wmslayer.defaultdetailhint")));
+			try {
+				this.layer = new WMSTiledImageLayer(caps, layerParams);
+				this.layer.setName(this.name);
+				this.layer.setValue(RimapAVKey.LAYER_PARENTNODE, this);
+				this.layer.setValue(RimapAVKey.HAS_RIMAP_EXTENSIONS, true);
+			} catch (Exception e) {
 				e.printStackTrace();
-	        }
+			}
 		}
-		
+
 		layer.setEnabled(this.checked);
 		return this.layer;
 	}

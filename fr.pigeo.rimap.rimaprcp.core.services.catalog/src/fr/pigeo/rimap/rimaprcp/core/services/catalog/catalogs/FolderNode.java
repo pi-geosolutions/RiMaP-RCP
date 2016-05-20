@@ -35,7 +35,7 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 	private List<INode> leaves = null;
 	private String id;
 	private String name = "new folder";
-	private boolean expanded = false;
+	private boolean expanded = true;
 	private String style = "folder";
 	private String comments = "";
 	private Date lastchanged;
@@ -83,7 +83,7 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 		if (!this.isRootNode()) {
 			this.id = NodeUtils.parseString(node, "id", null);
 			this.name = NodeUtils.parseString(node, "text", "unnamed folder");
-			this.expanded = NodeUtils.parseBool(node, "expanded", this.expanded);
+			this.expanded = NodeUtils.parseBool(node, "expanded", false);
 			this.lastchanged = NodeUtils.parseDate(node, "lastchanged");
 			// System.out.println("Loaded node "+this.name);
 		}
@@ -178,6 +178,11 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 	@Override
 	public String getName() {
 		return name;
+	}
+	
+	@Override
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
