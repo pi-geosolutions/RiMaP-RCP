@@ -191,6 +191,9 @@ public class WwjInstance {
 	@Inject
 	@Optional
 	void checkHandler(@UIEventTopic(RiMaPEventConstants.CHECKABLENODE_CHECKCHANGE) ICheckableNode node) {
+		if (node==null) {
+			return;
+		}
 		Layer layer = node.getLayer();
 		if (layer != null) {
 			updateLayer(layer, true);

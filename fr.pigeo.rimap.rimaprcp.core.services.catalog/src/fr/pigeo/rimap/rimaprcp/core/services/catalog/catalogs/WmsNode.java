@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.swt.graphics.Image;
 
@@ -20,6 +19,7 @@ import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
+import fr.pigeo.rimap.rimaprcp.core.wms.IWmsService;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
@@ -58,21 +58,20 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	protected boolean checked = false;
 
 	@Inject
-	@Optional
 	IPreferencesService prefsService;
 
 	@Inject
-	@Optional
 	IEclipseContext context;
 
 	@Inject
-	@Optional
 	IEventBroker eventBroker;
 
 	// Custom injected resource
 	@Inject
-	@Optional
 	PadreCatalogState catalogState;
+
+	@Inject
+	IWmsService wmsService;
 
 	@Override
 	public void loadFromJson(JsonNode node) {
@@ -107,6 +106,7 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		 * PadreCatalog.addServerCapability(this.url);
 		 * }
 		 */
+		//wmsService.registerServerCapability(this.url);
 
 		if (catalogState != null) {
 			if (this.checked) {
@@ -203,12 +203,10 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		return checked;
 	}
 
-	// TODO: purge old code from this (capabilities, RIMAPSWMSLayer)
 	@Override
 	public Layer getLayer() {
 		if (this.layer == null) {
-			// System.out.println("first, creating layer");
-			WMSCapabilities caps = PadreCatalog.getServerCapabilities(this.url);
+			WMSCapabilities caps = wmsService.getServerCapabilities(this.url);
 			if (caps == null) {
 				try {
 					URI wmsUri = new URI(this.url);
@@ -236,8 +234,10 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 				e.printStackTrace();
 			}
 		}
-
-		layer.setEnabled(this.checked);
+		if (this.layer != null) {
+			// Loading from caps may fail. In this case, layer, will still be null
+			layer.setEnabled(this.checked);
+		}
 		return this.layer;
 	}
 }

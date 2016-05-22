@@ -167,9 +167,9 @@ public class CatalogTabPart {
 						loading=null;
 						root.clear();
 						root.addLeaf(mainCatalog.getRootNode());
-						mainCatalog.sync();
 						viewer.refresh();
 						viewer.setExpandedElements(mainCatalog.getExpandedNodes().toArray());
+						mainCatalog.sync();
 					}
 				});
 				return Status.OK_STATUS;
