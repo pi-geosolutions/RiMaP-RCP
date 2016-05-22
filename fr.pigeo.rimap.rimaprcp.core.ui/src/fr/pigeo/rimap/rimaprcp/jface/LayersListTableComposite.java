@@ -2,12 +2,15 @@ package fr.pigeo.rimap.rimaprcp.jface;
 
 import java.net.URL;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -29,6 +32,7 @@ import org.eclipse.swt.widgets.Table;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.dnd.LayerDragListener;
 import fr.pigeo.rimap.rimaprcp.dnd.LayerDropListener;
@@ -259,5 +263,13 @@ public class LayersListTableComposite extends Composite {
 	
 	public IStructuredSelection getSelectedLayers() {
 		return this.viewer.getStructuredSelection();
+	}
+	
+
+	@Inject
+	@Optional
+	void checkHandler(@UIEventTopic(RiMaPEventConstants.CHECKABLENODE_CHECKCHANGE) ICheckableNode node) {
+		viewer.setInput(wwj.getLayersList());
+		viewer.refresh();
 	}
 }

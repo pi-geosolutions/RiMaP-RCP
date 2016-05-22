@@ -34,6 +34,7 @@ public class OrganizeTabPart {
 	public void postConstruct(Composite parent, WwjInstance wwjInst, Central central, IEclipseContext context) {
 		this.layersListComposite = new LayersListTableComposite(parent, SWT.BORDER_SOLID, wwjInst);
 		ContextInjectionFactory.inject(this.layersListComposite, context);
+		
 		this.layersListComposite.addDragnDropSupport();
 		this.layersListComposite.addWidgetFilter(false);
 		this.layersListComposite.setEventBroker(broker);
