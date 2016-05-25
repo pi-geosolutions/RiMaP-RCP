@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.workbench.lifecycle.PostContextCreate;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
@@ -15,6 +16,7 @@ import org.eclipse.swt.widgets.Display;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
+import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.security.ISecureResourceService;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
@@ -30,6 +32,7 @@ public class LifeCycleManager {
 
 	@PostContextCreate
 	void postContextCreate(IApplicationContext appContext, Display display,
+			IEclipseContext context,
 			IPreferencesService prefService /* default preferences */,
 			WwjInstance wwj /*
 							 * Needed to instanciate from custom config before
@@ -50,6 +53,8 @@ public class LifeCycleManager {
 		String cacheFolderName = prefService.getString(preferencesNode, "cache.rootname", "RiMaP", null);
 		String cachePath = store.getWriteLocation().getParentFile() + File.separator + cacheFolderName;
 		initCacheFolder(cachePath);
+		context.set(RimapConstants.RIMAP_CACHE_PATH, cachePath);
+		
 		Preferences config = preferences.node("config");
 		config.put("cachePath", cachePath);
 		try {

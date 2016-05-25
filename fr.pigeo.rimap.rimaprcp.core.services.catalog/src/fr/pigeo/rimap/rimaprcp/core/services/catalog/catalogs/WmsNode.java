@@ -106,7 +106,7 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		 * PadreCatalog.addServerCapability(this.url);
 		 * }
 		 */
-		//wmsService.registerServerCapability(this.url);
+		wmsService.registerServerCapability(this.url);
 
 		if (catalogState != null) {
 			if (this.checked) {
@@ -206,17 +206,9 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	@Override
 	public Layer getLayer() {
 		if (this.layer == null) {
+			
 			WMSCapabilities caps = wmsService.getServerCapabilities(this.url);
-			if (caps == null) {
-				try {
-					URI wmsUri = new URI(this.url);
-					caps = WMSCapabilities.retrieve(wmsUri);
-					caps.parse();
-				} catch (Exception e) {
-					e.printStackTrace();
-					return null;
-				}
-			}
+			
 			AVList layerParams = new AVListImpl();
 			// System.out.println(this.layers);
 			layerParams.setValue(AVKey.LAYER_NAMES, this.layers);

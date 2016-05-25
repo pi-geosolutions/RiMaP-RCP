@@ -5,7 +5,9 @@ Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.core
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: fr.pigeo.rimap.rimaprcp.core.catalog,
+ fr.pigeo.rimap.rimaprcp.core.constants,
  fr.pigeo.rimap.rimaprcp.core.events,
+ fr.pigeo.rimap.rimaprcp.core.resource,
  fr.pigeo.rimap.rimaprcp.core.security,
  fr.pigeo.rimap.rimaprcp.core.wms
 Service-Component: OSGI-INF/session-component.xml
