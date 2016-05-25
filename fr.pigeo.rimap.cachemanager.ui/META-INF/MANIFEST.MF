@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CacheManager-UI
+Bundle-SymbolicName: fr.pigeo.rimap.cachemanager.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: pi-Geosolutions
+Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150407-1430",
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.swt,
+ gov.nasa.worldwind,
+ org.eclipse.jface,
+ fr.pigeo.rimap.rimaprcp.cachemanager;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
+ javax.inject;version="1.0.0",
+ org.apache.commons.io
