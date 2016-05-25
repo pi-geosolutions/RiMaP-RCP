@@ -169,7 +169,7 @@ public class CatalogTabPart {
 						root.addLeaf(mainCatalog.getRootNode());
 						viewer.refresh();
 						viewer.setExpandedElements(mainCatalog.getExpandedNodes().toArray());
-						mainCatalog.sync();
+						//mainCatalog.sync();
 					}
 				});
 				return Status.OK_STATUS;
