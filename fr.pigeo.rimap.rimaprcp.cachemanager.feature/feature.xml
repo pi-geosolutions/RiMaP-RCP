@@ -24,4 +24,18 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="fr.pigeo.rimap.rimaprcp.cachemanager"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="fr.pigeo.externals.org.apache.commons"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
