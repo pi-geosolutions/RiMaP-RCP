@@ -26,7 +26,6 @@
     </children>
     <handlers xmi:id="_3ibNIMagEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handler.show.widget" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.handlers.ShowWidget" command="_NRVm4MZwEeWTGLqWyfJYDw"/>
     <mainMenu xmi:id="_qcxpQKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.0">
-      <children xsi:type="menu:Menu" xmi:id="_sfbdgKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.io" toBeRendered="false" visible="false" label="%menu.label.1"/>
       <children xsi:type="menu:Menu" xmi:id="_CrNVsMZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.menu.display" label="%menu.display.label">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_qwPYEMZ0EeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compass" toBeRendered="false" visible="false" label="%handledmenuitem.label.1" tooltip="%handledmenuitem.tooltip.1" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
           <persistedState key="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compassState" value="true"/>
@@ -46,10 +45,19 @@
         </children>
         <children xsi:type="menu:DynamicMenuContribution" xmi:id="_xWlnkMgBEeWZzdusKGuDEw" elementId="fr.pigeo.rimap.rimaprcp.dynamicmenucontribution.0" label="%dynamicmenucontribution.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.menus.WidgetMenuItem"/>
       </children>
+      <children xsi:type="menu:Menu" xmi:id="_w5uWoCNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.menu.menuwindow" label="%menu.window">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_zdnPsCNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.switchtomainperspective" label="%menu.window.switchperspective.main" command="_38TBgCNtEeaurtXB4vEzfw">
+          <parameters xmi:id="_CzvFICNuEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.parameter.0" name="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid" value="fr.pigeo.rimap.rimaprcp.perspective.main"/>
+        </children>
+      </children>
     </mainMenu>
   </children>
+  <handlers xmi:id="_IfKW4CNuEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handler.0" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.handlers.PerspectiveSwitchHandler" command="_38TBgCNtEeaurtXB4vEzfw"/>
   <commands xmi:id="_NRVm4MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.command.showWidget" commandName="%command.commandname.1" description="%command.description.1">
     <parameters xmi:id="_SKPgoMaeEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" name="Reference to the WWJ widget to show/hide" typeId="" optional="false"/>
+  </commands>
+  <commands xmi:id="_38TBgCNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.command.switchperspective" commandName="Switch Perspective">
+    <parameters xmi:id="_8Az_0CNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid" name="Perspective ID" optional="false"/>
   </commands>
   <addons xmi:id="_o0Uz4ZzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_o0Uz4pzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>

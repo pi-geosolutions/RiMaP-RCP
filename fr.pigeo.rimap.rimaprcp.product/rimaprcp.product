@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="PADRE2 3D" uid="fr.pigeo.rimap.rimaprcp.product" id="fr.pigeo.rimap.rimaprcp.core.ui.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.1.2" useFeatures="true" includeLaunchers="true">
+<product name="PADRE2 3D" uid="fr.pigeo.rimap.rimaprcp.product" id="fr.pigeo.rimap.rimaprcp.core.ui.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.1.3" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -38,8 +38,8 @@
    </plugins>
 
    <features>
-      <feature id="fr.pigeo.rimap.rimaprcp.getfeatureinfo.feature" version="1.0.0.qualifier"/>
       <feature id="fr.pigeo.rimap.rimaprcp.feature" version="1.0.0.qualifier"/>
+      <feature id="fr.pigeo.rimap.rimaprcp.getfeatureinfo.feature" version="1.0.0.qualifier"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.eclipse.emf.common"/>
