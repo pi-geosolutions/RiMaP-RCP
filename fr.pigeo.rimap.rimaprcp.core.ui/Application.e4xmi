@@ -26,9 +26,7 @@
     </children>
     <handlers xmi:id="_3ibNIMagEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handler.show.widget" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.handlers.ShowWidget" command="_NRVm4MZwEeWTGLqWyfJYDw"/>
     <mainMenu xmi:id="_qcxpQKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.0">
-      <children xsi:type="menu:Menu" xmi:id="_sfbdgKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.io" toBeRendered="false" visible="false" label="%menu.label.1">
-        <children xsi:type="menu:DirectMenuItem" xmi:id="_wAE5wKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menus.io.directmenuitem.load" label="%directmenuitem.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.menus.load"/>
-      </children>
+      <children xsi:type="menu:Menu" xmi:id="_sfbdgKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.io" toBeRendered="false" visible="false" label="%menu.label.1"/>
       <children xsi:type="menu:Menu" xmi:id="_CrNVsMZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.menu.display" label="%menu.display.label">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_qwPYEMZ0EeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compass" toBeRendered="false" visible="false" label="%handledmenuitem.label.1" tooltip="%handledmenuitem.tooltip.1" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
           <persistedState key="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compassState" value="true"/>
