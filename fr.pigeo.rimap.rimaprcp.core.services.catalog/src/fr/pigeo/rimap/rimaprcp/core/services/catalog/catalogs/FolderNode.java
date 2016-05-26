@@ -16,7 +16,6 @@ import org.eclipse.swt.graphics.Image;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
 import fr.pigeo.rimap.rimaprcp.core.catalog.IExpandableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
@@ -87,9 +86,8 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 			this.lastchanged = NodeUtils.parseDate(node, "lastchanged");
 			// System.out.println("Loaded node "+this.name);
 		}
-		if (node.has(CatalogProperties.getProperty("layertree.childrentag"))) {
+		if (node.has(this.childrentag)) {
 
-			// System.out.println("...loading its children");
 			JsonNode children = node.get(this.childrentag);
 			if (children.isArray())
 				this.leaves = this.loadLeaves(children);

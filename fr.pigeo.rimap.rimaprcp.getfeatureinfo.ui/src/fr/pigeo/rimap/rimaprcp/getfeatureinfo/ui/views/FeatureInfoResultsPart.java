@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 
-import fr.pigeo.rimap.rimaprcp.core.Central;
+import fr.pigeo.rimap.rimaprcp.core.ui.core.Central;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.FeatureInfoTarget;
 
 public class FeatureInfoResultsPart {

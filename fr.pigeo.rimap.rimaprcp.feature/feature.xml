@@ -41,13 +41,6 @@
          unpack="false"/>
 
    <plugin
-         id="fr.pigeo.rimap.rimaprcp.catalog"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="fr.pigeo.externals.com.fasterxml.jackson.core"
          download-size="0"
          install-size="0"
@@ -97,13 +90,6 @@
 
    <plugin
          id="fr.pigeo.externals.org.jdom"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="fr.pigeo.rimap.rimaprcp.cache.utils"
          download-size="0"
          install-size="0"
          version="0.0.0"

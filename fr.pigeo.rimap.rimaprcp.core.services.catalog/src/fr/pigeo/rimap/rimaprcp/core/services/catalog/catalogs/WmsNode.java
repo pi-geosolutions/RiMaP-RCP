@@ -1,6 +1,5 @@
 package fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs;
 
-import java.net.URI;
 import java.util.Date;
 import java.util.List;
 
@@ -13,12 +12,12 @@ import org.eclipse.swt.graphics.Image;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.pigeo.rimap.rimaprcp.catalog.CatalogProperties;
-import fr.pigeo.rimap.rimaprcp.catalog.PadreCatalog;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
+import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
+import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
 import fr.pigeo.rimap.rimaprcp.core.wms.IWmsService;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import gov.nasa.worldwind.avlist.AVKey;
@@ -26,7 +25,6 @@ import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
-import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
 public class WmsNode extends AbstractNode implements ICheckableNode {
 	private static String IMAGE_WMSICON = "icons/wms.png";
@@ -36,9 +34,11 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	public static Image checkedImage;
 	public static Image uncheckedImage;
 	public static Image wmsImage;
+	
+	protected double detailhint=0.1;
 
 	protected LayerType type = LayerType.WMS;
-	protected WMSTiledImageLayer layer;
+	protected RimapWMSTiledImageLayer layer;
 	protected INode parent = null;
 	protected String id;
 	protected String name = "unnamed wms layer";
@@ -72,6 +72,8 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 
 	@Inject
 	IWmsService wmsService;
+	
+	
 
 	@Override
 	public void loadFromJson(JsonNode node) {
@@ -96,16 +98,6 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		this.checked = NodeUtils.parseBool(node, "checked", this.checked);
 		this.pq_layer = NodeUtils.parseString(node, "pq_layer", null);
 
-		// TODO : implement equivalent, using context ?
-		/*
-		 * if (this.checked)
-		 * PadreCatalog.addInitiallyCheckedLayer(this);
-		 * 
-		 * if (Boolean.getBoolean(CatalogProperties.getProperty(
-		 * "catalog.loadcapabilitiesatstartup"))) {
-		 * PadreCatalog.addServerCapability(this.url);
-		 * }
-		 */
 		wmsService.registerServerCapability(this.url);
 
 		if (catalogState != null) {
@@ -114,6 +106,11 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 			}
 		} else {
 			System.out.println("################ catalogState context var is null #################");
+		}
+		
+		if (prefsService != null) {
+			this.detailhint = prefsService.getDouble(RimapConstants.WW_DEFAULT_PREFERENCE_NODE, RimapConstants.WW_DEFAULT_LAYER_DETAILSHINT,
+					this.detailhint, null);
 		}
 
 	}
@@ -215,10 +212,9 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 			layerParams.setValue(AVKey.DISPLAY_NAME, this.name);
 			layerParams.setValue(AVKey.TILE_WIDTH, 256);
 			layerParams.setValue(AVKey.TILE_HEIGHT, 256);
-			layerParams.setValue(AVKey.DETAIL_HINT,
-					Double.parseDouble(CatalogProperties.getProperty("wmslayer.defaultdetailhint")));
+			layerParams.setValue(AVKey.DETAIL_HINT, this.detailhint);
 			try {
-				this.layer = new WMSTiledImageLayer(caps, layerParams);
+				this.layer = new RimapWMSTiledImageLayer(caps, layerParams);
 				this.layer.setName(this.name);
 				this.layer.setValue(RimapAVKey.LAYER_PARENTNODE, this);
 				this.layer.setValue(RimapAVKey.HAS_RIMAP_EXTENSIONS, true);
@@ -232,4 +228,130 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		}
 		return this.layer;
 	}
+
+	public LayerType getType() {
+		return type;
+	}
+
+	public void setType(LayerType type) {
+		this.type = type;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getStyle() {
+		return style;
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public Date getLastchanged() {
+		return lastchanged;
+	}
+
+	public void setLastchanged(Date lastchanged) {
+		this.lastchanged = lastchanged;
+	}
+
+	public Integer getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Integer weight) {
+		this.weight = weight;
+	}
+
+	public Double getOpacity() {
+		return opacity;
+	}
+
+	public void setOpacity(Double opacity) {
+		this.opacity = opacity;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getLayers() {
+		return layers;
+	}
+
+	public void setLayers(String layers) {
+		this.layers = layers;
+	}
+
+	public String getLegendurl() {
+		return legendurl;
+	}
+
+	public void setLegendurl(String legendurl) {
+		this.legendurl = legendurl;
+	}
+
+	public String getMetadata_uuid() {
+		return metadata_uuid;
+	}
+
+	public void setMetadata_uuid(String metadata_uuid) {
+		this.metadata_uuid = metadata_uuid;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
+	public String getPq_layer() {
+		return pq_layer;
+	}
+
+	public void setPq_layer(String pq_layer) {
+		this.pq_layer = pq_layer;
+	}
+
+	public boolean isTiled() {
+		return tiled;
+	}
+
+	public void setTiled(boolean tiled) {
+		this.tiled = tiled;
+	}
+
+
+	public void setQueryable(boolean queryable) {
+		this.queryable = queryable;
+	}
+
+	public void setLayer(RimapWMSTiledImageLayer layer) {
+		this.layer = layer;
+	}
+
+	public boolean isQueryable() {
+		return this.queryable;
+	}
+
 }

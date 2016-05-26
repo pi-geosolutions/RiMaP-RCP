@@ -1,11 +1,8 @@
 
 package fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handlers;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.FeatureInfo;

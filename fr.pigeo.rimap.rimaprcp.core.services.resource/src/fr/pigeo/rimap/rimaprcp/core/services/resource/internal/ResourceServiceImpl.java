@@ -78,7 +78,6 @@ public class ResourceServiceImpl implements IResourceService {
 			}
 		}
 		// save it on disk (in cache location)
-		// IOCacheUtil.store(lt, cacheDestination, pwd);
 		secureResourceService.setResource(out, cachePath, UrlToFilename(url));
 		return out;
 	}

@@ -21,10 +21,9 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Display;
 
-import fr.pigeo.rimap.rimaprcp.core.Central;
-import fr.pigeo.rimap.rimaprcp.riskcatalog.Queryable;
-import fr.pigeo.rimap.rimaprcp.riskcatalog.RimapWMSTiledImageLayer;
+import fr.pigeo.rimap.rimaprcp.core.ui.core.Central;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import fr.pigeo.rimap.rimaprcp.worldwind.layers.IQueryableLayer;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 
@@ -44,7 +43,7 @@ public class FeatureInfo {
 	@Inject
 	Central central;
 
-	private RimapWMSTiledImageLayer[] layers;
+	private IQueryableLayer[] layers;
 	private boolean enabled;
 	private MouseAdapter clickListener;
 	private Locale locale = Locale.ENGLISH;
@@ -57,7 +56,7 @@ public class FeatureInfo {
 	/**
 	 * @return the queryable layers list
 	 */
-	public RimapWMSTiledImageLayer[] getLayers() {
+	public IQueryableLayer[] getLayers() {
 		return layers;
 	}
 
@@ -65,7 +64,7 @@ public class FeatureInfo {
 	 * @param layers
 	 *            the layers to set
 	 */
-	public void setLayers(RimapWMSTiledImageLayer[] layers) {
+	public void setLayers(IQueryableLayer[] layers) {
 		this.layers = layers;
 	}
 
@@ -82,7 +81,7 @@ public class FeatureInfo {
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-		// logger.info("FeatureInfo button status is " + enabled);
+		 logger.info("FeatureInfo button status is " + enabled);
 
 		if (this.enabled) {
 			if (clickListener == null) { // lazy init
@@ -113,18 +112,19 @@ public class FeatureInfo {
 
 	private void getFeatureInfo() {
 		final Position pos = wwj.getWwd().getCurrentPosition();
-		//logger.info("TODO: retrieve FI at pos " + pos.toString());
+		logger.info("TODO: retrieve FI at pos " + pos.toString());
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					ArrayList<FeatureInfoTarget> targets = new ArrayList<FeatureInfoTarget>();
 					Layer[] wwjlayers = wwj.getLayersList();
 					for (Layer layer : wwjlayers) {
-						if (layer instanceof Queryable) {
-							Queryable qlayer = (Queryable) layer;
+						System.out.println(layer.getClass());
+						if (layer instanceof IQueryableLayer) {
+							IQueryableLayer qlayer = (IQueryableLayer) layer;
 							if (qlayer.isQueryable()) {
 								URL req = qlayer.buildFeatureInfoRequest(pos, locale.getISO3Country());
 								if (req != null) {
-									logger.debug("GetFeatureInfoURL: "+req.toString());
+									logger.info("GetFeatureInfoURL: "+req.toString());
 									targets.add(new FeatureInfoTarget(qlayer, pos));
 								}
 							}

@@ -9,6 +9,7 @@ Require-Bundle: org.eclipse.e4.core.di.annotations,
  javax.inject,
  gov.nasa.worldwind,
  org.eclipse.equinox.preferences,
- fr.pigeo.rimap.rimaprcp.core,
- org.eclipse.e4.ui.di
-Export-Package: fr.pigeo.rimap.rimaprcp.worldwind
+ org.eclipse.e4.ui.di,
+ fr.pigeo.rimap.rimaprcp.core;bundle-version="1.0.0"
+Export-Package: fr.pigeo.rimap.rimaprcp.worldwind,
+ fr.pigeo.rimap.rimaprcp.worldwind.layers

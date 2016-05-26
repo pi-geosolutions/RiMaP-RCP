@@ -1,13 +1,13 @@
 package fr.pigeo.rimap.rimaprcp.getfeatureinfo.core;
 
-import fr.pigeo.rimap.rimaprcp.riskcatalog.Queryable;
+import fr.pigeo.rimap.rimaprcp.worldwind.layers.IQueryableLayer;
 import gov.nasa.worldwind.geom.Position;
 
 public class FeatureInfoTarget {
-	private Queryable layer;
+	private IQueryableLayer layer;
 	private Position position;
 
-	public FeatureInfoTarget(Queryable l, Position pos) {
+	public FeatureInfoTarget(IQueryableLayer l, Position pos) {
 		this.layer = l;
 		this.position = pos;
 	}
@@ -15,7 +15,7 @@ public class FeatureInfoTarget {
 	/**
 	 * @return the layer
 	 */
-	public Queryable getLayer() {
+	public IQueryableLayer getLayer() {
 		return layer;
 	}
 
@@ -23,7 +23,7 @@ public class FeatureInfoTarget {
 	 * @param layer
 	 *            the layer to set
 	 */
-	public void setLayer(Queryable layer) {
+	public void setLayer(IQueryableLayer layer) {
 		this.layer = layer;
 	}
 
