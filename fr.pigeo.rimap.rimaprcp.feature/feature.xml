@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="fr.pigeo.rimap.rimaprcp.feature"
+      id="fr.pigeo.rimap.rimaprcp.core.feature"
       label="Feature"
       version="1.0.0.qualifier">
 

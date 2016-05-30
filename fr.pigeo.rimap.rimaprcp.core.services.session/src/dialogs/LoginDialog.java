@@ -47,7 +47,7 @@ public class LoginDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
-		bgImage = this.getBgImage("fr.pigeo.rimap.rimaprcp.core.ui", "loginBackground.png");
+		bgImage = this.getBgImage("loginBackground.png");
 		container.setBackgroundImage(bgImage);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginRight = 5;
@@ -139,8 +139,8 @@ public class LoginDialog extends Dialog {
 		return password;
 	}
 
-	private Image getBgImage(String bundlename, String path) {
-		Bundle bundle = Platform.getBundle(bundlename);
+	private Image getBgImage(String path) {
+		Bundle bundle = FrameworkUtil.getBundle(LoginDialog.class);
 		URL url = FileLocator.find(bundle, new Path(path), null);
 
 		ImageDescriptor imageDescr = ImageDescriptor.createFromURL(url);

@@ -58,6 +58,7 @@ public class CatalogTabPart {
 	private Tree tree;
 	private RootNode root;
 	private MessageNode loading;
+	private boolean success;
 
 	@PostConstruct
 	public void postConstruct(// @Preference IEclipsePreferences prefs,
@@ -168,7 +169,7 @@ public class CatalogTabPart {
 		Job job = new Job("My Job") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				boolean success = mainCatalog.load();
+				success = mainCatalog.load();
 
 				synch.asyncExec(new Runnable() {
 					@Override
