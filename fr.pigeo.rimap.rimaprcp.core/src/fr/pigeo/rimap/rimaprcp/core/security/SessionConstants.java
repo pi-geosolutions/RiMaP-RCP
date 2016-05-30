@@ -1,4 +1,4 @@
-package fr.pigeo.rimap.rimaprcp.core.services.session.internal;
+package fr.pigeo.rimap.rimaprcp.core.security;
 
 public interface SessionConstants {
 	String PREFERENCES_NODE = "fr.pigeo.rimap.rimaprcp";
@@ -11,6 +11,9 @@ public interface SessionConstants {
 	String LOGIN_SERVICE = "j_spring_security_check" ;
 	String AUTH_SESSIONID="JSESSIONID";
 	String AUTH_URL_FAILURE_ENDSWITH = "?failure=true";
+
+	String WEB_CONNECTION_TIMEOUT = "web.connect.timeout";
+	String WEB_READ_TIMEOUT = "web.read.timeout";
 	
 	//Return codes
 	String RETURNCODE_AUTH_FAILURE = "authFailure";

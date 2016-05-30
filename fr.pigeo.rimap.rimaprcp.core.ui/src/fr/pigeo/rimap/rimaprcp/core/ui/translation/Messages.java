@@ -27,6 +27,10 @@ public class Messages {
 	public String parts_layerdetails_showlegend_tooltip;
 	public String parts_layerdetails_showmetadata;
 	public String parts_layerdetails_showmetadata_tooltip;
+	
+	//Error messages
+	public String catalog_load_error_title;
+	public String catalog_load_error_msg;
 
 	public Messages() {
 	}

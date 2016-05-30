@@ -15,5 +15,9 @@ public class Messages {
 	public String noConnectionMessageDialogGoLocal; 
 	public String noConnectionMessageDialogAbort; 
 	
+	//Wrong credentials Message dialog
+	public String wrongCredentialsDialogTitle;
+	public String wrongCredentialsDialogMsg;
+	
 	
 }

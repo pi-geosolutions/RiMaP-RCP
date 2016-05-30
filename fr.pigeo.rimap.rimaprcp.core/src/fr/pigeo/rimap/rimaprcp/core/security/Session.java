@@ -16,17 +16,23 @@ public class Session {
 					sessionID,
 					authentificationURL;
 	
-	private boolean anonymous;
-	// credsCheckLevel:
+	// credsCheckLevel (use constants form, cf SessionConstants):
 	//  - 2 if credentials have been validated by the web service (Geonetwork auth service)
 	//  - 1 if no web connection, i.e. creds have only been checked locally (were successful 
 	// for reading encrypted session cached data) 
 	//  - 0 if not checked at all
 	//  - (-1) if invalid (auth failure)
-	private int credsCheckLevel = 0;
+	private int credsCheckLevel = SessionConstants.CREDS_LEVEL_NULL;
 	
-	public Session (boolean anon) {
-		this.anonymous = anon;
+	public Session () {
+		this.reset();
+	}
+
+	private void reset() {
+		this.username=null;
+		this.password = null;
+		this.sessionID = null;
+		this.credsCheckLevel=SessionConstants.CREDS_LEVEL_NULL;
 	}
 
 	/**
@@ -75,14 +81,14 @@ public class Session {
 	 * @return the anonymous
 	 */
 	public boolean isAnonymous() {
-		return anonymous;
+		return (this.username==null);
 	}
 
 	/**
 	 * @param anonymous the anonymous to set
 	 */
-	public void setAnonymous(boolean anonymous) {
-		this.anonymous = anonymous;
+	public void setAnonymous() {
+		this.reset();
 	}
 
 	/**

@@ -7,6 +7,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
@@ -24,6 +30,10 @@ public class ResourceServiceImpl implements IResourceService {
 	@Inject
 	@Named(RimapConstants.RIMAP_CACHE_PATH)
 	String cachePath;
+
+	@Inject
+	@Optional
+	CloseableHttpClient httpClient;
 
 	@Override
 	public byte[] getResource(String url, int web_usage_level) {
@@ -53,21 +63,32 @@ public class ResourceServiceImpl implements IResourceService {
 		return getResourceFromFile(url, false);
 	}
 
-	/**
-	 * 
-	 * @param isFallback
-	 *            Tells if this is already the fallback method (i.e. we won't
-	 *            fallback on the getFromFile method if this one fails)
-	 * @return
-	 */
-
-	private byte[] getResourceFromURL(String url, boolean isFallback) {
-		byte[] out;
+	@Override
+	public byte[] getResourceFromURL(String url, boolean isFallback) {
+		byte[] out=null;
 		try {
 			URL _url = new URL(url);
-			out = IOUtils.toByteArray(_url);
+			if (httpClient != null) {
+				HttpGet httpget = new HttpGet(url);
+				CloseableHttpResponse response = httpClient.execute(httpget);
+				try {
+					HttpEntity entity = response.getEntity();
+					if (entity != null) {
+						out = EntityUtils.toByteArray(entity);
+					}
+				} finally {
+					response.close();
+				}
+			} else {
+				// Other method. No authentification is taken into account
+				logger.warn("HttpClient is null. This shouldn't occur."
+						+ "The application will not be able to access restricted resources."
+						+ "Trying to load the resource another way...");
+				out = IOUtils.toByteArray(_url);
+			}
 		} catch (IOException e) {
-			String msg = e.getClass().toString() + ": Couldn't load " + url + " from server.";
+			String msg = e.getClass()
+					.toString() + ": Couldn't load " + url + " from server.";
 			if (isFallback) {
 				logger.warn(msg);
 				return null;
@@ -82,14 +103,8 @@ public class ResourceServiceImpl implements IResourceService {
 		return out;
 	}
 
-	/**
-	 * 
-	 * @param isFallback
-	 *            Tells if this is already the fallback method (i.e. we won't
-	 *            fallback on the getFromURL method if this one fails)
-	 * @return
-	 */
-	private byte[] getResourceFromFile(String url, boolean isFallback) {
+	@Override
+	public byte[] getResourceFromFile(String url, boolean isFallback) {
 		byte[] out = secureResourceService.getResourceAsByteArray(cachePath, UrlToFilename(url));
 		if (out == null && !isFallback) {
 			// then we try to load it from the web
@@ -108,4 +123,5 @@ public class ResourceServiceImpl implements IResourceService {
 		filename = filename.replaceAll("\\W", "_");
 		return filename;
 	}
+
 }

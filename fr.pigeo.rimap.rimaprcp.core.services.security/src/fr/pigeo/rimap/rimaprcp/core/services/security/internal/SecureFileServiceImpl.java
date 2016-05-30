@@ -20,6 +20,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 
 import fr.pigeo.rimap.rimaprcp.core.security.ISecureResourceService;
@@ -28,12 +30,22 @@ import fr.pigeo.rimap.rimaprcp.core.security.Session;
 
 public class SecureFileServiceImpl implements ISecureResourceService {
 	private static String ENCODED_FILE_SUFFIX = ".enc";
-	@Inject
-	Logger logger;
-	@Inject
-	ISessionService sessionService = null;
+
 	Charset charset = StandardCharsets.UTF_8;
 
+	@Inject
+	Logger logger;
+
+	@Inject
+	ISessionService sessionService = null;
+
+	@Inject
+	@Optional
+	IPreferencesService prefsService;
+
+	// gracefully falls back on anonymous files if the encoded file does
+	// not exist.
+	// Uses preferences to set this behavior (can be disabled)
 	@Override
 	public byte[] getResourceAsByteArray(String resourcePath, String resourceName) {
 		Path rawPath = getResourcePath(resourcePath, resourceName);
@@ -45,6 +57,17 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 		} else if (Files.isRegularFile(rawPath)) {
 			return getUnencodedResourceAsByteArray(rawPath);
 		} else {
+			// try to fallback gracefully to anonymous cache data
+			if (prefsService != null) {
+				boolean gracefully_fallback = prefsService.getBoolean(SecurityConstants.PREFERENCES_NODE,
+						SecurityConstants.FALLBACK_ON_ANONYMOUS_PREF_TAG,
+						SecurityConstants.FALLBACK_ON_ANONYMOUS_PREF_DEFAULT, null);
+				rawPath = getPlainResourcePath(resourcePath, resourceName);
+				if (gracefully_fallback && Files.isRegularFile(rawPath)) {
+					logger.info("Resource unavailable using credentials. Falling back to anonymous cached data");
+					return getUnencodedResourceAsByteArray(rawPath);
+				}
+			} // else
 			logger.info("Couldn't get Resource. Returning null");
 			return null;
 		}
@@ -115,7 +138,6 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 			return false;
 		}
 		return (getEncodedResourceAsByteArray(encPath, key) != null);
-
 	}
 
 	@Override
@@ -138,8 +160,6 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 			}
 			if (cipher != null) {
 				outputBytes = cipher.doFinal(input);
-				// add extension to tell the file is encrypted
-				//destPath = Paths.get(destPath.getParent().toString(),	destPath.getFileName().toString() + SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
 				destPath = getEncodedResourcePath(resourcePath, resourceName);
 			} else {
 				destPath = getResourcePath(resourcePath, resourceName);
@@ -182,7 +202,8 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 		boolean isAvailableUnencoded = (Files.exists(path) && Files.isRegularFile(path));
 		Path encpath = getEncodedResourcePath(resourcePath, resourceName);
 		boolean isAvailableEncoded = (Files.exists(encpath) && Files.isRegularFile(encpath));
-		logger.info("Checking availability for file: \n"+path+"="+isAvailableUnencoded+" \n"+ encpath+"="+isAvailableEncoded);
+		logger.info("Checking availability for file: \n" + path + "=" + isAvailableUnencoded + " \n" + encpath + "="
+				+ isAvailableEncoded);
 		return (isAvailableUnencoded || isAvailableEncoded);
 	}
 
@@ -208,9 +229,13 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 		}
 		return path;
 	}
-	
+
+	private Path getPlainResourcePath(String resourcePath, String resourceName) {
+		return Paths.get(resourcePath, resourceName);
+	}
+
 	private Path getEncodedResourcePath(String resourcePath, String resourceName) {
-		return getResourcePath(resourcePath, resourceName+SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
+		return getResourcePath(resourcePath, resourceName + SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
 	}
 
 	/**
@@ -221,4 +246,5 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 		String key = session.getPassword();
 		return key;
 	}
+
 }

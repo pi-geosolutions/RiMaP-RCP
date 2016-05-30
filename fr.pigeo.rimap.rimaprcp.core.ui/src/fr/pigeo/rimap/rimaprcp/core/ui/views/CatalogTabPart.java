@@ -12,7 +12,9 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
@@ -33,9 +35,10 @@ import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalog;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalogService;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.IExpandableNode;
-import fr.pigeo.rimap.rimaprcp.core.catalog.LoadingMessageNode;
+import fr.pigeo.rimap.rimaprcp.core.catalog.MessageNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.RootNode;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
+import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 
 public class CatalogTabPart {
@@ -46,11 +49,15 @@ public class CatalogTabPart {
 
 	@Inject
 	Display disp;
+	
+	@Inject
+	@Translation
+	Messages messages;
 
 	private TreeViewer viewer;
 	private Tree tree;
 	private RootNode root;
-	private LoadingMessageNode loading;
+	private MessageNode loading;
 
 	@PostConstruct
 	public void postConstruct(// @Preference IEclipsePreferences prefs,
@@ -71,7 +78,8 @@ public class CatalogTabPart {
 		// To support multiple columns. See
 		// http://www.vogella.com/tutorials/EclipseJFaceTree/article.html
 		TreeViewerColumn mainColumn = new TreeViewerColumn(viewer, SWT.NONE);
-		mainColumn.getColumn().setWidth(300);
+		mainColumn.getColumn()
+				.setWidth(300);
 		mainColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(new CatalogViewNodenameProvider()));
 
 		this.tree = viewer.getTree();
@@ -83,10 +91,10 @@ public class CatalogTabPart {
 				if (tree.getSelection().length > 0) {
 					TreeItem item = tree.getSelection()[0];
 					if (item.getImage() != null) {
-						if ((e.x > item.getImageBounds(0).x)
-								&& (e.x < (item.getImageBounds(0).x + item.getImage().getBounds().width))) {
-							if ((e.y > item.getImageBounds(0).y)
-									&& (e.y < (item.getImageBounds(0).y + item.getImage().getBounds().height))) {
+						if ((e.x > item.getImageBounds(0).x) && (e.x < (item.getImageBounds(0).x + item.getImage()
+								.getBounds().width))) {
+							if ((e.y > item.getImageBounds(0).y) && (e.y < (item.getImageBounds(0).y + item.getImage()
+									.getBounds().height))) {
 								if (item.getData() instanceof ICheckableNode) {
 									ICheckableNode node = (ICheckableNode) item.getData();
 									node.toggleChecked();
@@ -130,7 +138,8 @@ public class CatalogTabPart {
 			@Override
 			public void handleEvent(Event event) {
 				TreeItem treeItem = (TreeItem) event.item;
-				final TreeColumn[] treeColumns = treeItem.getParent().getColumns();
+				final TreeColumn[] treeColumns = treeItem.getParent()
+						.getColumns();
 				disp.asyncExec(new Runnable() {
 
 					@Override
@@ -144,7 +153,7 @@ public class CatalogTabPart {
 
 		this.tree.addListener(SWT.Expand, packListener);
 		root = new RootNode();
-		loading = new LoadingMessageNode();
+		loading = new MessageNode();
 		root.addLeaf(loading);
 		viewer.setInput(root);
 		disp.timerExec(500, new Runnable() {
@@ -159,17 +168,26 @@ public class CatalogTabPart {
 		Job job = new Job("My Job") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				mainCatalog.load();
+				boolean success = mainCatalog.load();
 
 				synch.asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						loading=null;
-						root.clear();
-						root.addLeaf(mainCatalog.getRootNode());
-						viewer.refresh();
-						viewer.setExpandedElements(mainCatalog.getExpandedNodes().toArray());
-						//mainCatalog.sync();
+						if (success) {
+							loading = null;
+							root.clear();
+							root.addLeaf(mainCatalog.getRootNode());
+							viewer.refresh();
+							viewer.setExpandedElements(mainCatalog.getExpandedNodes()
+									.toArray());
+						} else {
+							loading = null;
+							root.clear();
+							MessageNode msgNode = new MessageNode(messages.catalog_load_error_title, "icons/warning.png");
+							root.addLeaf(msgNode);
+							viewer.refresh();
+							MessageDialog.openWarning(disp.getActiveShell(), messages.catalog_load_error_title, messages.catalog_load_error_msg); 
+						}
 					}
 				});
 				return Status.OK_STATUS;

@@ -38,7 +38,7 @@ public class PadreCatalog implements ICatalog {
 
 	@Inject
 	ISecureResourceService secureResourceService;
-	
+
 	@Inject
 	IResourceService resourceService;
 
@@ -91,13 +91,14 @@ public class PadreCatalog implements ICatalog {
 			return false;
 		}
 		Session session = sessionService.getSession();
-		logger.info("[PadreCatalog] Session service instanciated. Session username is "
-				+ sessionService.getSession().getUsername());
+		logger.info("[PadreCatalog] Session service instanciated. Session username is " + sessionService.getSession()
+				.getUsername());
 		this.layertreeAsJsonNode = getLayertree();
 
 		// if null, then it failed. We exit the function.
 		if (this.layertreeAsJsonNode == null) {
-			logger.error("ERROR parsing layertree (" + this.getClass().getName() + ")");
+			logger.error("ERROR parsing layertree (" + this.getClass()
+					.getName() + ")");
 			return false;
 		}
 
@@ -114,7 +115,6 @@ public class PadreCatalog implements ICatalog {
 		this.rootNode.setName(params.getName());
 		this.catalogState.addExpandedNode(this.rootNode);
 		this.rootNode.loadFromJson(this.layertreeAsJsonNode);
-		
 
 		this.checkInitialNodes(this.catalogState.getCheckedNodes());
 
@@ -123,10 +123,12 @@ public class PadreCatalog implements ICatalog {
 
 	protected JsonNode getLayertree() {
 		JsonNode node = null;
-		
+
 		byte[] b = resourceService.getResource(params.getUrl(), params.getWeb_usage_level());
-		String lt = new String(b);
-		node = this.stringToJson(lt);
+		if (b != null) {
+			String lt = new String(b);
+			node = this.stringToJson(lt);
+		}
 		return node;
 	}
 
@@ -188,15 +190,29 @@ public class PadreCatalog implements ICatalog {
 			System.out.println("Oops, wwj is null !");
 			return;
 		}
-		Iterator<ICheckableNode> itr = catalogState.getCheckedNodes().iterator();
+		Iterator<ICheckableNode> itr = catalogState.getCheckedNodes()
+				.iterator();
 		while (itr.hasNext()) {
 			ICheckableNode node = itr.next();
 			wwj.addLayer(node.getLayer());
 		}
 	}
-	
-	@Override public void sync() {
+
+	@Override
+	public void sync() {
 		this.checkInitialNodes(this.getCheckedNodes());
+	}
+
+	@Override
+	public boolean testCredentials(String username, String password, boolean local) {
+		// TODO: use provided credentials instead of the current session ones
+		// (will add more flexibility : e.g. test different credentials for
+		// different passwords, using the mainCatalog creds as master password)
+		byte[] lt = resourceService.getResourceFromFile(params.getUrl(), true);
+		if (lt != null) {
+			return true;
+		} // else
+		return false;
 	}
 
 }

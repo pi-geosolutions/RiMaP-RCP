@@ -3,7 +3,6 @@ package fr.pigeo.rimap.rimaprcp.core.services.session.internal;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -11,11 +10,15 @@ import javax.inject.Named;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -27,12 +30,13 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
-import org.osgi.service.event.Event;
 
 import dialogs.LoginDialog;
+import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalogService;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.core.security.Session;
+import fr.pigeo.rimap.rimaprcp.core.security.SessionConstants;
 
 public class DefaultSessionServiceImpl implements ISessionService {
 	private Session session;
@@ -75,14 +79,17 @@ public class DefaultSessionServiceImpl implements ISessionService {
 		String baseurl = prefService.getString(SessionConstants.PREFERENCES_NODE, SessionConstants.P_BASE_URL, null,
 				null);
 
+		// Initiate HttpClient (sets a context variable
+		this.getHttpClient();
+
 		// if baseurl is null, we open an anonymous session
 		// else we open a login dialog
-		session = new Session(baseurl == null);
+		session = new Session();
 		if (baseurl != null) {
 			String loginService = prefService.getString(SessionConstants.PREFERENCES_NODE,
 					SessionConstants.P_LOGIN_SERVICE, SessionConstants.LOGIN_SERVICE, null);
 			session.setAuthentificationURL(baseurl + loginService);
-			logger.info("Session service full URL : %s", session.getAuthentificationURL());
+			logger.info("Session service full URL : " + session.getAuthentificationURL());
 			askForLogin();
 
 			// TODO: check session is validated then send session_validated
@@ -121,9 +128,13 @@ public class DefaultSessionServiceImpl implements ISessionService {
 			String password = dialog.getPassword();
 			session.setUsername(username);
 			session.setPassword(password);
-			logger.info("Credentials set for %s. Now checking for their validity...", username);
+			logger.info("Credentials set for " + username + ". Now checking for their validity...");
 			this.tryOpenOnlineSession();
 			dialog.dispose();
+		} else {
+			// we need to reset session vars if necessary (e.g. in case of auth
+			// failure, username + pwd were previously set nonetheless
+			session.setAnonymous();
 		}
 
 	}
@@ -137,8 +148,8 @@ public class DefaultSessionServiceImpl implements ISessionService {
 			OpenNoConnectionMessage(session);
 			break;
 		case SessionConstants.RETURNCODE_AUTH_FAILURE:
-			MessageDialog.openError(shell, "Wrong credentials",
-					"Authentification failure. " + "Try login again or consider continuing as guest");
+			MessageDialog.openError(shell, messages.wrongCredentialsDialogTitle,
+					messages.wrongCredentialsDialogMsg);
 			this.askForLogin();
 			break;
 		case SessionConstants.RETURNCODE_IOEXCEPTION:
@@ -168,7 +179,6 @@ public class DefaultSessionServiceImpl implements ISessionService {
 		case 1: // TODO : check credentials locally (ie can decrypt the
 				// layertree)
 			checkCredentialsLocally();
-			// storeAuth(user, pwd, null);
 			break;
 		case 2:
 			System.exit(0);
@@ -177,13 +187,34 @@ public class DefaultSessionServiceImpl implements ISessionService {
 	}
 
 	private void checkCredentialsLocally() {
-		// TODO: Use SecureFilesIOService to check if the credentials are OK
+		// Won't work because of loop-dependency. In place, we just try when
+		// loading the catalog and display an error in case it won't load.
+		
+		
+		/*
+		 * boolean check = catalogService.getMainCatalog()
+		 * .testCredentials(session.getUsername(), session.getPassword(), true);
+		 * 
+		 * if (check) {
+		 * System.out.println(
+		 * "~~~~~~~~~~~~ Creds locally validated ~~~~~~~~~~~~");
+		 * session.setCredsCheckLevel(SessionConstants.
+		 * CREDS_LEVEL_LOCAL_VALIDATED);
+		 * } else {
+		 * MessageDialog.openWarning(shell, "Credentials invalid",
+		 * "Your credentials are invalid. Falling back to anonymous session");
+		 * System.out.println(
+		 * "~~~~~~~~~~~~ Creds are really invalid (even locally) ~~~~~~~~~~~~");
+		 * session.setAnonymous();
+		 * }
+		 */
+
 	}
 
 	private String getGeonetworkSessionID() {
 		String url = session.getAuthentificationURL();
 
-		CloseableHttpClient httpclient = HttpClients.createDefault();
+		CloseableHttpClient httpclient = this.getHttpClient();
 		HttpPost httppost = new HttpPost(url);
 		try {
 
@@ -196,12 +227,9 @@ public class DefaultSessionServiceImpl implements ISessionService {
 
 			// Execute and get the response.
 			CloseableHttpResponse response = httpclient.execute(httppost);
-			/*
-			 * Header[] headers = response.getAllHeaders(); for (Header h :
-			 * headers) { System.out.println(h.getName() + ": " + h.getValue());
-			 * }
-			 */
-			if (response.getHeaders("Location")[0].getValue().endsWith(SessionConstants.AUTH_URL_FAILURE_ENDSWITH)) {
+
+			if (response.getHeaders("Location")[0].getValue()
+					.endsWith(SessionConstants.AUTH_URL_FAILURE_ENDSWITH)) {
 				return SessionConstants.RETURNCODE_AUTH_FAILURE;
 			} else {
 				// return JSESSIONID value
@@ -215,9 +243,7 @@ public class DefaultSessionServiceImpl implements ISessionService {
 				}
 
 			}
-			// TODO : check if we can close response and httpclient without
-			// response.close();
-			// httpclient.close();
+			response.close();
 			httppost.releaseConnection();
 		} catch (ClientProtocolException | UnknownHostException e) {
 			logger.error(e.getClass() + ": Could not reach the server for authentification. "
@@ -231,9 +257,35 @@ public class DefaultSessionServiceImpl implements ISessionService {
 			return SessionConstants.RETURNCODE_IOEXCEPTION;
 		} finally {
 			httppost.releaseConnection();
-			// httpclient.close();
 		}
 		return ""; // shouldn't occur
+	}
+
+	public CloseableHttpClient getHttpClient() {
+		CloseableHttpClient client = context.get(CloseableHttpClient.class);
+
+		if (client == null) {
+			int defaulttimeout = 5;
+			int timeout = prefService.getInt(SessionConstants.PREFERENCES_NODE, SessionConstants.WEB_CONNECTION_TIMEOUT,
+					defaulttimeout, null);
+
+			RequestConfig config = RequestConfig.custom()
+					.setCookieSpec(CookieSpecs.DEFAULT)
+					.setConnectTimeout(timeout * 1000)
+					.setConnectionRequestTimeout(timeout * 1000)
+					.setSocketTimeout(timeout * 1000)
+					.build();
+
+			CookieStore httpCookieStore = new BasicCookieStore();
+
+			client = HttpClientBuilder.create()
+					.setDefaultRequestConfig(config)
+					.setDefaultCookieStore(httpCookieStore)
+					.build();
+
+			context.set(CloseableHttpClient.class, client);
+		}
+		return client;
 	}
 
 }
