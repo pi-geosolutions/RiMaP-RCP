@@ -6,19 +6,18 @@ import javax.inject.Inject;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -28,6 +27,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import fr.pigeo.rimap.rimaprcp.core.services.session.internal.Messages;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class LoginDialog extends Dialog {
 	private Text txtUser;
@@ -49,30 +49,41 @@ public class LoginDialog extends Dialog {
 		Composite container = (Composite) super.createDialogArea(parent);
 		bgImage = this.getBgImage("loginBackground.png");
 		container.setBackgroundImage(bgImage);
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginRight = 5;
-		layout.marginLeft = 10;
-		container.setLayout(layout);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
+		container.setLayout(new FormLayout());
+		
 
-		Label lblUser = new Label(container, SWT.NONE);
-		lblUser.setText(messages.loginDialogUserLbl);
+		txtPassword = new Text(container, SWT.BORDER | SWT.PASSWORD);
+		FormData fd_txtPassword = new FormData();
+		fd_txtPassword.bottom = new FormAttachment(100, -10);
+		fd_txtPassword.right = new FormAttachment(100,-10);
+		fd_txtPassword.width = 200;
+		txtPassword.setLayoutData(fd_txtPassword);
+		txtPassword.setText(password);
+		txtPassword.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Text textWidget = (Text) e.getSource();
+				String passwordText = textWidget.getText();
+				password = passwordText;
+			}
+		});
+
+		Label lblPassword = new Label(container, SWT.NONE);
+		lblPassword.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
+		FormData fd_lblPassword = new FormData();
+		fd_lblPassword.bottom = new FormAttachment(txtPassword, 0, SWT.CENTER);
+		fd_lblPassword.right = new FormAttachment(txtPassword, -10);
+		lblPassword.setLayoutData(fd_lblPassword);
+		lblPassword.setText(messages.loginDialogPwdLbl);
+
 
 		txtUser = new Text(container, SWT.BORDER);
-		txtUser.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		FormData fd_txtUser = new FormData();
+		fd_txtUser.bottom = new FormAttachment(txtPassword, -5);
+		fd_txtUser.right = new FormAttachment(100, -10);
+		fd_txtUser.width = 200;
+		txtUser.setLayoutData(fd_txtUser);
 		txtUser.setText(user);
 		txtUser.addModifyListener(new ModifyListener() {
 
@@ -84,24 +95,15 @@ public class LoginDialog extends Dialog {
 			}
 		});
 
-		Label lblPassword = new Label(container, SWT.NONE);
-		GridData gd_lblNewLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblNewLabel.horizontalIndent = 1;
-		lblPassword.setLayoutData(gd_lblNewLabel);
-		lblPassword.setText(messages.loginDialogPwdLbl);
+		Label lblUser = new Label(container, SWT.NONE);
+		lblUser.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
+		FormData fd_lblUser = new FormData();
+		fd_lblUser.bottom = new FormAttachment(txtUser, 0, SWT.CENTER);
+		fd_lblUser.right = new FormAttachment(txtUser, -10);
+		lblUser.setLayoutData(fd_lblUser);
+		lblUser.setText(messages.loginDialogUserLbl);
+		container.setTabList(new Control[]{txtUser, txtPassword});
 
-		txtPassword = new Text(container, SWT.BORDER | SWT.PASSWORD);
-		txtPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtPassword.setText(password);
-		txtPassword.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				Text textWidget = (Text) e.getSource();
-				String passwordText = textWidget.getText();
-				password = passwordText;
-			}
-		});
 		return container;
 	}
 
@@ -122,7 +124,7 @@ public class LoginDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(450, 300);
+		return new Point(500, 300);
 	}
 
 	/**

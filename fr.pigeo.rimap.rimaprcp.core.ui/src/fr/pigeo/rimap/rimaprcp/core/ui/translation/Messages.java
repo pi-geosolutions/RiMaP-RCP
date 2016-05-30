@@ -28,6 +28,9 @@ public class Messages {
 	public String parts_layerdetails_showmetadata;
 	public String parts_layerdetails_showmetadata_tooltip;
 	
+	//Legend dialog
+	public String dialog_legend_title;
+	
 	//Error messages
 	public String catalog_load_error_title;
 	public String catalog_load_error_msg;

@@ -8,6 +8,8 @@ import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -50,6 +52,9 @@ public class LayerDetailsImpl extends LayerDetails {
 
 	@Inject
 	IPreferencesService prefService;
+
+	@Inject
+	IEclipseContext context;
 
 	public LayerDetailsImpl() {
 
@@ -122,7 +127,7 @@ public class LayerDetailsImpl extends LayerDetails {
 	private void initComponents() {
 		boolean isLayer = (layer instanceof Layer);
 		boolean isRimapLayer;
-		if (layer != null && layer.hasKey(RimapAVKey.HAS_RIMAP_EXTENSIONS) ) {
+		if (layer != null && layer.hasKey(RimapAVKey.HAS_RIMAP_EXTENSIONS)) {
 			isRimapLayer = (boolean) layer.getValue(RimapAVKey.HAS_RIMAP_EXTENSIONS);
 		} else {
 			isRimapLayer = false;
@@ -199,9 +204,10 @@ public class LayerDetailsImpl extends LayerDetails {
 			this.btnLegendSelectionAdapter = new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					String legend_path = prefService.getString("fr.pigeo.rimap.rimaprcp", "catalog.wms_getlegend_relpath",
-							"not set", null);
+					String legend_path = prefService.getString("fr.pigeo.rimap.rimaprcp",
+							"catalog.wms_getlegend_relpath", "not set", null);
 					LayerLegendDialog dialog = new LayerLegendDialog(parent.getShell(), legend_path);
+					ContextInjectionFactory.inject(dialog, context);
 					dialog.setLayer(wmsNode);
 					dialog.open();
 				}
@@ -218,11 +224,9 @@ public class LayerDetailsImpl extends LayerDetails {
 
 	/*
 	 * Not used. Would be used in case we keep only one legend widget
-	 * (this.legendDialog) and change its content
-	 * when we select another layer.
+	 * (this.legendDialog) and change its content when we select another layer.
 	 * Poses the pb of what happens if the user closes the legend widget : it is
-	 * then disposed
-	 * and i didn't find how to deal with that.
+	 * then disposed and i didn't find how to deal with that.
 	 */
 	private void updateLegendShell(Layer l) {
 		if (legendDialog == null) {

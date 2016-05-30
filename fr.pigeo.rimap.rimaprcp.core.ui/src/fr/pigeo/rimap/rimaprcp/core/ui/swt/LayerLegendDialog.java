@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -27,6 +30,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
+import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 
 public class LayerLegendDialog extends Dialog {
 	private DataBindingContext m_bindingContext;
@@ -39,6 +43,10 @@ public class LayerLegendDialog extends Dialog {
 	private Image imgLegend=null;
 	private ImageData imgLegendData;
 	private String legendPath;
+	
+	@Inject
+	@Translation
+	private Messages messages;
 
 	public LayerLegendDialog(Shell parentShell, String path) {
 		super(parentShell);
@@ -86,7 +94,7 @@ public class LayerLegendDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Legend");
+		newShell.setText(messages.dialog_legend_title);
 	}
 
 	@Override
