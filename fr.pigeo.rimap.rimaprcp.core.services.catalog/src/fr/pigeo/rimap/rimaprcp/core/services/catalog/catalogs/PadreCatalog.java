@@ -126,7 +126,7 @@ public class PadreCatalog implements ICatalog {
 
 		byte[] b = resourceService.getResource(params.getUrl(), params.getWeb_usage_level());
 		if (b != null) {
-			String lt = new String(b);
+			String lt = new String(b, StandardCharsets.UTF_8);
 			node = this.stringToJson(lt);
 		}
 		return node;
