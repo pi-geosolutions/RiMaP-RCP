@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
-import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.services.log.Logger;
 
 import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
@@ -25,12 +25,23 @@ public class WmsServiceImpl implements IWmsService {
 	IResourceService resourceService;
 
 	@Inject
+	IPreferencesService prefService;
+
+	@Inject
 	Logger logger;
 
-	int web_usage_level = 1;
+	private int web_usage_level=-1; //unset
+	private int web_usage_level_default = 1;
 
 	Map<String, ServerCapability> serverCapabilitiesList = new HashMap();
 	Map<String, Thread> threadsList = new HashMap();
+
+	private int getWebUsageLevel() {
+		if (this.web_usage_level<0) { //i.e. unset
+			this.web_usage_level = prefService.getInt("fr.pigeo.rimap.rimaprcp", "web.usage.level", this.web_usage_level_default, null);
+		}
+		return this.web_usage_level;
+	}
 
 	@Override
 	public void registerServerCapability(String url) {
@@ -44,7 +55,7 @@ public class WmsServiceImpl implements IWmsService {
 
 		ServerCapability capability = serverCapabilitiesList.get(url.toLowerCase());
 		if (capability == null) {
-			capability=makeCapability(url);
+			capability = makeCapability(url);
 		}
 		return capability.getCapabilities();
 	}
@@ -62,15 +73,20 @@ public class WmsServiceImpl implements IWmsService {
 
 				CapabilitiesRequest request = new CapabilitiesRequest(wmsUri);
 
-				String address = request.getUri().toURL().toString();
-				System.out.println(request.getUri().toURL().toString());
+				String address = request.getUri()
+						.toURL()
+						.toString();
+				System.out.println(request.getUri()
+						.toURL()
+						.toString());
 				byte[] b;
 				if (resourceService != null) {
 					logger.info("Recovering getCapabilities using ResourceService plugin");
-					b = resourceService.getResource(address, web_usage_level);
+					b = resourceService.getResource(address, getWebUsageLevel());
 				} else {
 					logger.info("ResourceService plugin unavailable. Recovering getCapabilities directly from URL");
-					b = IOUtils.toByteArray(request.getUri().toURL());
+					b = IOUtils.toByteArray(request.getUri()
+							.toURL());
 				}
 				WMSCapabilities caps = new WMSCapabilities(new ByteArrayInputStream(b));
 

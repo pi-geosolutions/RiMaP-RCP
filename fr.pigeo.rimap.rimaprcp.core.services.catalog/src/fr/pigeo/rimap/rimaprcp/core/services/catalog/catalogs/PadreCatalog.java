@@ -87,7 +87,7 @@ public class PadreCatalog implements ICatalog {
 	public boolean load() {
 		if (sessionService == null) {
 			// we abort
-			logger.info("Aborting catalog %s loading : session is not set yet", params.getName());
+			logger.info("Aborting catalog "+params.getName()+" loading : session is not set yet" );
 			return false;
 		}
 		Session session = sessionService.getSession();
