@@ -17,6 +17,6 @@ The Core Session Service provides an implementation for the ISessionService inte
 
 The following preferences settings are used by the SecureFileService and can be overridden in the general settings.ini config file.
 
-* **fr.pigeo.rimap.rimaprcp/project.services.login=j_spring_security_check** : login service relative address of the online Padre platform's 
-* **fr.pigeo.rimap.rimaprcp/web.connect.timeout=5** : connection timouts for web access
-* **fr.pigeo.rimap.rimaprcp/web.read.timeout=20** : connection timouts for web access
+* **fr.pigeo.rimap.rimaprcp.core.services.session/services.login.relpath=j_spring_security_check** : login service relative address of the online Padre platform's 
+* **fr.pigeo.rimap.rimaprcp.core/web.connect.timeout=5** : connection timeouts for web access
+* **fr.pigeo.rimap.rimaprcp.core/web.read.timeout=20** : connection timeouts for web access

@@ -43,7 +43,6 @@ public class LoginDialog2 extends Shell {
 	public LoginDialog2(Display display) {
 		//super(display, SWT.CLOSE | SWT.RESIZE | SWT.TITLE);
 		super(display, SWT.RESIZE | SWT.APPLICATION_MODAL);
-		//this.setBackgroundImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp", "splash.bmp"));
 		setLayout(new FormLayout());
 		
 		Composite composite = new Composite(this, SWT.NONE);

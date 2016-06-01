@@ -7,11 +7,12 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.extensions.Preference;
 
+import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 
 public class ShowWidget {
 	@Execute
-	public void execute(@Preference(nodePath = "fr.pigeo.rimap.rimaprcp") IEclipsePreferences prefs,
+	public void execute(@Preference(nodePath = RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE) IEclipsePreferences prefs,
 			WwjInstance wwj,
 			@Named("fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref") String widgetRef) {
 		//System.out.println("current widget : "+widgetRef);

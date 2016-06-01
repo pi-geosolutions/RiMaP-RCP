@@ -15,9 +15,7 @@
           </children>
           <children xsi:type="basic:PartSashContainer" xmi:id="_0AJrMAfFEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.1" containerData="700">
             <children xsi:type="basic:PartStack" xmi:id="_sWgnQAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.partstack.0" containerData="700">
-              <children xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.views.WWJView" label="%part.label.5">
-                <toolbar xmi:id="_tezsEAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar"/>
-              </children>
+              <children xsi:type="advanced:Placeholder" xmi:id="_tRI_ACNwEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.placeholder.0" containerData="700" ref="_uAcTcJzFEeW3eM-i01vfSQ"/>
             </children>
             <children xsi:type="basic:PartStack" xmi:id="_RiHUQAfGEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.partstack.bottom" visible="false" containerData="300"/>
           </children>
@@ -49,8 +47,12 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_zdnPsCNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.switchtomainperspective" label="%menu.window.switchperspective.main" command="_38TBgCNtEeaurtXB4vEzfw">
           <parameters xmi:id="_CzvFICNuEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.parameter.0" name="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid" value="fr.pigeo.rimap.rimaprcp.perspective.main"/>
         </children>
+        <children xsi:type="menu:DirectMenuItem" xmi:id="_Iff50COJEea1gKFWzYVTOQ" elementId="fr.pigeo.rimap.rimaprcp.core.ui.directmenuitem.grumph" toBeRendered="false" visible="false" label="Grumph" enabled="false"/>
       </children>
     </mainMenu>
+    <sharedElements xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.views.WWJView" label="%part.label.5">
+      <toolbar xmi:id="_tezsEAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar"/>
+    </sharedElements>
   </children>
   <handlers xmi:id="_IfKW4CNuEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handler.0" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.handlers.PerspectiveSwitchHandler" command="_38TBgCNtEeaurtXB4vEzfw"/>
   <commands xmi:id="_NRVm4MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.command.showWidget" commandName="%command.commandname.1" description="%command.description.1">

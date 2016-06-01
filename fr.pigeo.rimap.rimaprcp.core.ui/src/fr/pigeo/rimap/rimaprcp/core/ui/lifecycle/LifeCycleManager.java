@@ -25,14 +25,12 @@ import gov.nasa.worldwind.cache.FileStore;
 
 public class LifeCycleManager {
 	private Preferences preferences;
-	private String preferencesNode = "fr.pigeo.rimap.rimaprcp";
 
 	@Inject
 	Logger logger;
 
 	@PostContextCreate
-	void postContextCreate(IApplicationContext appContext, Display display,
-			IEclipseContext context,
+	void postContextCreate(IApplicationContext appContext, Display display, IEclipseContext context,
 			IPreferencesService prefService /* default preferences */,
 			WwjInstance wwj /*
 							 * Needed to instanciate from custom config before
@@ -42,7 +40,7 @@ public class LifeCycleManager {
 		// close the static splash screen
 		// appContext.applicationRunning();
 
-		Preferences preferences = InstanceScope.INSTANCE.getNode("fr.pigeo.rimap.rimaprcp");
+		Preferences preferences = InstanceScope.INSTANCE.getNode(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE);
 		/*
 		 * get the path where to store persisted data (layertree, etc) for cache
 		 * management 1) get WorldWind cache path 2) go up 1 level and create
@@ -50,13 +48,15 @@ public class LifeCycleManager {
 		 */
 		wwj.getWwd();
 		FileStore store = new BasicDataFileStore();
-		String cacheFolderName = prefService.getString(preferencesNode, "cache.rootname", "RiMaP", null);
-		String cachePath = store.getWriteLocation().getParentFile() + File.separator + cacheFolderName;
+		String cacheFolderName = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
+				RimapConstants.CACHE_ROOTNAME_PREF_TAG, RimapConstants.CACHE_ROOTNAME_PREF_DEFAULT, null);
+		String cachePath = store.getWriteLocation()
+				.getParentFile() + File.separator + cacheFolderName;
 		initCacheFolder(cachePath);
-		context.set(RimapConstants.RIMAP_CACHE_PATH, cachePath);
-		
-		Preferences config = preferences.node("config");
-		config.put("cachePath", cachePath);
+		context.set(RimapConstants.RIMAP_CACHE_PATH_CONTEXT_NAME, cachePath);
+
+		Preferences config = preferences.node(RimapConstants.PREFERENCES_CONFIG_NODE_TAG);
+		config.put(RimapConstants.CACHE_PATH_PREF_TAG, cachePath);
 		try {
 			preferences.flush();
 			logger.info("Rimap cache storage path: " + cachePath);
@@ -70,13 +70,12 @@ public class LifeCycleManager {
 		logger.info("[LIFECYCLEMANAGER] : open session ! ");
 		sessionService.openSession(true);
 	}
-	
+
 	@ProcessRemovals
 	void ProcessRemovals(ISecureResourceService resourceService) {
-		//TODO: remove next line
+		// TODO: remove next line
 		logger.info("[LIFECYCLEMANAGER] : Secure Resource Service loaded");
 	}
-
 
 	/**
 	 * Creates the directory and ancestors if needed

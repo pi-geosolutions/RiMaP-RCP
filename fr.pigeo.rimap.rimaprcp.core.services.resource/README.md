@@ -12,11 +12,11 @@ Depending on the web usage level, the priority will be given either to URL or fi
 
 The following preferences settings are used by the Resource Service and can be overridden in the general settings.ini config file.
 
-* **fr.pigeo.rimap.rimaprcp/web.usage.level=1** (used indirectly) : defines the web usage policy. For now, 2 values are recognized : 
+* **fr.pigeo.rimap.rimaprcp.core/web.usage.level=1** (used indirectly) : defines the web usage policy. For now, 2 values are recognized : 
   * 9 means priority to web : gets from the web except when not connected
   * 1 means priority to cache : gets the data (layertree, WMS capabilities) from the cache whenever possible
   
-* **fr.pigeo.rimap.rimaprcp/cache.rootname=Padre** (used indirectly) : used in the definition of the Cache full path. This is the name of the root padre cache folder, set on the same level as WorldWind cache folder (the actual full path depends on how WorldWind determines its cache full path)
+* **fr.pigeo.rimap.rimaprcp.core/cache.rootname=Padre** (used indirectly) : used in the definition of the Cache full path. This is the name of the root padre cache folder, set on the same level as WorldWind cache folder (the actual full path depends on how WorldWind determines its cache full path)
 
 ## Dependencies :
 

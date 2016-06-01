@@ -1,11 +1,11 @@
 package fr.pigeo.rimap.rimaprcp.core.security;
 
 public interface SessionConstants {
-	String PREFERENCES_NODE = "fr.pigeo.rimap.rimaprcp";
+	String PREFERENCES_NODE = "fr.pigeo.rimap.rimaprcp.core.services.session";
 	
 	// preference strings
 	String P_BASE_URL = "project.baseurl";
-	String P_LOGIN_SERVICE = "project.services.login";
+	String P_LOGIN_SERVICE = "services.login.relpath";
 	
 	//default values
 	String LOGIN_SERVICE = "j_spring_security_check" ;

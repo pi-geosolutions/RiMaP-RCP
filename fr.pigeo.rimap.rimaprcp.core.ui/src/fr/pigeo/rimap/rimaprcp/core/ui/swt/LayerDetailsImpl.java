@@ -21,6 +21,7 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.LayerOpacityChangeListener;
@@ -93,12 +94,16 @@ public class LayerDetailsImpl extends LayerDetails {
 
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
-		IObservableValue observeTextLblNewLabel_1ObserveWidget = WidgetProperties.text().observe(lblLayerName);
-		IObservableValue nameLayerObserveValue = PojoProperties.value("name").observe(layer);
+		IObservableValue observeTextLblNewLabel_1ObserveWidget = WidgetProperties.text()
+				.observe(lblLayerName);
+		IObservableValue nameLayerObserveValue = PojoProperties.value("name")
+				.observe(layer);
 		bindingContext.bindValue(observeTextLblNewLabel_1ObserveWidget, nameLayerObserveValue, null, null);
 		//
-		IObservableValue observeSelectionScaleObserveWidget = WidgetProperties.selection().observe(scaleOpacity);
-		IObservableValue opacityLayerObserveValue = PojoProperties.value("opacity").observe(layer);
+		IObservableValue observeSelectionScaleObserveWidget = WidgetProperties.selection()
+				.observe(scaleOpacity);
+		IObservableValue opacityLayerObserveValue = PojoProperties.value("opacity")
+				.observe(layer);
 		UpdateValueStrategy strategy = new UpdateValueStrategy();
 		strategy.setConverter(new ScaleToOpacityConverter());
 		UpdateValueStrategy strategy_1 = new UpdateValueStrategy();
@@ -164,10 +169,13 @@ public class LayerDetailsImpl extends LayerDetails {
 				this.btnMetadataSelectionAdapter = new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						String baseurl = prefService.getString("fr.pigeo.rimap.rimaprcp", "project.baseurl", null,
+						String baseurl = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
+								RimapConstants.PROJECT_BASEURL_PREF_TAG, RimapConstants.PROJECT_BASEURL_PREF_DEFAULT,
 								null);
-						String mtdService = prefService.getString("fr.pigeo.rimap.rimaprcp", "catalog.metadata_relpath",
-								"not set", null);
+						// TODO : use constants
+						String mtdService = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
+								RimapConstants.CATALOG_METADATA_BY_UUID_RELPATH_PREF_TAG,
+								RimapConstants.CATALOG_METADATA_BY_UUID_PREF_DEFAULT, null);
 						String link = baseurl + mtdService + wmsNode.getMetadata_uuid();
 						Program.launch(link);
 					}
@@ -185,14 +193,19 @@ public class LayerDetailsImpl extends LayerDetails {
 						// System.out.println("Zooming to extent");
 						Sector sector = (Sector) l.getValue(AVKey.SECTOR);
 						WorldWindowGLCanvas wwd = wwj.getWwd();
-						Extent extent = Sector.computeBoundingCylinder(wwd.getModel().getGlobe(),
-								wwd.getSceneController().getVerticalExaggeration(), sector);
+						Extent extent = Sector.computeBoundingCylinder(wwd.getModel()
+								.getGlobe(),
+								wwd.getSceneController()
+										.getVerticalExaggeration(),
+								sector);
 
-						Angle fov = wwd.getView().getFieldOfView();
+						Angle fov = wwd.getView()
+								.getFieldOfView();
 						Position centerPos = new Position(sector.getCentroid(), 0d);
 						double zoom = extent.getRadius() / fov.cosHalfAngle() / fov.tanHalfAngle();
 
-						wwd.getView().goTo(centerPos, zoom);
+						wwd.getView()
+								.goTo(centerPos, zoom);
 					}
 				}
 			};
@@ -204,8 +217,9 @@ public class LayerDetailsImpl extends LayerDetails {
 			this.btnLegendSelectionAdapter = new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					String legend_path = prefService.getString("fr.pigeo.rimap.rimaprcp",
-							"catalog.wms_getlegend_relpath", "not set", null);
+					String legend_path = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
+							RimapConstants.WMS_LEGEND_RELPATH_PREF_TAG, RimapConstants.WMS_LEGEND_RELPATH_PREF_DEFAULT,
+							null);
 					LayerLegendDialog dialog = new LayerLegendDialog(parent.getShell(), legend_path);
 					ContextInjectionFactory.inject(dialog, context);
 					dialog.setLayer(wmsNode);

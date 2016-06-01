@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.services.log.Logger;
 
+import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
 import fr.pigeo.rimap.rimaprcp.core.services.wms.server.ServerCapability;
 import fr.pigeo.rimap.rimaprcp.core.wms.IWmsService;
@@ -30,15 +31,15 @@ public class WmsServiceImpl implements IWmsService {
 	@Inject
 	Logger logger;
 
-	private int web_usage_level=-1; //unset
-	private int web_usage_level_default = 1;
+	private int web_usage_level = -1; // unset
 
 	Map<String, ServerCapability> serverCapabilitiesList = new HashMap();
 	Map<String, Thread> threadsList = new HashMap();
 
 	private int getWebUsageLevel() {
-		if (this.web_usage_level<0) { //i.e. unset
-			this.web_usage_level = prefService.getInt("fr.pigeo.rimap.rimaprcp", "web.usage.level", this.web_usage_level_default, null);
+		if (this.web_usage_level < 0) { // i.e. unset
+			this.web_usage_level = prefService.getInt(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
+					RimapConstants.WEB_USAGE_LEVEL_PREF_TAG, RimapConstants.WEB_USAGE_LEVEL_PREF_DEFAULT, null);
 		}
 		return this.web_usage_level;
 	}

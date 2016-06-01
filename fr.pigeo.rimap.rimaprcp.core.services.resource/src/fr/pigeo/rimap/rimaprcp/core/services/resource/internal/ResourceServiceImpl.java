@@ -28,7 +28,7 @@ public class ResourceServiceImpl implements IResourceService {
 	Logger logger;
 
 	@Inject
-	@Named(RimapConstants.RIMAP_CACHE_PATH)
+	@Named(RimapConstants.RIMAP_CACHE_PATH_CONTEXT_NAME)
 	String cachePath;
 
 	@Inject

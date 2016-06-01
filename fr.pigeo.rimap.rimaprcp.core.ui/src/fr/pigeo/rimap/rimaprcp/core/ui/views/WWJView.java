@@ -11,6 +11,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.widgets.Composite;
 
+import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 
 public class WWJView {
@@ -30,7 +31,7 @@ public class WWJView {
 	}
 
 	@PostConstruct
-	public void postConstruct(Composite parent,MApplication app, WwjInstance wwj, @Preference(nodePath = "fr.pigeo.rimap.rimaprcp") IEclipsePreferences prefs) {
+	public void postConstruct(Composite parent,MApplication app, WwjInstance wwj, @Preference(nodePath = RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE) IEclipsePreferences prefs) {
 		// Setup AWT container.
 		_embeddedContainer = new Composite(parent, SWT.EMBEDDED);
 		java.awt.Frame frame = SWT_AWT.new_Frame(_embeddedContainer);

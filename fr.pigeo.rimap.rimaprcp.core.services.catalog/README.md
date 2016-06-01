@@ -17,15 +17,14 @@ ChartNodes will come but are not implemented yet.
 
 The following preferences settings are used by the Catalog Service and can be overridden in the general settings.ini config file.
 
-* **fr.pigeo.rimap.rimaprcp.core.services.catalog/childrentag=children** : used in the JSON parsing. This is the tag the parser will look for children nodes (an array)
-* **fr.pigeo.rimap.rimaprcp/project.baseurl=http\://sn-risk.pigeo.fr/sn-risk-gn2_10/** : the online Padre catalog base URL
-* **fr.pigeo.rimap.rimaprcp/project.services.layertree=srv/fre/pigeo.layertree.get** : the relative path to the layertree service on the online Padre catalog. Combined with project.baseurl, it should give the correct URL to get the layertree as a JSON dataset.
-* **fr.pigeo.rimap.rimaprcp/web.usage.level=1** : defines the web usage policy. For now, 2 values are recognized : 
+* **fr.pigeo.rimap.rimaprcp.core/project.baseurl=http\://sn-risk.pigeo.fr/sn-risk-gn2_10/** : the online Padre catalog base URL
+* **fr.pigeo.rimap.rimaprcp.core/web.usage.level=1** : defines the web usage policy. For now, 2 values are recognized : 
   * 9 means priority to web : gets from the web except when not connected
   * 1 means priority to cache : gets the data (layertree, WMS capabilities) from the cache whenever possible
-* **fr.pigeo.rimap.rimaprcp/catalog.metadata_relpath=/apps/geoportal/index.html?uuid=** : used by the WmsNode to provide a link to the related metadata (when a metadata UUID is provided)
-* **fr.pigeo.rimap.rimaprcp/catalog.metadata_xml_relpath=/srv/eng/xml.metadata.get?uuid=** : similar. Not used for now. (link to the metadata as XML)
-* **fr.pigeo.rimap.rimaprcp/catalog.wms_getlegend_relpath=REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=** : used by the WmsNode to provide a link to the related legend (on the WMS server)
+* **fr.pigeo.rimap.rimaprcp.core.services.catalog/childrentag=children** : used in the JSON parsing. This is the tag the parser will look for children nodes (an array)
+* **fr.pigeo.rimap.rimaprcp.core.services.catalog/maincatalog.layertree.relpath=srv/fre/pigeo.layertree.get** : the relative path to the layertree service on the online Padre catalog. Combined with project.baseurl, it should give the correct URL to get the layertree as a JSON dataset.
+* **fr.pigeo.rimap.rimaprcp.core/catalog.metadata.relpath=/apps/geoportal/index.html?uuid=** : used by the WmsNode to provide a link to the related metadata (when a metadata UUID is provided)
+* **fr.pigeo.rimap.rimaprcp.core/catalog.wms.getlegend.relpath=REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=** : used by the WmsNode to provide a link to the related legend (on the WMS server)
 
 ## Dependencies :
 

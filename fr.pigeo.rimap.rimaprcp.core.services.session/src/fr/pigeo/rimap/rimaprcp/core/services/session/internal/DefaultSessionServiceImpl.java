@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import dialogs.LoginDialog;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalogService;
+import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.core.security.Session;
@@ -76,8 +77,8 @@ public class DefaultSessionServiceImpl implements ISessionService {
 	@Override
 	public Session openSession(boolean anonymous) {
 		// Retrieve Preferences;
-		String baseurl = prefService.getString(SessionConstants.PREFERENCES_NODE, SessionConstants.P_BASE_URL, null,
-				null);
+		String baseurl = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
+				RimapConstants.PROJECT_BASEURL_PREF_TAG, RimapConstants.PROJECT_BASEURL_PREF_DEFAULT, null);
 
 		// Initiate HttpClient (sets a context variable
 		this.getHttpClient();
@@ -148,8 +149,7 @@ public class DefaultSessionServiceImpl implements ISessionService {
 			OpenNoConnectionMessage(session);
 			break;
 		case SessionConstants.RETURNCODE_AUTH_FAILURE:
-			MessageDialog.openError(shell, messages.wrongCredentialsDialogTitle,
-					messages.wrongCredentialsDialogMsg);
+			MessageDialog.openError(shell, messages.wrongCredentialsDialogTitle, messages.wrongCredentialsDialogMsg);
 			this.askForLogin();
 			break;
 		case SessionConstants.RETURNCODE_IOEXCEPTION:
@@ -189,8 +189,7 @@ public class DefaultSessionServiceImpl implements ISessionService {
 	private void checkCredentialsLocally() {
 		// Won't work because of loop-dependency. In place, we just try when
 		// loading the catalog and display an error in case it won't load.
-		
-		
+
 		/*
 		 * boolean check = catalogService.getMainCatalog()
 		 * .testCredentials(session.getUsername(), session.getPassword(), true);
@@ -265,9 +264,8 @@ public class DefaultSessionServiceImpl implements ISessionService {
 		CloseableHttpClient client = context.get(CloseableHttpClient.class);
 
 		if (client == null) {
-			int defaulttimeout = 5;
-			int timeout = prefService.getInt(SessionConstants.PREFERENCES_NODE, SessionConstants.WEB_CONNECTION_TIMEOUT,
-					defaulttimeout, null);
+			int timeout = prefService.getInt(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE, RimapConstants.WEB_CONNECTION_TIMEOUT_PREF_TAG,
+					RimapConstants.WEB_CONNECTION_TIMEOUT_PREF_DEFAULT, null);
 
 			RequestConfig config = RequestConfig.custom()
 					.setCookieSpec(CookieSpecs.DEFAULT)
