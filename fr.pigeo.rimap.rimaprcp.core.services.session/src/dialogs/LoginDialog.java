@@ -28,6 +28,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import fr.pigeo.rimap.rimaprcp.core.services.session.internal.Messages;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Button;
 
 public class LoginDialog extends Dialog {
 	private Text txtUser;
@@ -35,6 +36,7 @@ public class LoginDialog extends Dialog {
 	private String user = "";
 	private String password = "";
 	private Image bgImage;
+	private Button btnOK, btnCancel;
 
 	@Inject
 	@Translation
@@ -66,7 +68,9 @@ public class LoginDialog extends Dialog {
 				Text textWidget = (Text) e.getSource();
 				String passwordText = textWidget.getText();
 				password = passwordText;
+				updateOKButton();
 			}
+
 		});
 
 		Label lblPassword = new Label(container, SWT.NONE);
@@ -92,6 +96,7 @@ public class LoginDialog extends Dialog {
 				Text textWidget = (Text) e.getSource();
 				String userText = textWidget.getText();
 				user = userText;
+				updateOKButton();
 			}
 		});
 
@@ -118,8 +123,19 @@ public class LoginDialog extends Dialog {
 	// override method to use "Login" as label for the OK button
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, messages.loginDialogOK, true);
-		createButton(parent, IDialogConstants.CANCEL_ID, messages.loginDialogCancel, false);
+		btnOK = createButton(parent, IDialogConstants.OK_ID, messages.loginDialogOK, true);
+		btnOK.setEnabled(false);
+		btnCancel = createButton(parent, IDialogConstants.CANCEL_ID, messages.loginDialogCancel, false);
+	}
+	
+
+	private void updateOKButton() {
+		if (this.user.length()>0 && this.password.length() >0) {
+			btnOK.setEnabled(true);
+		} else {
+			btnOK.setEnabled(false);
+		}
+		
 	}
 
 	@Override
