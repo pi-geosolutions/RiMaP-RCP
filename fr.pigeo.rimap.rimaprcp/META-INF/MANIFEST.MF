@@ -31,4 +31,20 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0",
  org.eclipse.core.runtime;version="3.5.0"
-Bundle-ActivationPolicy: lazy
+Export-Package: fr.pigeo.rimap.rimaprcp,
+ fr.pigeo.rimap.rimaprcp.dnd,
+ fr.pigeo.rimap.rimaprcp.handlers,
+ fr.pigeo.rimap.rimaprcp.jface;
+  uses:="org.eclipse.e4.core.services.events,
+   org.eclipse.jface.layout,
+   org.eclipse.swt.graphics,
+   org.eclipse.jface.viewers,
+   org.eclipse.swt.widgets,
+   fr.pigeo.rimap.rimaprcp.worldwind",
+ fr.pigeo.rimap.rimaprcp.menus,
+ fr.pigeo.rimap.rimaprcp.swt,
+ fr.pigeo.rimap.rimaprcp.swt.bindings,
+ fr.pigeo.rimap.rimaprcp.toolbars,
+ fr.pigeo.rimap.rimaprcp.translation,
+ fr.pigeo.rimap.rimaprcp.views,
+ org.eclipse.wb.swt;uses:="org.eclipse.jface.resource,org.eclipse.swt.graphics"

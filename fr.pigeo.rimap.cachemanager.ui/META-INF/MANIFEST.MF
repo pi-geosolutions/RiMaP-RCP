@@ -10,8 +10,14 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150
  org.eclipse.swt,
  gov.nasa.worldwind,
  org.eclipse.jface,
- fr.pigeo.rimap.rimaprcp.cachemanager;bundle-version="1.0.0"
+ fr.pigeo.rimap.rimaprcp.cachemanager;bundle-version="1.0.0",
+ fr.pigeo.rimap.rimaprcp;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
+Import-Package: fr.pigeo.rimap.rimaprcp.riskcatalog,
+ fr.pigeo.rimap.rimaprcp.worldwind,
+ javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0",
- org.apache.commons.io
+ org.apache.commons.io,
+ org.eclipse.core.runtime;version="3.5.0",
+ org.eclipse.e4.core.services.events,
+ org.eclipse.e4.ui.di

@@ -69,7 +69,7 @@ public class LayersListTableComposite extends Composite {
 		// viewer.addFilter(new RimapFilterByKeyFilter("isRimapLayer"));
 	}
 
-	private void createColumns(TableViewer tv, TableColumnLayout tcl) {
+	protected void createColumns(TableViewer tv, TableColumnLayout tcl) {
 		// create a column for the checkbox
 		TableViewerColumn visibleCol = new TableViewerColumn(tv, SWT.NONE);
 		visibleCol.getColumn().setAlignment(SWT.CENTER);
@@ -213,7 +213,7 @@ public class LayersListTableComposite extends Composite {
 
 	// helper method to load the images
 	// ensure to dispose the images in your @PreDestroy method
-	private static Image getImage(String file) {
+	protected static Image getImage(String file) {
 		// assume that the current class is called View.java
 		Bundle bundle = FrameworkUtil.getBundle(OrganizeTabPart.class);
 		URL url = FileLocator.find(bundle, new Path("icons/" + file), null);

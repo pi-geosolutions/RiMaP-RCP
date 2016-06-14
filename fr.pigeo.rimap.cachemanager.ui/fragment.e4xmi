@@ -16,7 +16,7 @@
         </children>
         <children xsi:type="basic:PartSashContainer" xmi:id="_TYedcNCmEeWfp70WsrIskQ" elementId="fr.pigeo.rimap.cachemanager.ui.partsashcontainer.0" containerData="50" horizontal="true">
           <children xsi:type="basic:PartStack" xmi:id="_kTTJoNATEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.partstack.0" containerData="500">
-            <children xsi:type="basic:Part" xmi:id="_kkGlwNATEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.part.firsttab" contributionURI="bundleclass://fr.pigeo.rimap.cachemanager.ui/fr.pigeo.rimap.cachemanager.ui.views.SWTCacheTable" label="First tab"/>
+            <children xsi:type="basic:Part" xmi:id="_kkGlwNATEeWwWO4XLOgL4g" elementId="fr.pigeo.rimap.cachemanager.ui.part.firsttab" contributionURI="bundleclass://fr.pigeo.rimap.cachemanager.ui/fr.pigeo.rimap.cachemanager.ui.views.BulkTable" label="Bulk Download Panel"/>
             <children xsi:type="basic:Part" xmi:id="_VsQPMNCsEeWfp70WsrIskQ" elementId="fr.pigeo.rimap.cachemanager.ui.part.2ndtab" label="2nd tab"/>
           </children>
           <children xsi:type="advanced:Placeholder" xmi:id="_aTrVANCmEeWfp70WsrIskQ" elementId="fr.pigeo.rimap.cachemanager.ui.placeholder.0" containerData="500" ref="_xUiMENCnEeWfp70WsrIskQ"/>
