@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AdminTools core
+Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.admintools.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: fr.pigeo.rimap.rimaprcp.core.services.catalog,
+ fr.pigeo.rimap.rimaprcp.core,
+ fr.pigeo.externals.com.fasterxml.jackson.core,
+ javax.inject,
+ org.eclipse.equinox.preferences,
+ org.eclipse.e4.core.di.annotations
+Export-Package: fr.pigeo.rimap.rimaprcp.admintools.core.constants,
+ fr.pigeo.rimap.rimaprcp.admintools.core.editors

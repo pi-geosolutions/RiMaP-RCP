@@ -43,6 +43,7 @@
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.eclipse.emf.common"/>
+      <feature id="fr.pigeo.rimap.rimaprcp.admintools.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AdminTools core UI
+Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.admintools.core.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: pi-Geosolutions
+Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150407-1430",
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.core.di,
+ org.eclipse.jface;bundle-version="3.11.0",
+ org.eclipse.swt,
+ fr.pigeo.rimap.rimaprcp.core,
+ fr.pigeo.rimap.rimaprcp.core.services.catalog,
+ fr.pigeo.rimap.rimaprcp.admintools.core,
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.e4.ui.di,
+ org.eclipse.e4.core.services
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
+ javax.inject;version="1.0.0"

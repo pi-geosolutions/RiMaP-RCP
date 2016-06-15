@@ -144,7 +144,11 @@ public class PadreCatalog implements ICatalog {
 		}
 		return node;
 	}
-
+	
+	public JsonNode getRootNodeAsJson() {
+		return this.layertreeAsJsonNode;
+	}
+	
 	@Override
 	public INode getRootNode() {
 		return this.rootNode;
