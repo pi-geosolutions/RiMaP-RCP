@@ -15,6 +15,10 @@ public interface SessionConstants {
 	String WEB_CONNECTION_TIMEOUT = "web.connect.timeout";
 	String WEB_READ_TIMEOUT = "web.read.timeout";
 	
+
+	String PROFILE_SERVICE_PREF_TAG = "services.profile.relpath";
+	String PROFILE_SERVICE_PREF_DEFAULT = "srv/fre/xml.info?type=me" ;
+	
 	//Return codes
 	String RETURNCODE_AUTH_FAILURE = "authFailure";
 	String RETURNCODE_IOEXCEPTION = "IOException";

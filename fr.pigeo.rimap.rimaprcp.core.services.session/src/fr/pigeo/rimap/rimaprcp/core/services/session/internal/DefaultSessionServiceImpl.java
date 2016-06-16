@@ -8,6 +8,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
@@ -15,6 +17,7 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -30,9 +33,12 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 import dialogs.LoginDialog;
-import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalogService;
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
@@ -91,6 +97,10 @@ public class DefaultSessionServiceImpl implements ISessionService {
 					SessionConstants.P_LOGIN_SERVICE, SessionConstants.LOGIN_SERVICE, null);
 			session.setAuthentificationURL(baseurl + loginService);
 			logger.info("Session service full URL : " + session.getAuthentificationURL());
+
+			String profileService = prefService.getString(SessionConstants.PREFERENCES_NODE,
+					SessionConstants.PROFILE_SERVICE_PREF_TAG, SessionConstants.PROFILE_SERVICE_PREF_DEFAULT, null);
+			session.setProfileURL(baseurl + profileService);
 			askForLogin();
 
 			// TODO: check session is validated then send session_validated
@@ -161,8 +171,61 @@ public class DefaultSessionServiceImpl implements ISessionService {
 			logger.info("Authentification is valid (server-checked)");
 			session.setSessionID(geonetworkSessionID);
 			session.setCredsCheckLevel(SessionConstants.CREDS_LEVEL_WEB_VALIDATED);
+			// session.setProfile(getMe());
+			getProfile(session);
+			//set variable in context to use for core expression (menu entries visibility)
+			context.set("sessionProfile", session.getProfile());
 			eventBroker.send(RiMaPEventConstants.SESSION_SERVER_VALIDATED, session);
 		}
+	}
+
+	/**
+	 * Gets profile information from xml.info?type=me geonetwork service
+	 * @param s Session to store the profile information into
+	 * @return true if valid profile XML  was returned
+	 */
+	private boolean getProfile(Session s) {
+		String url = s.getProfileURL();
+		CloseableHttpClient httpclient = this.getHttpClient();
+		CloseableHttpResponse response;
+		Document doc = null;
+		try {
+			response = httpclient.execute(new HttpGet(url));
+			if (response.getStatusLine()
+					.getStatusCode() == HttpStatus.SC_OK) {
+				
+				HttpEntity entity = response.getEntity();
+				
+				SAXBuilder sxb = new SAXBuilder();
+				try {
+					doc = sxb.build(entity.getContent());
+					Element root = doc.getRootElement();
+					Element me = root.getChild("me");
+					if (me==null) {return false; }
+					s.setProfile(me.getChildText("profile"));
+					s.setProfile_name(me.getChildText("name"));
+					s.setProfile_surname(me.getChildText("surname"));
+					s.setProfile_email(me.getChildText("email"));
+				} catch (UnsupportedOperationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return false;
+				} catch (JDOMException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return false;
+				} 
+				finally {
+				}
+			}
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 	private void OpenNoConnectionMessage(Session session) {
@@ -231,6 +294,7 @@ public class DefaultSessionServiceImpl implements ISessionService {
 					.endsWith(SessionConstants.AUTH_URL_FAILURE_ENDSWITH)) {
 				return SessionConstants.RETURNCODE_AUTH_FAILURE;
 			} else {
+
 				// return JSESSIONID value
 				String cookieChain = response.getHeaders("Set-Cookie")[0].getValue();
 				String[] chunks = cookieChain.split(";");
@@ -240,7 +304,6 @@ public class DefaultSessionServiceImpl implements ISessionService {
 						return jsessionid;
 					}
 				}
-
 			}
 			response.close();
 			httppost.releaseConnection();
@@ -264,8 +327,9 @@ public class DefaultSessionServiceImpl implements ISessionService {
 		CloseableHttpClient client = context.get(CloseableHttpClient.class);
 
 		if (client == null) {
-			int timeout = prefService.getInt(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE, RimapConstants.WEB_CONNECTION_TIMEOUT_PREF_TAG,
-					RimapConstants.WEB_CONNECTION_TIMEOUT_PREF_DEFAULT, null);
+			int timeout = prefService.getInt(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
+					RimapConstants.WEB_CONNECTION_TIMEOUT_PREF_TAG, RimapConstants.WEB_CONNECTION_TIMEOUT_PREF_DEFAULT,
+					null);
 
 			RequestConfig config = RequestConfig.custom()
 					.setCookieSpec(CookieSpecs.DEFAULT)

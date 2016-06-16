@@ -8,5 +8,17 @@
             uri="fragment.e4xmi">
       </fragment>
    </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="fr.pigeo.rimap.rimaprcp.admintools.core.ui.show.layertree.editor">
+         <with
+               variable="sessionProfile">
+            <equals
+                  value="Administrator">
+            </equals>
+         </with>
+      </definition>
+   </extension>
 
 </plugin>

@@ -48,6 +48,7 @@
           <parameters xmi:id="_CzvFICNuEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.parameter.0" name="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid" value="fr.pigeo.rimap.rimaprcp.perspective.main"/>
         </children>
         <children xsi:type="menu:DirectMenuItem" xmi:id="_Iff50COJEea1gKFWzYVTOQ" elementId="fr.pigeo.rimap.rimaprcp.core.ui.directmenuitem.grumph" toBeRendered="false" visible="false" label="Grumph" enabled="false"/>
+        <children xsi:type="menu:Menu" xmi:id="_M0jTwDPKEea4hpsAeB2m5A" elementId="fr.pigeo.rimap.rimaprcp.core.ui.menu.show" label="Show" tooltip="Show view"/>
       </children>
     </mainMenu>
     <sharedElements xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.views.WWJView" label="%part.label.5">

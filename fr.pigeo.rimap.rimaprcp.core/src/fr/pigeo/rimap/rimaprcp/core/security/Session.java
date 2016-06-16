@@ -14,7 +14,12 @@ public class Session {
 	private String username,
 					password,
 					sessionID,
-					authentificationURL;
+					authentificationURL,
+					profileURL,
+					profile,
+					profile_name,
+					profile_surname,
+					profile_email;
 	
 	// credsCheckLevel (use constants form, cf SessionConstants):
 	//  - 2 if credentials have been validated by the web service (Geonetwork auth service)
@@ -111,5 +116,45 @@ public class Session {
 
 	public void setAuthentificationURL(String authentificationURL) {
 		this.authentificationURL = authentificationURL;
+	}
+
+	public String getProfileURL() {
+		return profileURL;
+	}
+
+	public void setProfileURL(String profileURL) {
+		this.profileURL = profileURL;
+	}
+
+	public String getProfile() {
+		return profile;
+	}
+
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
+
+	public String getProfile_name() {
+		return profile_name;
+	}
+
+	public void setProfile_name(String profile_name) {
+		this.profile_name = profile_name;
+	}
+
+	public String getProfile_surname() {
+		return profile_surname;
+	}
+
+	public void setProfile_surname(String profile_surname) {
+		this.profile_surname = profile_surname;
+	}
+
+	public String getProfile_email() {
+		return profile_email;
+	}
+
+	public void setProfile_email(String profile_email) {
+		this.profile_email = profile_email;
 	}
 }

@@ -77,9 +77,7 @@ public class WmsServiceImpl implements IWmsService {
 				String address = request.getUri()
 						.toURL()
 						.toString();
-				System.out.println(request.getUri()
-						.toURL()
-						.toString());
+
 				byte[] b;
 				if (resourceService != null) {
 					logger.info("Recovering getCapabilities using ResourceService plugin");
@@ -92,7 +90,6 @@ public class WmsServiceImpl implements IWmsService {
 				WMSCapabilities caps = new WMSCapabilities(new ByteArrayInputStream(b));
 
 				// caps = new WMSCapabilities(request);
-				System.out.println(caps.getClass());
 				caps.parse();
 				capability = new ServerCapability(url, caps);
 				serverCapabilitiesList.put(url.toLowerCase(), capability);
