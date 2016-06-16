@@ -1,5 +1,8 @@
 package fr.pigeo.rimap.rimaprcp.admintools.core.editors;
 
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 import javax.inject.Inject;
@@ -15,22 +18,34 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import fr.pigeo.rimap.rimaprcp.admintools.core.constants.AdminToolsConstants;
+import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
+import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.NodeUtils;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.PadreCatalog;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.CatalogConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
 
 public class PadreCatalogEditor {
+	@Inject IResourceService resourceService;
 
 	PadreCatalog catalog;
 	JsonNode jsonOriginal, jsonCurrent;
-	private String childrentag = "children";
+	private String childrentag = "children", 
+			layertree_service_url;
+	private boolean dirty=false;
 
 	@Inject
 	public PadreCatalogEditor(PadreCatalog catalog, @Optional IPreferencesService prefsService) {
 		if (prefsService != null) {
 			childrentag = prefsService.getString(CatalogConstants.PREFERENCES_NODE, CatalogConstants.CHILDREN_PREF_TAG,
 					CatalogConstants.CHILDREN_PREF_DEFAULT, null);
+			String baseurl = prefsService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
+					RimapConstants.PROJECT_BASEURL_PREF_TAG, RimapConstants.PROJECT_BASEURL_PREF_DEFAULT, null);
+			String layertreeService = prefsService.getString(AdminToolsConstants.PREFERENCES_NODE,
+					AdminToolsConstants.MAINCATALOG_LAYERTREE_ADMIN_RELPATH_PREF_TAG,
+					AdminToolsConstants.MAINCATALOG_LAYERTREE_ADMIN_RELPATH_PREF_DEFAULT, null);
+			layertree_service_url = baseurl + layertreeService;
 		}
 		this.catalog = catalog;
 	}
@@ -48,7 +63,18 @@ public class PadreCatalogEditor {
 		// Lazy init. We initialize working json (current) to original value
 		if (this.jsonCurrent == null) {
 			if (this.jsonOriginal == null) {
-				jsonOriginal = catalog.getRootNodeAsJson();
+				//we get the resource from the web (imperative !)
+				byte[] b = resourceService.getResource(layertree_service_url, 9);
+				if (b != null) {
+					String lt = new String(b, StandardCharsets.UTF_8);
+					ObjectMapper objectMapper = new ObjectMapper();
+					try {
+						jsonOriginal = objectMapper.readValue(lt, JsonNode.class);
+					} catch (IOException e) {
+						e.printStackTrace();
+						return null;
+					}
+				}
 			}
 			jsonCurrent = jsonOriginal.deepCopy();
 		}
@@ -79,8 +105,17 @@ public class PadreCatalogEditor {
 	public void reset() {
 		jsonCurrent=null;
 		jsonOriginal=null;
+		dirty=false;
 	}
 	
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+
 	public void fixLayertree() {
 		fixNode(this.jsonCurrent);
 	}
@@ -147,6 +182,7 @@ public class PadreCatalogEditor {
 			}
 
 			System.out.println("       to [LAYERS="+l+" / URL="+u+"]");
+			this.dirty=true;
 		}
 	}
 

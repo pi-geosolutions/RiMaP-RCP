@@ -3,16 +3,20 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_nVZsojJTEeaFT6iUohRRCQ" featurename="handlers" parentElementId="fr.pigeo.rimap.rimaprcp.application">
     <elements xsi:type="commands:Handler" xmi:id="_IU-PkDJVEeaFT6iUohRRCQ" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handler.0" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.admintools.core.ui/fr.pigeo.rimap.rimaprcp.admintools.core.ui.handlers.ShowLayertreeSourceHandler" command="_Ew_LcDJVEeaFT6iUohRRCQ"/>
     <elements xsi:type="commands:Handler" xmi:id="_QoZNUDMQEean_-vY9k6c3w" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handler.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.admintools.core.ui/fr.pigeo.rimap.rimaprcp.admintools.core.ui.handlers.FixDataHandler" command="_KKU9sDMQEean_-vY9k6c3w"/>
+    <elements xsi:type="commands:Handler" xmi:id="_bfnbQDMgEean_-vY9k6c3w" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handler.2" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.admintools.core.ui/fr.pigeo.rimap.rimaprcp.admintools.core.ui.handlers.SaveLayertreeHandler" command="_ZT_RMDMgEean_-vY9k6c3w"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_nVZspDJTEeaFT6iUohRRCQ" featurename="commands" parentElementId="fr.pigeo.rimap.rimaprcp.application">
     <elements xsi:type="commands:Command" xmi:id="_Ew_LcDJVEeaFT6iUohRRCQ" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.command.showsource" commandName="Show Source" description="Show layertree source code"/>
     <elements xsi:type="commands:Command" xmi:id="_KKU9sDMQEean_-vY9k6c3w" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.command.fixData" commandName="Fix Data" description="Fix layertree nodes"/>
+    <elements xsi:type="commands:Command" xmi:id="_ZT_RMDMgEean_-vY9k6c3w" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.command.save" commandName="Save" description="Save layertree to BD"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_ShUPIDJSEeaFT6iUohRRCQ" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.partstack.0">
     <elements xsi:type="basic:Part" xmi:id="_ShUPITJSEeaFT6iUohRRCQ" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.part.layertreeeditor" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.admintools.core.ui/fr.pigeo.rimap.rimaprcp.admintools.core.ui.parts.LayertreeEditorPart" label="LayertreeEditor" closeable="true">
       <toolbar xmi:id="_gIcMIDJSEeaFT6iUohRRCQ" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.toolbar.0">
         <children xsi:type="menu:HandledToolItem" xmi:id="_3L8kADJSEeaFT6iUohRRCQ" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handledtoolitem.showsource" accessibilityPhrase="Show Source" label="" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.admintools.core.ui/icons/book_open.png" tooltip="Show Source" command="_Ew_LcDJVEeaFT6iUohRRCQ"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_xt2AsDMPEean_-vY9k6c3w" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handledtoolitem.fixdata" accessibilityPhrase="Fix layertree nodes" label="Fix Data" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.admintools.core.ui/icons/wrench.png" tooltip="Fix layertree nodes" command="_KKU9sDMQEean_-vY9k6c3w"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_Th_54DMfEean_-vY9k6c3w" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handledtoolitem.reload" accessibilityPhrase="Reload" label="Reload" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.admintools.core.ui/icons/view-refresh.png" tooltip="Reload" command="_Ew_LcDJVEeaFT6iUohRRCQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_RiGCMDMgEean_-vY9k6c3w" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handledtoolitem.save" accessibilityPhrase="Save" label="Save" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.admintools.core.ui/icons/database_save.png" tooltip="Save layertree to server" command="_ZT_RMDMgEean_-vY9k6c3w"/>
       </toolbar>
     </elements>
   </fragments>

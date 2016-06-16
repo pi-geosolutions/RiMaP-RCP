@@ -13,15 +13,16 @@ import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
 import fr.pigeo.rimap.rimaprcp.admintools.core.constants.AdminToolsEventConstants;
 import fr.pigeo.rimap.rimaprcp.admintools.core.editors.PadreCatalogEditor;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalog;
-import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.FolderNode;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.PadreCatalog;
 
 public class LayertreeEditorPart {
@@ -30,6 +31,9 @@ public class LayertreeEditorPart {
 
 	@Inject
 	MDirtyable dirty;
+
+	@Inject
+	Display display;
 
 	private Text text;
 	private PadreCatalogEditor editor;
@@ -63,28 +67,36 @@ public class LayertreeEditorPart {
 	private void subscribeCatalogFix(@UIEventTopic(AdminToolsEventConstants.ADMINTOOLS_CATALOG_FIX) ICatalog catalog,
 			IEclipseContext context) {
 		if (catalog instanceof PadreCatalog) {
-			if (editor==null) {
+			if (editor == null) {
 				this.loadEditor((PadreCatalog) catalog, context);
 			}
 			editor.fixLayertree();
 			this.text.setText(this.editor.toString(true));
-			this.dirty.setDirty(true);
+			this.dirty.setDirty(editor.isDirty());
 
 		}
 	}
 
-	private void loadEditor(PadreCatalog catalog, IEclipseContext context) {
-		// create a new local_ context
-		IEclipseContext catalogContext = EclipseContextFactory.create();
-		catalogContext.set(PadreCatalog.class, catalog);
+	private void loadEditor(final PadreCatalog catalog, final IEclipseContext context) {
 
-		// connect new local context with context hierarchy
-		catalogContext.setParent(context);
+		BusyIndicator.showWhile(display, new Runnable() {
+			@Override
+		      public void run() {
+				// create a new local_ context
+				IEclipseContext catalogContext = EclipseContextFactory.create();
+				catalogContext.set(PadreCatalog.class, catalog);
 
-		this.editor = ContextInjectionFactory.make(PadreCatalogEditor.class, catalogContext);
-		//Injection reuses the object if it has already been created once. So we reset the values.
-		this.editor.reset();
-		this.text.setText(this.editor.toString(true));
+				// connect new local context with context hierarchy
+				catalogContext.setParent(context);
+
+				editor = ContextInjectionFactory.make(PadreCatalogEditor.class, catalogContext);
+				// Injection reuses the object if it has already been created once. So
+				// we reset the values.
+				editor.reset();
+				text.setText(editor.toString(true));
+		      }
+		});
+		
 	}
 
 	public Text getText() {
