@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_NKo3UDiSEeaeP4om2KZOEg">
+  <imports xsi:type="basic:Part" xmi:id="_fj0_sDiTEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview"/>
+  <imports xsi:type="commands:Command" xmi:id="_UbyUQDiTEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.command.switchperspective"/>
+  <imports xsi:type="commands:CommandParameter" xmi:id="_lyZawDiTEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid"/>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_6snnYDiSEeaeP4om2KZOEg" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.core.ui.menu.menuwindow" positionInList="after=fr.pigeo.rimap.rimaprcp.handledmenuitem.switchtomainperspective">
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_Ll6fwDiTEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.handledmenuitem.modecachemanager" label="Mode Cache Manager" command="_UbyUQDiTEeaeP4om2KZOEg">
+      <parameters xmi:id="_1ieBQDiTEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.parameter.0" name="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid" value="fr.pigeo.rimap.cachemanager.ui.perspective.main"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_XURu4DiUEeaeP4om2KZOEg" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.perspectivestack.main">
+    <elements xsi:type="advanced:Perspective" xmi:id="_b2jnQDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.cachemanager.ui.perspective.main">
+      <children xsi:type="basic:PartSashContainer" xmi:id="_gaVUcDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partsashcontainer.0">
+        <children xsi:type="basic:PartStack" xmi:id="_jPzswDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partstack.0" containerData="500">
+          <children xsi:type="basic:Part" xmi:id="_pWJ_8DiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.part.mainview" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.cachemanager.ui/fr.pigeo.rimap.rimaprcp.cachemanager.ui.views.CacheTable" label="Main View"/>
+        </children>
+        <children xsi:type="basic:PartSashContainer" xmi:id="_lWxZQDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partsashcontainer.1" containerData="500" horizontal="true">
+          <children xsi:type="basic:PartStack" xmi:id="_8pKhsDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partstack.1" containerData="500">
+            <children xsi:type="basic:Part" xmi:id="_9Xkf0DiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.part.bulkdownload" containerData="" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.cachemanager.ui/fr.pigeo.rimap.rimaprcp.cachemanager.ui.views.BulkTable" label="Bulk Download Panel"/>
+          </children>
+          <children xsi:type="advanced:Placeholder" xmi:id="_IjZfEDiVEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.placeholder.0" containerData="500" ref="_fj0_sDiTEeaeP4om2KZOEg"/>
+        </children>
+      </children>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>

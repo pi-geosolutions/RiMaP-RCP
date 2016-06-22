@@ -44,6 +44,7 @@
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.eclipse.emf.common"/>
       <feature id="fr.pigeo.rimap.rimaprcp.admintools.feature" version="1.0.0.qualifier"/>
+      <feature id="fr.pigeo.rimap.cachemanager.feature" version="1.0.1.qualifier"/>
    </features>
 
    <configurations>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="fr.pigeo.rimap.cachemanager.feature"
+      label="Cache Manager Feature"
+      version="1.0.1.qualifier"
+      provider-name="pi-Geosolutions">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="fr.pigeo.externals.org.apache.commons" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="gov.nasa.worldwind" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.model.workbench" version="1.1.100.v20150407-1430" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.di"/>
+      <import plugin="org.eclipse.e4.ui.workbench"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="fr.pigeo.rimap.rimaprcp.cachemanager" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="javax.inject"/>
+      <import plugin="javax.annotation"/>
+   </requires>
+
+   <plugin
+         id="fr.pigeo.rimap.rimaprcp.cachemanager"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="fr.pigeo.rimap.rimaprcp.cachemanager.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
