@@ -37,7 +37,7 @@ public class OrganizeTabPart {
 		
 		this.layersListComposite.addDragnDropSupport();
 		this.layersListComposite.addWidgetFilter(false);
-		this.layersListComposite.setEventBroker(broker);
+		this.layersListComposite.registerEvents();
 		// this.layersListComposite.drawTableLines();
 		central.append("fr.pigeo.rimap.rimaprcp.jface.LayersListTableComposite", layersListComposite);
 	}

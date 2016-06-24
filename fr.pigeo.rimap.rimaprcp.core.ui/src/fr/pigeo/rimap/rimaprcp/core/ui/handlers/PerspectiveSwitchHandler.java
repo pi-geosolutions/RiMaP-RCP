@@ -1,5 +1,5 @@
  
-package fr.pigeo.rimap.rimaprcp.handlers;
+package fr.pigeo.rimap.rimaprcp.core.ui.handlers;
 
 import javax.inject.Named;
 

@@ -35,11 +35,6 @@ import gov.nasa.worldwind.cache.FileStore;
 public class CacheTable {
 	private TableViewer tableViewer;
 
-	@Inject
-	public CacheTable() {
-
-	}
-
 	@PostConstruct
 	public void postConstruct(Composite parent) {
 		parent.setLayout(new GridLayout(1, false));

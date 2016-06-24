@@ -10,7 +10,12 @@ Require-Bundle: fr.pigeo.externals.org.apache.commons;bundle-version="1.0.0",
  fr.pigeo.rimap.rimaprcp.core.ui,
  org.eclipse.jface,
  fr.pigeo.rimap.rimaprcp.worldwind,
- org.eclipse.e4.core.services
+ org.eclipse.e4.core.services,
+ javax.inject,
+ fr.pigeo.rimap.rimaprcp.core,
+ org.eclipse.e4.ui.di,
+ org.eclipse.e4.core.di.annotations,
+ org.eclipse.core.runtime
 Export-Package: fr.pigeo.rimap.rimaprcp.cachemanager.wwutil
 Import-Package: org.apache.commons.io
 Bundle-ActivationPolicy: lazy

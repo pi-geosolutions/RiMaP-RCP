@@ -6,15 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-/*import java.awt.Color;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-*/
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -43,7 +34,6 @@ import org.eclipse.swt.widgets.Composite;
 
 import fr.pigeo.rimap.rimaprcp.core.ui.jface.LayersListTableComposite;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
-//import gov.nasa.worldwind.avlist.AVListImpl.addPropertyChangeListener;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.cache.BasicDataFileStore;
@@ -53,30 +43,17 @@ import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.retrieve.BulkRetrievable;
 import gov.nasa.worldwind.retrieve.BulkRetrievalThread;
 import gov.nasa.worldwindx.examples.BulkDownloadPanel.DownloadMonitorPanel;
-//import gov.nasa.worldwindx.examples.util.SectorSelector;
-//import gov.nasa.worldwindx.examples.util.SectorSelector;
-//import gov.nasa.worldwindx.examples.util.SectorSelector;
 
 public class BulkLayersListTableComposite extends LayersListTableComposite {
 
 	private SelectionAdapter btnSelectSelectionAdapter;
 	private MouseAdapter btnMouseAdapter;
-	private TableViewer viewer;
-	private WwjInstance wwj;
-	private IEventBroker eventBroker;
 
 	private static boolean moveGraphActive = false;
 	private static boolean clickSelect = false;
 	private static Point moveStartPos = new Point(0, 0);
 	// private static ScrolledComposite sc;
 	private static Point startOrigin;
-
-	private final Image CHECKED = getImage("checked.png");
-	private final Image UNCHECKED = getImage("unchecked.png");
-	private final Image FEATUREINFO = getImage("icon_featureinfo_16px.png");
-	private final Image METADATA = getImage("icon_metadata_16px.png");
-	private final Image PQUERY = getImage("polygon_query_16px.png");
-	private final Image WMSICON = getImage("wms.png");
 
 	protected WorldWindow wwd;
 	protected Sector currentSector;
@@ -98,21 +75,11 @@ public class BulkLayersListTableComposite extends LayersListTableComposite {
 	public BulkLayersListTableComposite(Composite parent, int style, WwjInstance wwjInst) {
 
 		super(parent, style, wwjInst);
-		this.wwj = wwjInst;
 		final WorldWindowGLCanvas wwd = wwj.getWwd();
 		// this.wwd=wwd;
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		this.setLayout(tableColumnLayout);
 
-		// define the TableViewer
-		viewer = new TableViewer(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.NONE);
-
-		// create the columns
-		createColumns(viewer, tableColumnLayout);
-
-		// set the content provider
-		viewer.setContentProvider(ArrayContentProvider.getInstance());
-		viewer.setInput(wwj.getLayersList());
 
 		// Buttons
 		final Composite composite = new Composite(parent, SWT.NONE);
@@ -184,19 +151,6 @@ public class BulkLayersListTableComposite extends LayersListTableComposite {
 				}
 			}
 		});
-
-		// System.out.println("test out");
-
-		// this.selectButton.addSelectionListener((SelectionListener)
-		// selectButton);
-
-		// this.selectButton.addSelectionListener(this.btnSelectSelectionAdapter);
-		// this.selectButton.addMouseListener((MouseListener) selectButton);
-
-		// if (clickSelect){
-		// PositionListener(wwd);
-
-		// }
 		
 		 // Button to download data
 		
@@ -245,32 +199,10 @@ public class BulkLayersListTableComposite extends LayersListTableComposite {
 		MouseAdapter ma = new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				/*
-				 * if (e.getButton() == MouseEvent.BUTTON1) {
-				 * System.out.println("test mouse"); //selector = new
-				 * SWTSectorSelector(wwd); //
-				 * 
-				 * }
-				 */
 
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					// PositionListener(wwd);
 					System.out.println("test position2");
-					// System.out.println(wwd.getCurrentPosition().toString());
-					/*
-					 * selector = new SWTSectorSelector(wwd);
-					 * selector.addPropertyChangeListener(SWTSectorSelector.
-					 * SECTOR_PROPERTY,new PropertyChangeListener() {
-					 * 
-					 * public void propertyChange(PropertyChangeEvent e) {
-					 * System.out.println("test update"); updateSector();
-					 * 
-					 * } });
-					 */
-					// updateSector();
-					// java.awt.Point pt = e.getLocationOnScreen();
-					// System.out.println("xpt,ypt " + pt.toString() );
-					// updateSector();
 
 					moveStartPos.x = e.getXOnScreen();
 					moveStartPos.y = e.getYOnScreen();
@@ -286,203 +218,6 @@ public class BulkLayersListTableComposite extends LayersListTableComposite {
 		};
 		return ma;
 	}
-
-	// private Object wwd;
-	// final WorldWindowGLCanvas wwd = wwj.getWwd();
-	// @Override
-	// public void widgetSelected(SelectionEvent e) {
-	// if (wwj != null) {
-
-	// wwd.getView().computePositionFromScreenPoint(int x, int y) {
-	// }
-
-	// @SuppressWarnings("unused")
-
-	// @Override
-	/*
-	 * public void mouseDown(final MouseEvent e) { moveGraphActive = e.button ==
-	 * 1; if (moveGraphActive) {
-	 * //System.out.println(this.wwd.getCurrentPosition().toString());
-	 * moveStartPos.x = e.x; moveStartPos.y = e.y; System.out.println(
-	 * "test down" + moveStartPos.x + moveStartPos.y); // startOrigin =
-	 * composite.getWindowOrigin(); } }
-	 * 
-	 * //@Override public void mouseUp(final MouseEvent e) { moveGraphActive =
-	 * false; startOrigin = null; System.out.println("test up"); }
-	 */
-
-	// }
-
-	// });
-
-	/*
-	 * sc.addMouseMoveListener(new MouseMoveListener() {
-	 * 
-	 * @Override public void mouseMove(final MouseEvent e) { if
-	 * (moveGraphActive) { // FIXED final int newX = startOrigin.x +
-	 * moveStartPos.x - e.x; final int newY = startOrigin.y + moveStartPos.y -
-	 * e.y; sc.setOrigin(newX, newY); } } });
-	 * 
-	 */
-
-	// public mouseEvent(MouseEvent e){
-	// }
-	// }
-
-	/*
-	 * Sector sector = (Sector) l.getValue(AVKey.SECTOR); WorldWindowGLCanvas
-	 * wwd = wwj.getWwd(); Extent extent =
-	 * Sector.computeBoundingCylinder(wwd.getModel().getGlobe(),
-	 * wwd.getSceneController().getVerticalExaggeration(), sector);
-	 * 
-	 * Angle fov = wwd.getView().getFieldOfView(); Position centerPos = new
-	 * Position(sector.getCentroid(), 0d); double zoom = extent.getRadius() /
-	 * fov.cosHalfAngle() / fov.tanHalfAngle();
-	 * 
-	 * wwd.getView().goTo(centerPos, zoom); } }
-	 * 
-	 * 
-	 * };
-	 * 
-	 */
-
-	/*
-	 * 
-	 * // Button to draw a selection Button selectButton = new Button(composite,
-	 * SWT.PUSH); selectButton.setText("Select sector");
-	 * selectButton.addSelectionListener(new SelectionAdapter() {
-	 * 
-	 * public void widgetSelected(SelectionEvent e) {
-	 * 
-	 * //drawingRect.redraw(); // updateSector(); }
-	 * 
-	 * // }
-	 * 
-	 * 
-	 * 
-	 * });
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * //addFilter(SWT.MouseMove, listener); //Vogella
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * selectButton.setLayoutData(gridData);
-	 * 
-	 * 
-	 * // Init sector selector this.selector = new SWTSectorSelector(wwd); //
-	 * this.selector.setInteriorColor(new Color(1f, 1f, 1f, 0.1f));
-	 * //this.selector.setBorderColor(new Color(1f, 0f, 0f, 0.5f));
-	 * //this.selector.setBorderWidth(3);
-	 * this.selector.addPropertyChangeListener(SectorSelector.SECTOR_PROPERTY,
-	 * new PropertyChangeListener() { public void
-	 * propertyChange(PropertyChangeEvent evt) { updateSector(); } });
-	 * 
-	 * 
-	 * /* // Button to clear selection Button clearButton = new
-	 * Button(composite, SWT.PUSH); clearButton.setText("Clear sector");
-	 * clearButton.addSelectionListener(new SelectionAdapter() {
-	 * 
-	 * });
-	 * 
-	 * clearButton.setLayoutData(gridData);
-	 * 
-	 * // Button to download data Button downloadButton = new Button(composite,
-	 * SWT.PUSH); downloadButton.setText("Start download" );
-	 * downloadButton.addSelectionListener(new SelectionAdapter() {
-	 * 
-	 * }); downloadButton.setLayoutData(gridData);
-	 * 
-	 * // Create the WorldWindow. // canvasSize.setSize (width, height); //
-	 * this.wwjPanel = this.createAppPanel((width, height), //
-	 * includeStatusBar); // this.wwjPanel.setPreferredSize(size);
-	 */
-	/*
-	 * // Init sector selector WorldWindowGLCanvas wwd = wwj.getWwd();
-	 * this.selector = new SWTSectorSelector(wwd); //
-	 * this.selector.setInteriorColor(new Color(1f, 1f, 1f, 0.1f)); //
-	 * this.selector.setBorderColor(new Color(1f, 0f, 0f, 0.5f)); //
-	 * this.selector.setBorderWidth(3);
-	 * this.selector.addPropertyChangeListener(SWTSectorSelector.
-	 * SECTOR_PROPERTY, new PropertyChangeListener() {
-	 * 
-	 * @Override public void propertyChange(PropertyChangeEvent evt) {
-	 * updateSector(); } });
-	 */
-
-	/*
-	 * //SWT PositionListener private void PositionListener(final
-	 * WorldWindowGLCanvas wwd) { // TODO Auto-generated method stub
-	 * // @Override System.out.println("test position1"); addMouseListener(new
-	 * MouseAdapter() {
-	 * 
-	 * @Override public void mouseDown(final MouseEvent e) { // moveGraphActive
-	 * = e.button == 1; // if (moveGraphActive) { System.out.println(
-	 * "test position2"); moveStartPos.x = e.x; System.out.println("x " +
-	 * moveStartPos.x); moveStartPos.y = e.y; System.out.println("y " +
-	 * moveStartPos.y); // } }
-	 * 
-	 * /* addMouseListener(new MouseListener() {
-	 * 
-	 * @Override
-	 * 
-	 * public void mouseDown(final MouseEvent event) {
-	 * System.out.println("test"); try {
-	 * System.out.println(wwd.getCurrentPosition().toString()); return; } catch
-	 * (NullPointerException e) { // click was not on the globe } }
-	 */
-
-	/*
-	 * @Override public void mouseDoubleClick(MouseEvent e) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void mouseUp(MouseEvent e) { // TODO Auto-generated
-	 * method stub
-	 * 
-	 * }
-	 * 
-	 * });
-	 * 
-	 * }
-	 * 
-	 */
-
-	/*
-	 * public class PositionListener implements MouseListener { private final
-	 * WorldWindowGLCanvas ww;
-	 * 
-	 * public PositionListener(WorldWindowGLCanvas ww) { this.ww = ww; }
-	 * 
-	 * // @Override public void mouseClicked(MouseEvent event) { try {
-	 * System.out.println(ww.getCurrentPosition().toString()); } catch
-	 * (NullPointerException e) { // click was not on the globe } }
-	 * 
-	 * // ...
-	 * 
-	 * @Override public void mouseDoubleClick(MouseEvent e) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void mouseDown(MouseEvent e) { // TODO Auto-generated
-	 * method stub
-	 * 
-	 * }
-	 * 
-	 * @Override public void mouseUp(MouseEvent e) { // TODO Auto-generated
-	 * method stub
-	 * 
-	 * } }
-	 */
 
 	protected void updateSector() {
 		this.currentSector = this.selector.getSector();

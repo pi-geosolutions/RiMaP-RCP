@@ -55,7 +55,7 @@
       <toolbar xmi:id="_tezsEAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar"/>
     </sharedElements>
   </children>
-  <handlers xmi:id="_IfKW4CNuEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handler.0" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.handlers.PerspectiveSwitchHandler" command="_38TBgCNtEeaurtXB4vEzfw"/>
+  <handlers xmi:id="_IfKW4CNuEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handler.0" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.handlers.PerspectiveSwitchHandler" command="_38TBgCNtEeaurtXB4vEzfw"/>
   <commands xmi:id="_NRVm4MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.command.showWidget" commandName="%command.commandname.1" description="%command.description.1">
     <parameters xmi:id="_SKPgoMaeEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" name="Reference to the WWJ widget to show/hide" typeId="" optional="false"/>
   </commands>

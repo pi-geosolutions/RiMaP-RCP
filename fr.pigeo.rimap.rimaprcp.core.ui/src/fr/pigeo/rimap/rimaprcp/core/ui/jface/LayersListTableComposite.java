@@ -47,16 +47,18 @@ import gov.nasa.worldwind.wms.WMSTiledImageLayer;
  */
 
 public class LayersListTableComposite extends Composite {
-	private TableViewer viewer;
-	private WwjInstance wwj;
-	private IEventBroker eventBroker;
+	protected TableViewer viewer;
+	@Inject
+	WwjInstance wwj;
+	@Inject
+	IEventBroker eventBroker;
 
-	private final Image CHECKED = getImage("checked.png");
-	private final Image UNCHECKED = getImage("unchecked.png");
-	private final Image FEATUREINFO = getImage("icon_featureinfo_16px.png");
-	private final Image METADATA = getImage("icon_metadata_16px.png");
-	private final Image PQUERY = getImage("polygon_query_16px.png");
-	private final Image WMSICON = getImage("wms.png");
+	protected final Image CHECKED = getImage("checked.png");
+	protected final Image UNCHECKED = getImage("unchecked.png");
+	protected final Image FEATUREINFO = getImage("icon_featureinfo_16px.png");
+	protected final Image METADATA = getImage("icon_metadata_16px.png");
+	protected final Image PQUERY = getImage("polygon_query_16px.png");
+	protected final Image WMSICON = getImage("wms.png");
 
 	public LayersListTableComposite(Composite parent, int style, WwjInstance wwjInst) {
 		super(parent, style);
@@ -76,7 +78,7 @@ public class LayersListTableComposite extends Composite {
 		
 	}
 
-	private void createColumns(TableViewer tv, TableColumnLayout tcl) {
+	protected void createColumns(TableViewer tv, TableColumnLayout tcl) {
 		// create a column for the checkbox
 		TableViewerColumn visibleCol = new TableViewerColumn(tv, SWT.NONE);
 		visibleCol.getColumn().setAlignment(SWT.CENTER);
@@ -236,7 +238,7 @@ public class LayersListTableComposite extends Composite {
 
 	// helper method to load the images
 	// ensure to dispose the images in your @PreDestroy method
-	private static Image getImage(String file) {
+	protected static Image getImage(String file) {
 		// assume that the current class is called View.java
 		Bundle bundle = FrameworkUtil.getBundle(OrganizeTabPart.class);
 		URL url = FileLocator.find(bundle, new Path("icons/" + file), null);
@@ -260,8 +262,11 @@ public class LayersListTableComposite extends Composite {
 		super.dispose();
 	}
 
-	public void setEventBroker(IEventBroker broker) {
-		this.eventBroker = broker;
+	public void registerEvents() {
+		if (eventBroker==null) {
+			System.out.println("ERROR: EventBroker is Null");
+			return;
+		}
 		this.viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			
 			@Override
