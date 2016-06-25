@@ -16,6 +16,21 @@ Require-Bundle: fr.pigeo.externals.org.apache.commons;bundle-version="1.0.0",
  org.eclipse.e4.ui.di,
  org.eclipse.e4.core.di.annotations,
  org.eclipse.core.runtime
-Export-Package: fr.pigeo.rimap.rimaprcp.cachemanager.wwutil
+Export-Package: fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
+  uses:="gov.nasa.worldwind.layers,
+   gov.nasa.worldwind.cache,
+   org.eclipse.swt.graphics,
+   fr.pigeo.rimap.rimaprcp.worldwind,
+   org.eclipse.swt.widgets,
+   org.eclipse.e4.core.services.events,
+   org.eclipse.jface.viewers,
+   gov.nasa.worldwind.render,
+   gov.nasa.worldwind.avlist,
+   gov.nasa.worldwind.event,
+   gov.nasa.worldwind.geom,
+   gov.nasa.worldwind,
+   fr.pigeo.rimap.rimaprcp.core.ui.jface,
+   org.eclipse.jface.layout,
+   javax.swing"
 Import-Package: org.apache.commons.io
 Bundle-ActivationPolicy: lazy

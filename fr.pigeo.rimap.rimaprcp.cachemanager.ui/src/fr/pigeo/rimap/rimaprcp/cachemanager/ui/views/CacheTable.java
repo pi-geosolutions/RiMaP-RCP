@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jface.viewers.ArrayContentProvider;
