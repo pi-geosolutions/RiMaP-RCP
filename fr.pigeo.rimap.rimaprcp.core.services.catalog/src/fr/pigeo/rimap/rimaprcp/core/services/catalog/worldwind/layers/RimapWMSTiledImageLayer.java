@@ -188,4 +188,12 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 	public void setParams(PolygonQueryableParams params) {
 		this.setValue(RimapAVKey.LAYER_POLYGONQUERYPARAMS, params);
 	}
+
+	@Override
+	public String getWPSUrl() {
+		//Assumes a GeoServer WMS Url pattern
+		String pattern = "(?i)(/wms)(\\?)?$";
+		String url = this.parent.getUrl().replaceAll(pattern, "/wps");
+		return url;
+	}
 }

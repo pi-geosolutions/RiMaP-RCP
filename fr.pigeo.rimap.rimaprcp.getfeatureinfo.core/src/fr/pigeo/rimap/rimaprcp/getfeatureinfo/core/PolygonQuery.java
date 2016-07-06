@@ -2,13 +2,27 @@ package fr.pigeo.rimap.rimaprcp.getfeatureinfo.core;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.http.Consts;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -18,15 +32,26 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants.QueryEventConstants;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.wwj.PolygonBuilder;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import fr.pigeo.rimap.rimaprcp.worldwind.layers.IPolygonQueryableLayer;
+import fr.pigeo.rimap.rimaprcp.worldwind.layers.PolygonQueryableParams;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.render.SurfacePolygon;
 
+/**
+ * PolygonQuery : Central class for the PolygonQuery functionality. All other
+ * PolygonQuery-related classes report to it and get most of the intel. from it
+ * 
+ * @author jean.pommier@pi-geosolutions.fr
+ *
+ */
 @Creatable
 @Singleton
 public class PolygonQuery {
@@ -35,6 +60,12 @@ public class PolygonQuery {
 	int digits = 10;
 	// Image format used in the WPS process
 	String imageFormat = "image/tiff";
+	String EPSGcode = "4326";
+
+	// connection timeouts in seconds
+	int socketTimeout = 20;
+	int connectTimeout = 20;
+	int requestTimeout = 120;
 
 	@Inject
 	Logger logger;
@@ -45,9 +76,14 @@ public class PolygonQuery {
 	@Inject
 	IEventBroker eventBroker;
 
+	@Inject
+	@Optional
+	CloseableHttpClient httpClient;
+
 	private List<IPolygonQueryableLayer> layers = new ArrayList();
 	private boolean enabled;
 	private PolygonBuilder pb;
+	private SurfacePolygon polygon;
 
 	@Inject
 	public PolygonQuery() {
@@ -102,13 +138,84 @@ public class PolygonQuery {
 			p.setArmed(true);
 			((Component) wwj.getWwd()).setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		} else {
+			((Component) wwj.getWwd()).setCursor(Cursor.getDefaultCursor());
 		}
 	}
 
-	private void getStats(String postdata) {
-		System.out.println("TODO : code the PQ internals. Send");
+	public String getStats(IPolygonQueryableLayer layer) {
+		if (this.httpClient == null) {
+			logger.error("HttpClient not set");
+			return null;
+		}
+		String html = "gffdg";
+		String layername = layer.getParams()
+				.getLayernames();
+		PolygonQueryableParams params = layer.getParams();
+		String request = buildWPSRequest(layername, this.polygon);
+		System.out.println(request);
+		String url = layer.getWPSUrl();
 
-		System.out.println(postdata);
+		// perform the WPS query
+		StringEntity entity = new StringEntity(request, ContentType.create("text/xml", Consts.UTF_8));
+		// entity.setChunked(true);
+		HttpPost post = new HttpPost(url);
+		post.setEntity(entity);
+
+		RequestConfig requestConfig = RequestConfig.custom()
+				.setSocketTimeout(this.socketTimeout * 1000)
+				.setConnectTimeout(this.connectTimeout * 1000)
+				.setConnectionRequestTimeout(this.requestTimeout * 1000)
+				.build();
+
+		post.setConfig(requestConfig);
+
+		InputStream in;
+
+		try {
+			((Component) wwj.getWwd()).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			HttpResponse response = httpClient.execute(post);
+
+			System.out.println(response.toString());
+			in = response.getEntity()
+					.getContent();
+			String body = IOUtils.toString(in);
+			System.out.println(body);
+			html = formatJson2HTML(body, layer);
+
+			// EntityUtils.consumeQuietly(response.getEntity());
+		} catch (ClientProtocolException e) {
+			return e.toString();
+		} catch (SocketTimeoutException e) {
+			return "<p style=\"font-weight:bold\">"
+					+ "socket timeout exception while getting polygon stats. Please try again with a smaller polygon"
+					+ "</p>";
+		} catch (IOException e) {
+			return e.toString();
+		} finally {
+			post.releaseConnection();
+		}
+
+		System.out.println("TODO : code the PQ internals. Send");
+		((Component) wwj.getWwd()).setCursor(Cursor.getDefaultCursor());
+		return html;
+	}
+
+	private String formatJson2HTML(String body, IPolygonQueryableLayer layer) {
+		String html = "";
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			JsonNode json = objectMapper.readValue(body, JsonNode.class);
+			JsonNode stats = json.get("features").get(0).get("properties");
+			Iterator<Entry<String, JsonNode>> it = stats.fields();
+			while (it.hasNext()) {
+				Entry<String, JsonNode> entry = it.next();
+				html+="<p> "+entry.getKey()+" : "+entry.getValue().asText()+"</p>";
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			return e.getMessage();
+		}
+		return html;
 	}
 
 	/**
@@ -122,6 +229,7 @@ public class PolygonQuery {
 	@Inject
 	@Optional
 	void polygonClosed(@UIEventTopic(QueryEventConstants.POLYGONQUERY_POLYGON_CLOSED) SurfacePolygon poly) {
+		this.polygon = poly;
 		((Component) wwj.getWwd()).setCursor(Cursor.getDefaultCursor());
 		if (context == null) {
 			return;
@@ -154,7 +262,7 @@ public class PolygonQuery {
 		}
 		if (eventBroker != null) {
 			eventBroker.post(QueryEventConstants.POLYGONQUERY_READY, this);
-		} 
+		}
 	}
 
 	public String buildWPSRequest(String layername, SurfacePolygon poly) {
@@ -183,8 +291,8 @@ public class PolygonQuery {
 	}
 
 	private String polygonToStringRep(SurfacePolygon p) {
-		String json = "	{\"type\":\"FeatureCollection\", "
-				+ "\"crs\":{\"type\":\"EPSG\",\"properties\":{\"code\":\"4326\"}},"
+		String json = "	{\"type\":\"FeatureCollection\", " + "\"crs\":{\"type\":\"EPSG\",\"properties\":{\"code\":\""
+				+ EPSGcode + "\"}},"
 				+ "\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[";
 		Iterator it = p.getOuterBoundary()
 				.iterator();
@@ -192,7 +300,11 @@ public class PolygonQuery {
 			LatLon l = (LatLon) it.next();
 			json += "[" + a2s(l.getLongitude()) + "," + a2s(l.getLatitude()) + "],";
 		}
-		json = json.substring(0, json.length() - 2);
+		// close the polygon by returning on the first node
+		LatLon l = (LatLon) p.getOuterBoundary()
+				.iterator()
+				.next();
+		json += "[" + a2s(l.getLongitude()) + "," + a2s(l.getLatitude()) + "]";
 		json += "]]}}]}";
 
 		return json;

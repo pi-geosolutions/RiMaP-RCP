@@ -6,4 +6,5 @@ public interface IPolygonQueryableLayer {
 	public PolygonQueryableParams getParams();
 	public void setParams(PolygonQueryableParams params);
 	public String getName();
+	public String getWPSUrl();
 }

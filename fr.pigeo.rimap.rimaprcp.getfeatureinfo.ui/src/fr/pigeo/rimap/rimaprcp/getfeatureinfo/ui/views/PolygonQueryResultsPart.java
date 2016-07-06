@@ -1,6 +1,7 @@
 
 package fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views;
 
+import java.net.URL;
 import java.util.Locale;
 
 import javax.annotation.PostConstruct;
@@ -12,6 +13,9 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -23,6 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 
 import fr.pigeo.rimap.rimaprcp.core.ui.core.Central;
+import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.FeatureInfoTarget;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.PolygonQuery;
 import fr.pigeo.rimap.rimaprcp.worldwind.layers.IPolygonQueryableLayer;
 
@@ -88,19 +93,21 @@ public class PolygonQueryResultsPart {
 		//needed for Windows env. (elsewise, nothing is selected by default):
 		browser.setUrl(targets.get(0).getLayer().buildFeatureInfoRequest(targets.get(0).getPosition(), locale.getISO3Country()).toString());
 		
-
+*/
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				if (selection.size() > 0) {
-					FeatureInfoTarget target = (FeatureInfoTarget) selection.getFirstElement();
-					URL fiurl = target.getLayer().buildFeatureInfoRequest(target.getPosition(), locale.getISO3Country());
+					IPolygonQueryableLayer target = (IPolygonQueryableLayer) selection.getFirstElement();
+					//String req = pq.buildWPSRequest(target.getName(), poly);
+					browser.setText(pq.getStats(target));
+					/*URL fiurl = target.buildFeatureInfoRequest(target.getPosition(), locale.getISO3Country());
 					System.out.println(fiurl.toString());
-					browser.setUrl(fiurl.toString());
+					browser.setUrl(fiurl.toString());*/
 				}
 			}
-		});*/
+		});
 	}
 
 	@Focus

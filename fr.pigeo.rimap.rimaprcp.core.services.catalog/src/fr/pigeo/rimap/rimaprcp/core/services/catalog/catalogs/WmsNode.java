@@ -239,6 +239,8 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 			try {
 				this.layer = new RimapWMSTiledImageLayer(caps, layerParams);
 				this.layer.setName(this.name);
+				this.layer.setParent(this);
+				//redundant with previous...
 				this.layer.setValue(RimapAVKey.LAYER_PARENTNODE, this);
 				this.layer.setValue(RimapAVKey.HAS_RIMAP_EXTENSIONS, true);
 				if ((this.polygonQueryParams!=null) && (this.polygonQueryParams.isValid())) {
