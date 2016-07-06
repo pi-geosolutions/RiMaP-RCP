@@ -12,7 +12,10 @@ Require-Bundle: fr.pigeo.rimap.rimaprcp.getfeatureinfo.core,
  org.eclipse.swt,
  org.eclipse.jface,
  org.eclipse.e4.ui.di,
- org.eclipse.e4.core.contexts
+ org.eclipse.e4.core.contexts,
+ fr.pigeo.rimap.rimaprcp.core,
+ gov.nasa.worldwind,
+ org.eclipse.e4.ui.workbench
 Import-Package: gov.nasa.worldwind.geom,
  javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0"

@@ -11,7 +11,7 @@ public class FeatureInfoCommandHandler {
 
 	@Execute
 	public void execute(final MToolItem item, IEventBroker broker, FeatureInfo fi) {
-		broker.post("GETFEATUREINFO/UI/BUTTON_STATUS", item.isSelected()); 
+		broker.post("GETFEATUREINFO/UI/BUTTON_STATUS", item.isSelected()); //unused
 		fi.setEnabled(item.isSelected());
 	}
 

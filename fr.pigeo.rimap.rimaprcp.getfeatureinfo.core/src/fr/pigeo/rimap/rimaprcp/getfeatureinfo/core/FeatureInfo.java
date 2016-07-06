@@ -147,7 +147,8 @@ public class FeatureInfo {
 					MPartStack stack = (MPartStack) modelService.find("fr.pigeo.rimap.rimaprcp.partstack.bottom",
 							application);
 					
-					stack.getChildren().add(part);int siblings = countSiblings(stack);
+					stack.getChildren().add(part);
+					int siblings = countSiblings(stack);
 					if (siblings > 1) {
 						part.setLabel("(" + siblings + ")");
 					}

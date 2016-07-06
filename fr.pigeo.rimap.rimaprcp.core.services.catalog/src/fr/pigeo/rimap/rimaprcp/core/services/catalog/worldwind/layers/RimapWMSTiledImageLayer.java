@@ -8,7 +8,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
+import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
+import fr.pigeo.rimap.rimaprcp.worldwind.layers.IPolygonQueryableLayer;
 import fr.pigeo.rimap.rimaprcp.worldwind.layers.IQueryableLayer;
+import fr.pigeo.rimap.rimaprcp.worldwind.layers.PolygonQueryableParams;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.Position;
@@ -17,7 +20,7 @@ import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
-public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQueryableLayer {
+public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQueryableLayer, IPolygonQueryableLayer {
 	private WmsNode parent;
 	private AVList params;
 
@@ -169,5 +172,20 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 			sb.append("&feature_count=50");
 			return new URL(sb.toString());
 		}
+	}
+
+	@Override
+	public boolean isPolygonQueryable() {
+		return (boolean) this.getValue(RimapAVKey.LAYER_ISPOLYGONQUERYABLE);
+	}
+
+	@Override
+	public PolygonQueryableParams getParams() {
+		return (PolygonQueryableParams) this.getValue(RimapAVKey.LAYER_POLYGONQUERYPARAMS);
+	}
+
+	@Override
+	public void setParams(PolygonQueryableParams params) {
+		this.setValue(RimapAVKey.LAYER_POLYGONQUERYPARAMS, params);
 	}
 }

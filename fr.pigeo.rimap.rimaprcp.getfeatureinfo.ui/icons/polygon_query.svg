@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="22"
+   height="22"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   inkscape:export-filename="/home/jean/dev/geonetwork-GIT/jpgeonetwork/web-client/src/main/resources/apps/geoportal/images/polygon_query_22px.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   sodipodi:docname="Nouveau document 1">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="31.678384"
+     inkscape:cx="11.533258"
+     inkscape:cy="9.7068066"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1033"
+     inkscape:window-x="1920"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1030.3622)">
+    <path
+       transform="translate(0,1030.3622)"
+       style="color:#000000;fill:#00fa9a;fill-opacity:1;fill-rule:nonzero;stroke:#8d8d8d;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 2.768946,2.6257425 14.973717,0.82424464 20.234618,11.077726 18.151179,20.011262 1.1995562,20.958281 z"
+       id="rect2989"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:9px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Linux Libertine O;-inkscape-font-specification:Linux Libertine O"
+       x="8.7757006"
+       y="14.171318"
+       id="text3761"
+       sodipodi:linespacing="125%"
+       transform="translate(0,1030.3622)"><tspan
+         sodipodi:role="line"
+         id="tspan3763"
+         x="8.7757006"
+         y="14.171318" /></text>
+    <path
+       sodipodi:type="inkscape:offset"
+       inkscape:radius="0.27864641"
+       inkscape:original="M 12.875 1036.3438 C 11.996446 1036.3438 9.3334401 1037.4705 8.1875 1038.0625 L 8.34375 1039.0312 C 9.2223042 1038.6464 9.1214779 1038.7188 9.65625 1038.7188 C 10.076428 1038.7188 10.125 1039.046 10.125 1039.3125 C 10.125 1039.9638 9.2639282 1042.1384 8.84375 1043.5 C 8.423572 1044.8618 7.75 1046.2929 7.75 1047.625 C 7.75 1048.3947 8.1075819 1048.8438 8.71875 1048.8438 C 9.3681161 1048.8438 10.065766 1048.5936 12.28125 1047.4688 C 12.892418 1047.1432 10.701171 1048.2188 13.03125 1047.0938 L 13.28125 1045.9375 C 11.409549 1046.8255 11.937533 1046.5625 11.59375 1046.5625 C 11.173572 1046.5625 10.875 1046.2237 10.875 1045.75 C 10.875 1044.6843 11.343718 1043.5625 11.6875 1042.4375 L 12.84375 1038.6562 C 13.03474 1038.0346 13.375 1037.1053 13.375 1036.75 C 13.375 1036.5133 13.218785 1036.3437 12.875 1036.3438 z "
+       style="font-size:29.79739379999999827px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.32100000000000001;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:TeX Gyre Chorus;-inkscape-font-specification:TeX Gyre Chorus Medium"
+       id="path3810"
+       d="m 12.875,1036.0625 c -0.558394,0 -1.414924,0.2967 -2.34375,0.6563 -0.9288258,0.3595 -1.8816249,0.7904 -2.46875,1.0937 a 0.27867427,0.27867427 0 0 0 -0.15625,0.2813 l 0.15625,0.9687 a 0.27867427,0.27867427 0 0 0 0.15625,0.2187 0.27867427,0.27867427 0 0 0 0.25,0 C 9.3427152,1038.8985 9.0963282,1039 9.65625,1039 c 0.13776,0 0.1343819,0.024 0.15625,0.062 0.021868,0.039 0.03125,0.1337 0.03125,0.25 0,0.1014 -0.040214,0.3486 -0.125,0.6563 -0.084786,0.3076 -0.2106123,0.6983 -0.34375,1.0937 -0.2662754,0.7908 -0.5989212,1.6516 -0.8125,2.3437 -0.411658,1.3342 -1.09375,2.7928 -1.09375,4.2188 0,0.428 0.094761,0.7887 0.3125,1.0625 0.2177388,0.2738 0.5636641,0.4375 0.9375,0.4375 0.6563805,0 1.457313,-0.3263 3.25,-1.2188 0.03638,-0.018 0.05644,-0.012 0.09375,-0.031 0.01545,-0.01 0.02914,-0.015 0.0625,-0.031 0.03581,-0.017 0.219206,-0.095 0.28125,-0.125 0.0394,-0.021 0.07153,-0.05 0.09375,-0.063 0.01111,-0.01 0.02025,0.01 0.03125,0 0.01024,-0 0.02044,-0.026 0.03125,-0.031 0.0083,-0.01 0.06231,-0.031 0.0625,-0.031 0.165713,-0.08 0.232713,-0.1059 0.53125,-0.25 a 0.27867427,0.27867427 0 0 0 0.125,-0.125 0.27867427,0.27867427 0 0 0 0.03125,-0.063 l 0.25,-1.1562 a 0.27867427,0.27867427 0 0 0 -0.21875,-0.3438 0.27867427,0.27867427 0 0 0 -0.1875,0.031 c -0.935393,0.4438 -1.28733,0.5976 -1.375,0.625 -0.04223,-0.013 -0.09818,-0.031 -0.1875,-0.031 -0.270392,0 -0.4375,-0.1746 -0.4375,-0.5312 0,-0.984 0.463161,-2.0756 0.8125,-3.2188 L 13.125,1038.75 c 0.0933,-0.3037 0.201642,-0.7018 0.3125,-1.0625 0.110858,-0.3607 0.21875,-0.6709 0.21875,-0.9375 0,-0.1796 -0.07199,-0.3712 -0.21875,-0.5 -0.146761,-0.1288 -0.344774,-0.1876 -0.5625,-0.1875 z"
+       transform="translate(-1.2626907,0.66291261)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="font-size:29.79739379999999827px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.23899999999999999;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:TeX Gyre Chorus;-inkscape-font-specification:TeX Gyre Chorus Medium"
+       d="m 10.927796,1032.9598 c 0.04405,0.2286 0.08408,0.3742 0.104706,0.5217 0.21163,1.0354 0.214307,1.0892 0.30988,2.0266 0.741207,0.1367 1.158614,0.137 2.376714,0.026 l -0.325777,-1.286 c -0.01812,-0.2142 -0.05014,-0.3514 -0.188859,-1.2106 -1.015615,0.052 -1.101522,0.051 -1.845488,-0.019 -0.118693,-0.032 -0.297904,-0.054 -0.431177,-0.059 z"
+       id="path3781"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-3.6302357"
+       y="12.087878"
+       id="text3800"
+       sodipodi:linespacing="125%"
+       transform="translate(0,1030.3622)"><tspan
+         sodipodi:role="line"
+         id="tspan3802"></tspan></text>
+  </g>
+</svg>

@@ -13,7 +13,10 @@ public interface RiMaPEventConstants {
 	String LAYER_ALLEVENTS			="fr/pigeo/rimap/rimaprcp/layer/*" ;
 	String LAYER_CHECKED			="fr/pigeo/rimap/rimaprcp/layer/checked" ;
 	String LAYER_CHECKCHANGE		="fr/pigeo/rimap/rimaprcp/layer/checkchange" ;
-	String LAYER_SELECTED			="fr/pigeo/rimap/rimaprcp/layer/selected" ;
+	//1st layer selected
+	String LAYER_SELECTED			="fr/pigeo/rimap/rimaprcp/layer/selected/first" ;
+	//all selected layers
+	String LAYER_SELECTED_LAYERS	="fr/pigeo/rimap/rimaprcp/layer/selected/all" ;
 	
 	//INode related
 	String FOLDERNODE_EXPANDCHANGE	="fr/pigeo/rimap/rimaprcp/inode/folder/folderchange";
