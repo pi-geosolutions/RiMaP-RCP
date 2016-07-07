@@ -1,6 +1,7 @@
 package fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,12 +62,14 @@ public class PolygonQueryUIManager {
 		// add it an existing stack and show it
 		MPartStack stack = (MPartStack) modelService.find(partContainerID, application);
 
+		removeSiblings(stack);
 		stack.getChildren()
 				.add(part);
+		/*
 		int siblings = countSiblings(stack);
 		if (siblings > 1) {
 			part.setLabel("(" + siblings + ")");
-		}
+		}*/
 		if (!stack.isVisible()) {
 			stack.setVisible(true);
 		}
@@ -81,5 +84,17 @@ public class PolygonQueryUIManager {
 				partDescriptorID, MPart.class, null);
 		System.out.println("Found parts(s) : " + elementsWithTags.size());
 		return elementsWithTags.size();
+	}
+
+	private void removeSiblings(MPartStack stack) {
+		List<String> tags = new ArrayList<>();
+		tags.add(partDescriptorTag);
+		List<MPart> elementsWithTags = modelService.findElements(application,
+				partDescriptorID, MPart.class, null);
+		Iterator<MPart> it = elementsWithTags.iterator();
+		while (it.hasNext()) {
+			MPart part= it.next();
+			partService.hidePart(part);
+		}
 	}
 }

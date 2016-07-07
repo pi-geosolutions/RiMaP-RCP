@@ -51,12 +51,6 @@ public class PolygonQueryResultsPart {
 		gl_parent.marginWidth = 0;
 		parent.setLayout(gl_parent);
 
-		/*ArrayList<FeatureInfoTarget> targets = (ArrayList<FeatureInfoTarget>) central
-				.get("fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.FeatureInfoTargets");
-		if (targets == null || targets.size() == 0) {
-			return;
-		}*/
-
 		Label lblPos = new Label(parent, SWT.NONE);
 		lblPos.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		lblPos.setText("Polygon query ");
@@ -89,11 +83,11 @@ public class PolygonQueryResultsPart {
 		browser = new Browser(parent, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		viewer.setInput(pq.getLayers());
-	/*	
-		//needed for Windows env. (elsewise, nothing is selected by default):
-		browser.setUrl(targets.get(0).getLayer().buildFeatureInfoRequest(targets.get(0).getPosition(), locale.getISO3Country()).toString());
 		
-*/
+		//needed for Windows env. (elsewise, nothing is selected by default):
+		browser.setUrl(pq.getStats(pq.getLayers().get(0)));
+		
+
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {

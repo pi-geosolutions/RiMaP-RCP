@@ -21,5 +21,6 @@ Require-Bundle: javax.inject,
  fr.pigeo.externals.org.apache.commons,
  fr.pigeo.externals.com.fasterxml.jackson.core
 Export-Package: fr.pigeo.rimap.rimaprcp.getfeatureinfo.core,
- fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants
+ fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants,
+ fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n
 Import-Package: gov.nasa.worldwind.geom

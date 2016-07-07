@@ -4,12 +4,16 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.SocketTimeoutException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,6 +33,8 @@ import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.nls.Translation;
+import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -37,6 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants.QueryEventConstants;
+import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n.Messages;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.wwj.PolygonBuilder;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import fr.pigeo.rimap.rimaprcp.worldwind.layers.IPolygonQueryableLayer;
@@ -80,13 +87,20 @@ public class PolygonQuery {
 	@Optional
 	CloseableHttpClient httpClient;
 
+	@Inject
+	@Translation
+	Messages messages;
+
 	private List<IPolygonQueryableLayer> layers = new ArrayList();
 	private boolean enabled;
 	private PolygonBuilder pb;
 	private SurfacePolygon polygon;
+	private Locale locale = Locale.ENGLISH;
+	private HashMap<IPolygonQueryableLayer, String> wpsResultsCache = new HashMap<>();
 
 	@Inject
-	public PolygonQuery() {
+	public PolygonQuery(IEclipseContext ctx) {
+		locale = (Locale) ctx.get(TranslationService.LOCALE);
 	}
 
 	/**
@@ -143,15 +157,20 @@ public class PolygonQuery {
 	}
 
 	public String getStats(IPolygonQueryableLayer layer) {
+		//manages some caching, to avoid re-querying a result already retrieved once
+		if (wpsResultsCache.containsKey(layer)) {
+			return wpsResultsCache.get(layer);
+		}
+		
 		if (this.httpClient == null) {
 			logger.error("HttpClient not set");
 			return null;
 		}
-		String html = "gffdg";
+		String html = "";
 		String layername = layer.getParams()
 				.getLayernames();
 		PolygonQueryableParams params = layer.getParams();
-		String request = buildWPSRequest(layername, this.polygon);
+		String request = buildWPSRequest(layer, this.polygon);
 		System.out.println(request);
 		String url = layer.getWPSUrl();
 
@@ -195,27 +214,103 @@ public class PolygonQuery {
 			post.releaseConnection();
 		}
 
-		System.out.println("TODO : code the PQ internals. Send");
 		((Component) wwj.getWwd()).setCursor(Cursor.getDefaultCursor());
+		
+		//Sets the result in the cache
+		wpsResultsCache.put(layer, html);
 		return html;
 	}
 
 	private String formatJson2HTML(String body, IPolygonQueryableLayer layer) {
 		String html = "";
+		
+		// print header
+		PolygonQueryableParams p = layer.getParams();
+		String header = layer.getParams()
+				.getHeaders();
+		System.out.println(header);
+		if (header == null || header.isEmpty()) {
+			header = messages.polygonquery_header;
+		}
+		html += this.formatWPSHeader(header);
+		
+		// print results
 		ObjectMapper objectMapper = new ObjectMapper();
+		layer.getParams()
+				.getFields();
 		try {
 			JsonNode json = objectMapper.readValue(body, JsonNode.class);
-			JsonNode stats = json.get("features").get(0).get("properties");
+			JsonNode stats = json.get("features")
+					.get(0)
+					.get("properties");
 			Iterator<Entry<String, JsonNode>> it = stats.fields();
 			while (it.hasNext()) {
 				Entry<String, JsonNode> entry = it.next();
-				html+="<p> "+entry.getKey()+" : "+entry.getValue().asText()+"</p>";
+				if (layer.getParams()
+						.getFields()
+						.contains(entry.getKey())) {
+					html += formatWPSEntry(entry.getKey(), entry.getValue()
+							.asText(),
+							layer.getParams()
+									.getRoundValue());
+				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			return e.getMessage();
 		}
 		return html;
+	}
+
+	/**
+	 * Formats the result using a template defined in the bunde.properties file
+	 * 
+	 * @param key
+	 * @param value
+	 * @param roundDecimals
+	 * @return
+	 */
+	private String formatWPSEntry(String key, String value, int roundDecimals) {
+		Object[] messageArguments = { messages.translate("polygonquery_" + key), tryRound(value, roundDecimals) };
+		MessageFormat formatter = new MessageFormat("");
+		formatter.setLocale(locale);
+		formatter.applyPattern(messages.polygonquery_template);
+		String output = formatter.format(messageArguments);
+		return output;
+	}
+
+	/**
+	 * Formats the results header using a template defined in the
+	 * bunde.properties file
+	 * 
+	 * @param key
+	 * @param value
+	 * @param roundDecimals
+	 * @return
+	 */
+	private String formatWPSHeader(String text) {
+		Object[] messageArguments = { text };
+		MessageFormat formatter = new MessageFormat("");
+		formatter.setLocale(locale);
+		formatter.applyPattern(messages.polygonquery_header_template);
+		String output = formatter.format(messageArguments);
+		return output;
+	}
+
+	/**
+	 * Tries to convert value to a float value and round it to the given nb of
+	 * decimals. If it fails, returns the original string
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private String tryRound(String value, int decimals) {
+		try {
+			BigDecimal bd = new BigDecimal(value).setScale(decimals, RoundingMode.HALF_EVEN);
+			return bd.toString();
+		} catch (Exception ex) {
+			return value;
+		}
 	}
 
 	/**
@@ -229,6 +324,9 @@ public class PolygonQuery {
 	@Inject
 	@Optional
 	void polygonClosed(@UIEventTopic(QueryEventConstants.POLYGONQUERY_POLYGON_CLOSED) SurfacePolygon poly) {
+		//Clear the cached results
+		wpsResultsCache.clear();
+		
 		this.polygon = poly;
 		((Component) wwj.getWwd()).setCursor(Cursor.getDefaultCursor());
 		if (context == null) {
@@ -265,10 +363,20 @@ public class PolygonQuery {
 		}
 	}
 
-	public String buildWPSRequest(String layername, SurfacePolygon poly) {
+	public String buildWPSRequest(IPolygonQueryableLayer layer, SurfacePolygon poly) {
 		String xml = "";
+		String layername = layer.getParams()
+				.getLayernames();
+		String band = String.valueOf(layer.getParams()
+				.getBandNumber());
 		BoundingBox bb = computeEnclosingBounds(poly);
-		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><wps:Execute version=\"1.0.0\" service=\"WPS\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.opengis.net/wps/1.0.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:wcs=\"http://www.opengis.net/wcs/1.1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd\">"
+		xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><wps:Execute version=\"1.0.0\" service=\"WPS\" "
+				+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+				+ "xmlns=\"http://www.opengis.net/wps/1.0.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" "
+				+ "xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" "
+				+ "xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" "
+				+ "xmlns:wcs=\"http://www.opengis.net/wcs/1.1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" "
+				+ "xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd\">"
 				+ "  <ows:Identifier>ras:RasterZonalStatistics</ows:Identifier>" + "  <wps:DataInputs>"
 				+ "    <wps:Input>" + "      <ows:Identifier>data</ows:Identifier>"
 				+ "      <wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://geoserver/wcs\" method=\"POST\">"
@@ -279,7 +387,9 @@ public class PolygonQuery {
 				+ "                <ows:UpperCorner>" + a2s(bb.maxLon) + " " + a2s(bb.maxLat) + "</ows:UpperCorner>"
 				+ "              </gml:BoundingBox>" + "            </wcs:DomainSubset>"
 				+ "            <wcs:Output format=\"" + imageFormat + "\"/>" + "          </wcs:GetCoverage>"
-				+ "        </wps:Body>" + "      </wps:Reference>" + "    </wps:Input>" + "    <wps:Input>"
+				+ "        </wps:Body>" + "      </wps:Reference>" + "    </wps:Input>"
+				+ "<wps:Input><ows:Identifier>band</ows:Identifier><wps:Data><wps:LiteralData>" + band
+				+ "</wps:LiteralData></wps:Data></wps:Input>" + "    <wps:Input>"
 				+ "      <ows:Identifier>zones</ows:Identifier>" + "      <wps:Data>"
 				+ "        <wps:ComplexData mimeType=\"application/json\">" + "			<![CDATA["
 				+ this.polygonToStringRep(poly) + "]]>" + "		 </wps:ComplexData>" + "      </wps:Data>"
