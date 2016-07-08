@@ -171,7 +171,7 @@ public class PolygonQuery {
 				.getLayernames();
 		PolygonQueryableParams params = layer.getParams();
 		String request = buildWPSRequest(layer, this.polygon);
-		System.out.println(request);
+		//System.out.println(request);
 		String url = layer.getWPSUrl();
 
 		// perform the WPS query
@@ -194,11 +194,11 @@ public class PolygonQuery {
 			((Component) wwj.getWwd()).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			HttpResponse response = httpClient.execute(post);
 
-			System.out.println(response.toString());
+			//System.out.println(response.toString());
 			in = response.getEntity()
 					.getContent();
 			String body = IOUtils.toString(in);
-			System.out.println(body);
+			//System.out.println(body);
 			html = formatJson2HTML(body, layer);
 
 			// EntityUtils.consumeQuietly(response.getEntity());
@@ -229,7 +229,7 @@ public class PolygonQuery {
 		PolygonQueryableParams p = layer.getParams();
 		String header = layer.getParams()
 				.getHeaders();
-		System.out.println(header);
+		//System.out.println(header);
 		if (header == null || header.isEmpty()) {
 			header = messages.polygonquery_header;
 		}

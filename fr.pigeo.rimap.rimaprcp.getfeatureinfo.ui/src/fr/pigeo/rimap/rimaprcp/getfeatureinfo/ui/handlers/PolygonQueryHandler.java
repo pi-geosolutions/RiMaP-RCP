@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants.QueryEventConstants;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.PolygonQueryUIManager;
-import fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.tools.UITools;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.AVListImpl;
@@ -26,13 +25,15 @@ import gov.nasa.worldwind.render.SurfacePolygon;
 public class PolygonQueryHandler {
 	private IStructuredSelection selectedLayers = null;
 	private MToolItem toolItem=null;
+	private PolygonQueryUIManager pqm=null;
 
 	@Execute
-	public void execute(final MToolItem item, IEventBroker broker, PolygonQueryUIManager pquim) {
-		//disable all other toolItems
-		UITools.disableSiblingToolItems(item);
+	public void execute(final MToolItem item, IEventBroker broker, PolygonQueryUIManager pquim, IEventBroker eventBroker) {
+		//disable all other toolItems by telling them this item is selected
+		eventBroker.send(QueryEventConstants.TOOLITEM_SELECTED, item);
 		
 		pquim.enable(item.isSelected());
+		this.pqm = pquim;
 	}
 
 	@CanExecute
@@ -53,6 +54,21 @@ public class PolygonQueryHandler {
 		}
 		reset();
 		return false;
+	}
+	
+	@Inject
+	@Optional
+	void onToolItemChange(@UIEventTopic(QueryEventConstants.TOOLITEM_SELECTED) MToolItem item) {
+		if (item==this.toolItem) {
+			//do nothing, we probably issued the event
+			return;
+		}
+		if (this.toolItem!=null) {
+			this.toolItem.setSelected(false);
+		}
+		if (this.pqm!=null) {
+			this.pqm.enable(false);
+		}
 	}
 
 	@Inject

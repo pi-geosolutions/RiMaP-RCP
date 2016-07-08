@@ -6,10 +6,15 @@ import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -23,7 +28,7 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 
 import fr.pigeo.rimap.rimaprcp.core.ui.core.Central;
@@ -39,6 +44,8 @@ public class PolygonQueryResultsPart {
 	@Inject
 	@Translation
 	Messages messages;
+	
+	@Inject UISynchronize sync;
 
 	@Inject
 	public PolygonQueryResultsPart() {
@@ -46,7 +53,7 @@ public class PolygonQueryResultsPart {
 	}
 
 	@PostConstruct
-	public void postConstruct(Composite parent, Central central, MPart part, IEclipseContext context, PolygonQuery pq) {
+	public void postConstruct(Display display, Composite parent, Central central, MPart part, IEclipseContext context, final PolygonQuery pq) {
 		if(locale==null) {
 			locale = (Locale) context.get(TranslationService.LOCALE);
 		}
@@ -62,9 +69,6 @@ public class PolygonQueryResultsPart {
 		// define the TableViewer
 		viewer = new TableViewer(parent,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.SINGLE);
-		// create the columns
-		// not yet implemented
-		// createColumns(viewer);
 
 		// make lines and header visible
 		final Table table = viewer.getTable();
@@ -89,7 +93,8 @@ public class PolygonQueryResultsPart {
 		viewer.setInput(pq.getLayers());
 		
 		//needed for Windows env. (elsewise, nothing is selected by default):
-		browser.setUrl(pq.getStats(pq.getLayers().get(0)));
+		updateBrowser(browser, pq.getLayers().get(0), pq);
+		//browser.setText(pq.getStats(pq.getLayers().get(0)));
 		
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -98,14 +103,34 @@ public class PolygonQueryResultsPart {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				if (selection.size() > 0) {
 					IPolygonQueryableLayer target = (IPolygonQueryableLayer) selection.getFirstElement();
-					//String req = pq.buildWPSRequest(target.getName(), poly);
-					browser.setText(pq.getStats(target));
-					/*URL fiurl = target.buildFeatureInfoRequest(target.getPosition(), locale.getISO3Country());
-					System.out.println(fiurl.toString());
-					browser.setUrl(fiurl.toString());*/
+					updateBrowser(browser, target, pq);
+					//browser.setText(pq.getStats(target));
 				}
 			}
 		});
+	}
+	
+	private void updateBrowser(final Browser browser, final IPolygonQueryableLayer layer, final PolygonQuery pq) {
+		browser.setText(messages.loading);
+		Job job = new Job("My Job") {
+				String html="";
+			
+			  @Override
+			  protected IStatus run(IProgressMonitor monitor) {
+				 html = pq.getStats(layer);
+				  
+			    sync.asyncExec(new Runnable() {
+			      @Override
+			      public void run() {
+			        browser.setText(html);
+			      }
+			    });
+			    return Status.OK_STATUS;
+			  }
+			};
+
+			// Start the Job
+			job.schedule(); 
 	}
 
 	@Focus

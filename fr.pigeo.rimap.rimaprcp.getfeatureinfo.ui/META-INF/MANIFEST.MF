@@ -7,6 +7,7 @@ Require-Bundle: fr.pigeo.rimap.rimaprcp.getfeatureinfo.core,
  fr.pigeo.rimap.rimaprcp.core.ui,
  fr.pigeo.rimap.rimaprcp.worldwind,
  org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150407-1430",
+ org.eclipse.core.runtime;bundle-version="3.11.1",
  org.eclipse.e4.core.di,
  org.eclipse.e4.core.services,
  org.eclipse.swt,
@@ -15,7 +16,8 @@ Require-Bundle: fr.pigeo.rimap.rimaprcp.getfeatureinfo.core,
  org.eclipse.e4.core.contexts,
  fr.pigeo.rimap.rimaprcp.core,
  gov.nasa.worldwind,
- org.eclipse.e4.ui.workbench
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.core.jobs
 Import-Package: gov.nasa.worldwind.geom,
  javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0"

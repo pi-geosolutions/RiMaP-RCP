@@ -3,6 +3,8 @@ package fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n;
 import java.lang.reflect.Field;
 
 public class Messages {
+	public String loading;
+	
 	//FI Strings
 	public String fi_results_position;
 	public String fi_results_latitude;

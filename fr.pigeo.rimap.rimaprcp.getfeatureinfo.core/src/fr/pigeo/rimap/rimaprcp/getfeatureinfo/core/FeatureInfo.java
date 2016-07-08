@@ -1,5 +1,7 @@
 package fr.pigeo.rimap.rimaprcp.getfeatureinfo.core;
 
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
@@ -93,10 +95,12 @@ public class FeatureInfo {
 				clickListener = buildMouseListener();
 			}
 			this.wwj.getWwd().getInputHandler().addMouseListener(clickListener);
+			((Component) wwj.getWwd()).setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			//logger.debug("added listener");
 		} else {
 			if (clickListener != null) {
 				this.wwj.getWwd().getInputHandler().removeMouseListener(clickListener);
+				((Component) wwj.getWwd()).setCursor(Cursor.getDefaultCursor());
 				//logger.debug("removed listener");
 			}
 		}
