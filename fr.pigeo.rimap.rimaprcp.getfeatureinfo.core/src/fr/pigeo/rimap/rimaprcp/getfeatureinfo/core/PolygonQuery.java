@@ -164,7 +164,7 @@ public class PolygonQuery {
 		
 		if (this.httpClient == null) {
 			logger.error("HttpClient not set");
-			return null;
+			return messages.polygonquery_result_error;
 		}
 		String html = "";
 		String layername = layer.getParams()
@@ -203,13 +203,14 @@ public class PolygonQuery {
 
 			// EntityUtils.consumeQuietly(response.getEntity());
 		} catch (ClientProtocolException e) {
-			return e.toString();
+			logger.error(e.toString());
+			return messages.polygonquery_result_error;
 		} catch (SocketTimeoutException e) {
-			return "<p style=\"font-weight:bold\">"
-					+ "socket timeout exception while getting polygon stats. Please try again with a smaller polygon"
-					+ "</p>";
+			logger.error(e.toString());
+			return messages.polygonquery_result_timeout_error;
 		} catch (IOException e) {
-			return e.toString();
+			logger.error(e.toString());
+			return messages.polygonquery_result_error;
 		} finally {
 			post.releaseConnection();
 		}

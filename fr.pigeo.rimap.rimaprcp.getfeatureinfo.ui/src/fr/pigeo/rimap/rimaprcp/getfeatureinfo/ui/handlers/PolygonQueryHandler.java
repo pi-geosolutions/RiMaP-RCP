@@ -15,9 +15,9 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
-import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.PolygonQuery;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants.QueryEventConstants;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.PolygonQueryUIManager;
+import fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.tools.UITools;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.AVListImpl;
@@ -29,6 +29,9 @@ public class PolygonQueryHandler {
 
 	@Execute
 	public void execute(final MToolItem item, IEventBroker broker, PolygonQueryUIManager pquim) {
+		//disable all other toolItems
+		UITools.disableSiblingToolItems(item);
+		
 		pquim.enable(item.isSelected());
 	}
 

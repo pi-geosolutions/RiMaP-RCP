@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.swt.graphics.Image;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -76,11 +77,13 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 
 	@Inject
 	IWmsService wmsService;
+	
+	@Inject Logger logger;
 
 	@Override
 	public void loadFromJson(JsonNode node) {
 		if (!NodeUtils.isValid(node, this.type)) {
-			System.out.println("ERROR: error parsing JsonNode in " + this.getClass()
+			logger.error("ERROR: error parsing JsonNode in " + this.getClass()
 					.getName());
 			return;
 		}
@@ -109,12 +112,12 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 			Iterator<Entry<String, JsonNode>> it = n.fields();
 			List<String> pq_fields = new ArrayList();
 
-			System.out.println("    -> polygon query fields:");
+			//System.out.println("    -> polygon query fields:");
 			while (it.hasNext()) {
 				Entry<String, JsonNode> entry = it.next();
 				if (entry.getValue().asBoolean(false)) {
 					pq_fields.add(entry.getKey());
-					System.out.println("        - "+entry.getKey());
+					//System.out.println("        - "+entry.getKey());
 				}
 			}
 			this.polygonQueryParams = new PolygonQueryableParams(pq_layer, pq_header, pq_bandnb, pq_round, pq_fields);
@@ -128,7 +131,7 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 				catalogState.addCheckedNode(this);
 			}
 		} else {
-			System.out.println("################ catalogState context var is null #################");
+			logger.error("catalogState context var is null");
 		}
 
 		if (prefsService != null) {

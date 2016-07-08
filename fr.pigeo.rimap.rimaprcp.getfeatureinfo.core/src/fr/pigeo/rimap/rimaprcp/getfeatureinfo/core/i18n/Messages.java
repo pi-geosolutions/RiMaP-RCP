@@ -3,6 +3,13 @@ package fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n;
 import java.lang.reflect.Field;
 
 public class Messages {
+	//FI Strings
+	public String fi_results_position;
+	public String fi_results_latitude;
+	public String fi_results_longitude;
+	public String fi_results_altitude;
+	public String fi_results_layers;
+	
 	// WPS Strings
 	public String polygonquery_count;
 	public String polygonquery_min;
@@ -14,6 +21,10 @@ public class Messages {
 	public String polygonquery_header_template;
 	public String polygonquery_template;
 	public String polygonquery_presentation;
+	public String polygonquery_layers;
+	//Error messages
+	public String polygonquery_result_error;
+	public String polygonquery_result_timeout_error;
 
 	/**
 	 * Translates the values using Eclipse's i18n translation system +

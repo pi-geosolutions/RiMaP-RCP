@@ -1,13 +1,13 @@
 
 package fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views;
 
-import java.net.URL;
 import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -27,14 +27,18 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 
 import fr.pigeo.rimap.rimaprcp.core.ui.core.Central;
-import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.FeatureInfoTarget;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.PolygonQuery;
+import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.layers.IPolygonQueryableLayer;
 
 public class PolygonQueryResultsPart {
 	private TableViewer viewer;
 	private Browser browser;
 	private Locale locale;
+
+	@Inject
+	@Translation
+	Messages messages;
 
 	@Inject
 	public PolygonQueryResultsPart() {
@@ -51,9 +55,9 @@ public class PolygonQueryResultsPart {
 		gl_parent.marginWidth = 0;
 		parent.setLayout(gl_parent);
 
-		Label lblPos = new Label(parent, SWT.NONE);
+		/*Label lblPos = new Label(parent, SWT.NONE);
 		lblPos.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		lblPos.setText("Polygon query ");
+		lblPos.setText("Polygon query ");*/
 
 		// define the TableViewer
 		viewer = new TableViewer(parent,
@@ -78,7 +82,7 @@ public class PolygonQueryResultsPart {
 			}
 		});
 		colName.getColumn().setWidth(200);
-		colName.getColumn().setText("Layers");
+		colName.getColumn().setText(messages.polygonquery_layers);
 
 		browser = new Browser(parent, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));

@@ -82,7 +82,7 @@ public class PolygonQueryUIManager {
 		tags.add(partDescriptorTag);
 		List<MPart> elementsWithTags = modelService.findElements(application,
 				partDescriptorID, MPart.class, null);
-		System.out.println("Found parts(s) : " + elementsWithTags.size());
+		//System.out.println("Found parts(s) : " + elementsWithTags.size());
 		return elementsWithTags.size();
 	}
 

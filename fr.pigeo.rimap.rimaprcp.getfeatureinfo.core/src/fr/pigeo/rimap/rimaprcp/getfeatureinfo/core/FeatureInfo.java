@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -22,6 +23,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Display;
 
 import fr.pigeo.rimap.rimaprcp.core.ui.core.Central;
+import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import fr.pigeo.rimap.rimaprcp.worldwind.layers.IQueryableLayer;
 import gov.nasa.worldwind.geom.Position;
@@ -42,6 +44,9 @@ public class FeatureInfo {
 	MApplication application;
 	@Inject
 	Central central;
+	@Inject
+	@Translation
+	Messages messages;
 
 	private IQueryableLayer[] layers;
 	private boolean enabled;
@@ -81,18 +86,18 @@ public class FeatureInfo {
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-		 logger.info("FeatureInfo button status is " + enabled);
+		 //logger.info("FeatureInfo button status is " + enabled);
 
 		if (this.enabled) {
 			if (clickListener == null) { // lazy init
 				clickListener = buildMouseListener();
 			}
 			this.wwj.getWwd().getInputHandler().addMouseListener(clickListener);
-			logger.debug("added listener");
+			//logger.debug("added listener");
 		} else {
 			if (clickListener != null) {
 				this.wwj.getWwd().getInputHandler().removeMouseListener(clickListener);
-				logger.debug("removed listener");
+				//logger.debug("removed listener");
 			}
 		}
 	}
@@ -112,19 +117,19 @@ public class FeatureInfo {
 
 	private void getFeatureInfo() {
 		final Position pos = wwj.getWwd().getCurrentPosition();
-		logger.info("TODO: retrieve FI at pos " + pos.toString());
+		//logger.info("TODO: retrieve FI at pos " + pos.toString());
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					ArrayList<FeatureInfoTarget> targets = new ArrayList<FeatureInfoTarget>();
 					Layer[] wwjlayers = wwj.getLayersList();
 					for (Layer layer : wwjlayers) {
-						System.out.println(layer.getClass());
+						//System.out.println(layer.getClass());
 						if (layer instanceof IQueryableLayer) {
 							IQueryableLayer qlayer = (IQueryableLayer) layer;
 							if (qlayer.isQueryable()) {
 								URL req = qlayer.buildFeatureInfoRequest(pos, locale.getISO3Country());
 								if (req != null) {
-									logger.info("GetFeatureInfoURL: "+req.toString());
+									//logger.info("GetFeatureInfoURL: "+req.toString());
 									targets.add(new FeatureInfoTarget(qlayer, pos));
 								}
 							}
@@ -141,7 +146,7 @@ public class FeatureInfo {
 							"bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views.FeatureInfoResultsPart");
 							*/
 					// create a nice label for the part header
-					String header = "Position:" + pos.toString();
+					String header = messages.fi_results_position + pos.toString();
 					part.setCloseable(true);
 					// add it an existing stack and show it
 					MPartStack stack = (MPartStack) modelService.find("fr.pigeo.rimap.rimaprcp.partstack.bottom",
@@ -163,7 +168,7 @@ public class FeatureInfo {
 					tags.add("FeatureInfo");
 					List<MPart> elementsWithTags = modelService.findElements(application, "fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.partdescriptor.fi"
 							, MPart.class, null);
-					System.out.println("Found parts(s) : " + elementsWithTags.size());
+					//System.out.println("Found parts(s) : " + elementsWithTags.size());
 					return elementsWithTags.size();
 				}
 			});
