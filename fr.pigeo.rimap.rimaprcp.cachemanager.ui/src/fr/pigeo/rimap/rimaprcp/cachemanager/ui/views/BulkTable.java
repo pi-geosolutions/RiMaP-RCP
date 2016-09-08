@@ -18,5 +18,9 @@ public class BulkTable {
 	public void postConstruct(Composite parent, WwjInstance wwjInst, IEclipseContext context){
 		this.layersListComposite = new BulkLayersListTableComposite2(parent, SWT.BORDER_SOLID, wwjInst);
 		ContextInjectionFactory.inject(this.layersListComposite, context);
+		
+		//this.layersListComposite.addDragnDropSupport();
+		this.layersListComposite.addWidgetFilter(false);
+		this.layersListComposite.registerEvents();
 	}
 }

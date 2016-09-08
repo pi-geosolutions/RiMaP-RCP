@@ -1,21 +1,19 @@
 package fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.*;
 //import org.eclipse.swt.events.MouseEvent;
 //import org.eclipse.swt.events.MouseListener;
 //import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.internal.gtk.*;
+//import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.internal.gtk.OS;
 //import org.eclipse.swt.internal.gtk.OS;
 import org.eclipse.swt.widgets.Display;
-//import org.eclipse.swt.widgets.Widget.getDisplay;
-import org.eclipse.swt.widgets.Widget;
 
 import gov.nasa.worldwind.Movable;
 import gov.nasa.worldwind.View;
@@ -77,7 +75,7 @@ public abstract class SWTSectorSelector extends WWObjectImpl
 	protected static final int SOUTHWEST = SOUTH + WEST;
 	protected static final int SOUTHEAST = SOUTH + EAST;
 
-	private static Cursor cursor = null;
+	//private static Cursor cursor = null;
 
 	private final WorldWindow wwd;
 	private final Layer layer;
@@ -91,7 +89,8 @@ public abstract class SWTSectorSelector extends WWObjectImpl
 	private int side = NONE;
 	private Position previousPosition = null;
 	private Sector previousSector = null;
-	Cursor newCursor = cursor;
+	//Cursor newCursor = cursor;
+	private static java.awt.Cursor Cursor = null;
 	Display display;
 	public long /*int*/ handle;
 	Thread thread;
@@ -139,20 +138,30 @@ public abstract class SWTSectorSelector extends WWObjectImpl
 		this.getWwd().addSelectListener(this);
 		 this.getWwd().getInputHandler().addMouseListener(this);
 		 this.getWwd().getInputHandler().addMouseMotionListener(this);
-
+		 this.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.CROSSHAIR_CURSOR));
+		
 		// this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-		 Display display = getDisplay();
-			Cursor newCursor = cursor;
-			newCursor = display.getSystemCursor(SWT.CURSOR_CROSS);
-		 this.setCursor(newCursor);
+		 //Display display = getDisplay();
+			//Cursor newCursor = cursor;
+			//newCursor = display.getSystemCursor(SWT.CURSOR_CROSS);
+			
+	/*		
+			Cursor crossCursor = new Cursor(display,SWT.CURSOR_CROSS);
+			
+			//list.setCursor(crossCursor);
+		 this.setCursor(crossCursor);
+		 
+		 */
 	}
 
+	/*
 	private Display getDisplay() {
 		Display display = this.display;
 		if (display == null) error (SWT.ERROR_WIDGET_DISPOSED);
 		return display;
 		
 	}
+	*/
 	
 	void error (int code) {
 		SWT.error (code);
@@ -170,6 +179,7 @@ public abstract class SWTSectorSelector extends WWObjectImpl
 	}
 
 	public Sector getSector() {
+		//System.out.println("test");
 		return this.getShape().hasSelection() ? this.getShape().getSector() : null;
 		// TODO: Determine how to handle date-line spanning sectors.
 	}
@@ -517,34 +527,44 @@ public abstract class SWTSectorSelector extends WWObjectImpl
 		}
 	}
 
+	/*
 	protected void checkWidget () {
 		Display display = this.display;
 		if (display == null) error (SWT.ERROR_WIDGET_DISPOSED);
 		//if (display.thread != Thread.currentThread ()) error (SWT.ERROR_THREAD_INVALID_ACCESS);
 		if ((state & DISPOSED) != 0) error (SWT.ERROR_WIDGET_DISPOSED);
 	}
+	*/
 	
+	 protected void setCursor(Cursor cursor)
+	    {
+	        ((Component) this.getWwd()).setCursor(cursor != null ? cursor : java.awt.Cursor.getDefaultCursor());
+	    }
 	
-	public void setCursor (Cursor cursor) {
-		checkWidget();
-		if (cursor != null && cursor.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);
-		this.cursor = cursor;
-		setCursor (cursor != null ? cursor.handle : 0);
+	/*
+	public void setCursor (java.awt.Cursor cursor2) {
+		//checkWidget();
+		if (cursor2 != null && cursor2.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);
+		this.cursor = cursor2;
+		setCursor (cursor2 != null ? cursor2.handle : 0);
 	}
 
-	void setCursor (long /*int*/ cursor) {
-		long /*int*/ window = eventWindow ();
-		if (window != 0) {
-			OS.gdk_window_set_cursor (window, cursor);
-			if (!OS.isX11()) {
-				OS.gdk_flush ();
-			} else {
-				long /*int*/ xDisplay = OS.gdk_x11_display_get_xdisplay(OS.gdk_display_get_default());
-				OS.XFlush (xDisplay);
-			}
-		}
-	}
+*/
+	//void setCursor (long /*int*/ cursor) {
+	//	long /*int*/ window = eventWindow ();
+	//	if (window != 0) {
+	//		OS.gdk_window_set_cursor (window, cursor);
+	//		if (!OS.isX11()) {
+	//			OS.gdk_flush ();
+	//		} else {
+	//			long /*int*/ xDisplay = OS.gdk_x11_display_get_xdisplay(OS.gdk_display_get_default());
+	//			OS.XFlush (xDisplay);
+	//		}
+	//	}
+	//}
 	 
+	
+	
 	long /*int*/ eventWindow () {
 		long /*int*/ eventHandle = eventHandle ();
 		OS.gtk_widget_realize (eventHandle);
@@ -679,11 +699,13 @@ public abstract class SWTSectorSelector extends WWObjectImpl
 	        protected Position getStartPosition()
 	        {
 	            return startPosition;
+	            
 	        }
 
 	        protected void setStartPosition(Position startPosition)
 	        {
 	            this.startPosition = startPosition;
+	           // System.out.println("setstartPosition  " + startPosition);
 	        }
 
 	        protected Position getEndPosition()
@@ -694,11 +716,13 @@ public abstract class SWTSectorSelector extends WWObjectImpl
 	        protected void setEndPosition(Position endPosition)
 	        {
 	            this.endPosition = endPosition;
+	            //System.out.println("endPosition" + endPosition);
 	        }
 
 	        protected SurfaceSector getBorder()
 	        {
 	            return borderShape;
+	            
 	        }
 
 	        protected void setBorder(SurfaceSector shape)
@@ -711,6 +735,7 @@ public abstract class SWTSectorSelector extends WWObjectImpl
 	            }
 
 	            this.borderShape = shape;
+	            System.out.println("borderShape" + borderShape);
 	        }
 
 	        protected boolean hasSelection()
