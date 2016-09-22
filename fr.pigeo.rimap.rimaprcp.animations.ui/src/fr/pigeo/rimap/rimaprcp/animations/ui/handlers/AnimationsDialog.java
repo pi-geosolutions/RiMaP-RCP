@@ -1,19 +1,19 @@
 package fr.pigeo.rimap.rimaprcp.animations.ui.handlers;
 
+import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -29,7 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -47,14 +46,21 @@ import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-import fr.pigeo.rimap.rimaprcp.animations.AnimationsEventConstants;
+import fr.pigeo.rimap.rimaprcp.animations.constants.AnimationsEventConstants;
 import fr.pigeo.rimap.rimaprcp.animations.core.Animations;
 import fr.pigeo.rimap.rimaprcp.animations.core.AnimationsSource;
+import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.SurfaceImage;
 
 public class AnimationsDialog extends Dialog {
 	@Inject
 	Animations animations;
 
+	@Inject
+	IEventBroker eventBroker;
+	
 	private LocalResourceManager resManager;
 	private Text txtDate;
 	private Button btnLoad;
@@ -64,6 +70,7 @@ public class AnimationsDialog extends Dialog {
 	private Scale scale;
 	private Label lblDate;
 	private Button buttonLast, btnFirst, btnPrev, btnBPlay, buttonPause, buttonFPlay, buttonNext;
+	private int loopDirection = 0;
 
 	private AnimationsSource currentDataset = null;
 
@@ -109,7 +116,7 @@ public class AnimationsDialog extends Dialog {
 		progressBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		progressBar.setToolTipText("Please choose a dataset first...");
 		progressBar.setSize(200, 20);
-		//progressBar.setVisible(false);
+		// progressBar.setVisible(false);
 
 		compositeControls = new Composite(container, SWT.NONE);
 		compositeControls.setLayout(new GridLayout(2, false));
@@ -119,26 +126,6 @@ public class AnimationsDialog extends Dialog {
 		scale = new Scale(compositeControls, SWT.NONE);
 		scale.setSelection(100);
 		scale.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		scale.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (currentDataset==null) {
-					return;
-				}
-				int sel = scale.getSelection();
-				int max = scale.getMaximum();
-				
-				updateDate(currentDataset,scale.getSelection());
-				
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				
-			}
-			
-		});
 
 		lblDate = new Label(compositeControls, SWT.NONE);
 		GridData gd_lblDate = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
@@ -177,7 +164,133 @@ public class AnimationsDialog extends Dialog {
 		buttonLast = new Button(compositeButtons, SWT.NONE);
 		buttonLast.setText(">|");
 
+		addListeners();
+
 		return container;
+	}
+
+	private void addListeners() {
+		SelectionAdapter scaleSelectionListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (currentDataset == null) {
+					return;
+				}
+				eventBroker.send(AnimationsEventConstants.ANIMATIONS_SELECTED_DATE_CHANGED, scale.getSelection());
+
+			}
+		};
+		scale.addSelectionListener(scaleSelectionListener);
+
+		SelectionListener btnFirstSelectionListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				loopDirection = 0;
+				int index = scale.getMinimum();
+				scale.setSelection(index);
+				// setSelection does not trigger the scale's listener, hence we
+				// have to send the event here too
+				eventBroker.send(AnimationsEventConstants.ANIMATIONS_SELECTED_DATE_CHANGED, index);
+			}
+		};
+		btnFirst.addSelectionListener(btnFirstSelectionListener);
+		SelectionListener btnLastSelectionListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				loopDirection = 0;
+				int index = scale.getMaximum();
+				scale.setSelection(index);
+				// setSelection does not trigger the scale's listener, hence we
+				// have to send the event here too
+				eventBroker.send(AnimationsEventConstants.ANIMATIONS_SELECTED_DATE_CHANGED, index);
+			}
+		};
+		buttonLast.addSelectionListener(btnLastSelectionListener);
+		SelectionAdapter lbtnPrevSelectionListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				increment(-1, false);
+			}
+		};
+		btnPrev.addSelectionListener(lbtnPrevSelectionListener);
+		SelectionAdapter btnBPlaySelectionListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				loopDirection = -1;
+				increment(-1, true);
+			}
+		};
+		btnBPlay.addSelectionListener(btnBPlaySelectionListener);
+		SelectionAdapter btnPauseSelectionListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				increment(0, false);
+			}
+		};
+		buttonPause.addSelectionListener(btnPauseSelectionListener);
+		SelectionAdapter btnFPlaySelectionListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				loopDirection = 1;
+				increment(1, true);
+			}
+		};
+		buttonFPlay.addSelectionListener(btnFPlaySelectionListener);
+		SelectionAdapter btnNextSelectionListener = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				increment(1, false);
+			}
+		};
+		buttonNext.addSelectionListener(btnNextSelectionListener);
+
+	}
+
+	private void increment(final int step, final boolean loop) {
+		int index = scale.getSelection() + step;
+		int interval = scale.getMaximum() - scale.getMinimum();
+		if (index > scale.getMaximum()) {
+			index -= interval;
+		} else if (index < scale.getMinimum()) {
+			index += interval;
+		}
+
+		//System.out.println(scale.getMinimum() + " / " + index + " / " + scale.getMaximum());
+
+		scale.setSelection(index);
+		// setSelection does not trigger the scale's listener, hence we have to
+		// send the event here too
+		eventBroker.send(AnimationsEventConstants.ANIMATIONS_SELECTED_DATE_CHANGED, index);
+
+		if (loop) {
+			this.getShell()
+					.getDisplay()
+					.timerExec(1000, new Runnable() {
+						public void run() {
+							if (loopDirection * step > 0) {
+								// means go the same direction
+								increment(step, true);
+							} /*
+								 * else if (loopDirection*step < 0) {
+								 * //means go the opposite direction => we
+								 * cancel this loop
+								 * return;
+								 * } else {
+								 * //means one of them is =0
+								 * return;
+								 * }
+								 */
+							else {
+								// means either the direction changed of we
+								// stopped animating. In both cases, we should
+								// stop this loop
+								return;
+							}
+						}
+					});
+		} else {
+			loopDirection = 0;
+		}
 	}
 
 	private SelectionListener getLoadButtonSelectionListener() {
@@ -216,16 +329,11 @@ public class AnimationsDialog extends Dialog {
 		};
 	}
 
-	
-	@Override
-	protected void okPressed() {
-		System.out.println("ok pressed");
-		super.okPressed();
-	}
-
+	//We do not dispose the dialog : it would dispose the contained widgets and generate an error if we try to open it again
 	@Override
 	public boolean close() {
-		this.getShell().setVisible(false);
+		this.getShell()
+				.setVisible(false);
 		return true;
 	}
 
@@ -234,25 +342,19 @@ public class AnimationsDialog extends Dialog {
 	 */
 	private void reset() {
 		if (progressBar != null) {
-			//progressBar.setToolTipText("Please choose a dataset first...");
+			// progressBar.setToolTipText("Please choose a dataset first...");
 			progressBar.setVisible(false);
 			progressBar.setSelection(0);
 		}
-
 		if (compositeControls != null) {
 			compositeControls.setVisible(false);
-
 		}
-
 		if (scale != null) {
 			scale.setSelection(100);
-
 		}
-
 		if (txtDate != null) {
 			txtDate.setText("");
 		}
-
 	}
 
 	// overriding this methods allows you to set the
@@ -286,33 +388,48 @@ public class AnimationsDialog extends Dialog {
 		ImageDescriptor image = ImageDescriptor.createFromURL(url);
 		return resManager.createImage(image);
 	}
-	
+
 	protected void updateDate(AnimationsSource ds, int index) {
-		String filename = ds.getFilenames().get(index);
+		String filename = ds.getFilenames()
+				.get(index);
 		String timestamp = filename.replaceAll(ds.getTimestampRegexMatch(), ds.getTimestampRegexFormat());
 		txtDate.setText(timestamp);
 	}
-	
+
 	@Inject
 	@Optional
-	void animationsSourceConfigured(@UIEventTopic(AnimationsEventConstants.ANIMATIONS_DATASET_CONFIGURED) AnimationsSource ds) {
-		progressBar.setMaximum(ds.getFilenames().size());
-	}	
-	
+	void animationsSourceConfigured(
+			@UIEventTopic(AnimationsEventConstants.ANIMATIONS_DATASET_CONFIGURED) AnimationsSource ds) {
+		progressBar.setMaximum(ds.getFilenames()
+				.size());
+	}
+
 	@Inject
 	@Optional
 	void filesLoadProgress(@UIEventTopic(AnimationsEventConstants.ANIMATIONS_FILES_LOAD_PROGRESS) int count) {
 		progressBar.setSelection(count);
-	}	@Inject
+	}
+
+	@Inject
 	@Optional
 	void filesLoadComplete(@UIEventTopic(AnimationsEventConstants.ANIMATIONS_FILES_LOAD_COMPLETE) AnimationsSource ds) {
 		progressBar.setToolTipText("Ready to play !");
 		compositeControls.setVisible(true);
-		
-		//configure the scale bar
-		int max = ds.getFilenames().size()-1;
+
+		// configure the scale bar
+		int max = ds.getFilenames()
+				.size() - 1;
 		scale.setMaximum(max);
 		scale.setSelection(max);
 		updateDate(ds, max);
+		animations.showImage(ds, max);
 	}
+
+	@Inject
+	@Optional
+	void selectedDateChanged(@UIEventTopic(AnimationsEventConstants.ANIMATIONS_SELECTED_DATE_CHANGED) int scaleIndex) {
+		updateDate(currentDataset, scaleIndex);
+		animations.showImage(currentDataset, scaleIndex);
+	}
+
 }

@@ -228,5 +228,6 @@ public class WwjInstance {
 		} else if (removeIfDisabled) {
 			layers.remove(layer);
 		}
+		this.getWwd().redraw();
 	}
 }

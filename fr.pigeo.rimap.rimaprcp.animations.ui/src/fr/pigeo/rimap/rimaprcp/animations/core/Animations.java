@@ -1,11 +1,15 @@
 package fr.pigeo.rimap.rimaprcp.animations.core;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -30,13 +34,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import fr.pigeo.rimap.rimaprcp.animations.AnimationsEventConstants;
 import fr.pigeo.rimap.rimaprcp.animations.constants.AnimationsConstants;
+import fr.pigeo.rimap.rimaprcp.animations.constants.AnimationsEventConstants;
 import fr.pigeo.rimap.rimaprcp.animations.i18n.Messages;
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
 import fr.pigeo.rimap.rimaprcp.core.resource.WebUsageLevel;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.SurfaceImage;
 
 /**
  * Animations : Central class for the Animations functionality. All other
@@ -71,6 +78,8 @@ public class Animations {
 	private String animationsServiceUrl, animationsListfileServiceUrl, animationsListfileParamName, 
 	animationsGetImageServiceUrl,animationsGetImageParamName,animationsGetImageParamPath;
 	private List<AnimationsSource> AnimationDatasets;
+	private RenderableLayer wwjLayer;
+	private SurfaceImage wwjSurfaceImage;
 
 	@Inject
 	public Animations(IPreferencesService prefsService) {
@@ -253,22 +262,74 @@ public class Animations {
 	private void preloadImages(AnimationsSource dataset) {
 		Iterator<String> it = dataset.getFilenames()
 				.iterator();
-		String url = animationsGetImageServiceUrl + "?" 
+		/*String url = animationsGetImageServiceUrl + "?" 
 				+ animationsGetImageParamPath + "=" + dataset.getServerPath() +"&"
-				+ animationsGetImageParamName + "=";
+				+ animationsGetImageParamName + "=";*/
 		int count = 0;
 		while (it.hasNext()) {
 			String name = it.next();
-			resourceService.getResource(url+name, WebUsageLevel.PRIORITY_LOCAL);
+			resourceService.getResource(getURL(dataset)+name, WebUsageLevel.PRIORITY_LOCAL);
 			count++;
 			eventBroker.send(AnimationsEventConstants.ANIMATIONS_FILES_LOAD_PROGRESS, count);
 		}
 
 		eventBroker.send(AnimationsEventConstants.ANIMATIONS_FILES_LOAD_COMPLETE, dataset);
 	}
+	
+	public BufferedImage getBufferedImage(AnimationsSource dataset, String name) {
+		BufferedImage bufferedImage = null;
+		byte[] file = resourceService.getResource(getURL(dataset)+name, WebUsageLevel.PRIORITY_LOCAL);
+		InputStream in = new ByteArrayInputStream(file);
+		try {
+			bufferedImage = ImageIO.read(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return bufferedImage;
+	}
 
 	public List<AnimationsSource> getSources() {
 		return AnimationDatasets;
+	}
+	
+	private String getURL(AnimationsSource dataset) {
+		return animationsGetImageServiceUrl + "?" 
+				+ animationsGetImageParamPath + "=" + dataset.getServerPath() +"&"
+				+ animationsGetImageParamName + "=";
+	}
+	
+
+	public void showImage(AnimationsSource ds, int index) {
+		BufferedImage bi = getBufferedImage(ds, ds.getFilenames().get(index));
+		if (bi==null) {
+			return;
+		}
+		if (wwjLayer==null) {
+			wwjLayer = new RenderableLayer();
+			wwjLayer.setPickEnabled(false);
+			
+			wwjSurfaceImage = new SurfaceImage(bi, new ArrayList<LatLon>(Arrays.asList(
+	                LatLon.fromDegrees(ds.getMinlat(), ds.getMinlon()),
+	                LatLon.fromDegrees(ds.getMinlat(), ds.getMaxlon()),
+	                LatLon.fromDegrees(ds.getMaxlat(), ds.getMaxlon()),
+	                LatLon.fromDegrees(ds.getMaxlat(), ds.getMinlon())
+	            )));
+			wwjLayer.addRenderable(wwjSurfaceImage);
+		} else {
+			//then wwjSurfaceImage should already exist and be part of wwjLayer
+			wwjSurfaceImage.setImageSource(bi, new ArrayList<LatLon>(Arrays.asList(
+	                LatLon.fromDegrees(ds.getMinlat(), ds.getMinlon()),
+	                LatLon.fromDegrees(ds.getMinlat(), ds.getMaxlon()),
+	                LatLon.fromDegrees(ds.getMaxlat(), ds.getMaxlon()),
+	                LatLon.fromDegrees(ds.getMaxlat(), ds.getMinlon())
+	            )));
+		}
+		wwjLayer.setName("Animations ("+ds.getLabel()+")");
+		
+		//Will actually update the layer, if it is already in the model:
+        wwj.addLayer(wwjLayer);
+		
+	
 	}
 
 }
