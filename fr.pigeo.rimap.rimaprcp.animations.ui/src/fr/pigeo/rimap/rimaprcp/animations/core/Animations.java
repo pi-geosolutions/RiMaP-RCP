@@ -80,6 +80,7 @@ public class Animations {
 	private List<AnimationsSource> AnimationDatasets;
 	private RenderableLayer wwjLayer;
 	private SurfaceImage wwjSurfaceImage;
+	private String storagePath="animations/";
 
 	@Inject
 	public Animations(IPreferencesService prefsService) {
@@ -260,6 +261,7 @@ public class Animations {
 	 * @param dataset
 	 */
 	private void preloadImages(AnimationsSource dataset) {
+		String category = this.storagePath+dataset.getId();
 		Iterator<String> it = dataset.getFilenames()
 				.iterator();
 		/*String url = animationsGetImageServiceUrl + "?" 
@@ -268,7 +270,7 @@ public class Animations {
 		int count = 0;
 		while (it.hasNext()) {
 			String name = it.next();
-			resourceService.getResource(getURL(dataset)+name, WebUsageLevel.PRIORITY_LOCAL);
+			resourceService.getResource(getURL(dataset)+name, category, WebUsageLevel.PRIORITY_LOCAL);
 			count++;
 			eventBroker.send(AnimationsEventConstants.ANIMATIONS_FILES_LOAD_PROGRESS, count);
 		}
@@ -277,8 +279,9 @@ public class Animations {
 	}
 	
 	public BufferedImage getBufferedImage(AnimationsSource dataset, String name) {
+		String category = this.storagePath+dataset.getId();
 		BufferedImage bufferedImage = null;
-		byte[] file = resourceService.getResource(getURL(dataset)+name, WebUsageLevel.PRIORITY_LOCAL);
+		byte[] file = resourceService.getResource(getURL(dataset)+name, category, WebUsageLevel.PRIORITY_LOCAL);
 		InputStream in = new ByteArrayInputStream(file);
 		try {
 			bufferedImage = ImageIO.read(in);

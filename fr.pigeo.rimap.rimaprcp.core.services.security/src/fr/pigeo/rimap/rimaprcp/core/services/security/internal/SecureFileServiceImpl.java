@@ -30,6 +30,7 @@ import fr.pigeo.rimap.rimaprcp.core.security.Session;
 
 public class SecureFileServiceImpl implements ISecureResourceService {
 	private static String ENCODED_FILE_SUFFIX = ".enc";
+	private static String guestUsername = "guest";
 
 	Charset charset = StandardCharsets.UTF_8;
 
@@ -43,13 +44,18 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 	@Optional
 	IPreferencesService prefsService;
 
+	@Override
+	public byte[] getResourceAsByteArray(String resourcePath, String resourceName) {
+		return this.getResourceAsByteArray(resourcePath, "", resourceName);
+	}
+
 	// gracefully falls back on anonymous files if the encoded file does
 	// not exist.
 	// Uses preferences to set this behavior (can be disabled)
 	@Override
-	public byte[] getResourceAsByteArray(String resourcePath, String resourceName) {
-		Path rawPath = getResourcePath(resourcePath, resourceName);
-		Path encPath = getEncodedResourcePath(resourcePath, resourceName);
+	public byte[] getResourceAsByteArray(String resourcePath, String category, String resourceName) {
+		Path rawPath = getResourcePath(resourcePath, category, resourceName);
+		Path encPath = getEncodedResourcePath(resourcePath, category, resourceName);
 		String key = getKey();
 
 		if (key != null && Files.isRegularFile(encPath)) {
@@ -62,7 +68,7 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 				boolean gracefully_fallback = prefsService.getBoolean(SecurityConstants.PREFERENCES_NODE,
 						SecurityConstants.FALLBACK_ON_ANONYMOUS_PREF_TAG,
 						SecurityConstants.FALLBACK_ON_ANONYMOUS_PREF_DEFAULT, null);
-				rawPath = getPlainResourcePath(resourcePath, resourceName);
+				rawPath = getPlainResourcePath(resourcePath, category, resourceName);
 				if (gracefully_fallback && Files.isRegularFile(rawPath)) {
 					logger.info("Resource unavailable using credentials. Falling back to anonymous cached data");
 					return getUnencodedResourceAsByteArray(rawPath);
@@ -125,14 +131,23 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 
 	@Override
 	public boolean isResourceEncrypted(String resourcePath, String resourceName) {
-		// Path unencodedPath = getResourcePath(resourcePath, resourceName);
-		Path encodedPath = getEncodedResourcePath(resourcePath, resourceName);
+		return this.isResourceEncrypted(resourcePath, "", resourceName);
+	}
+
+	@Override
+	public boolean isResourceEncrypted(String resourcePath, String category, String resourceName) {
+		Path encodedPath = getEncodedResourcePath(resourcePath, category, resourceName);
 		return Files.isRegularFile(encodedPath);
 	}
 
 	@Override
 	public boolean currentSessionCanDecrypt(String resourcePath, String resourceName) {
-		Path encPath = getEncodedResourcePath(resourcePath, resourceName);
+		return this.currentSessionCanDecrypt(resourcePath, "", resourceName);
+	}
+
+	@Override
+	public boolean currentSessionCanDecrypt(String resourcePath, String category, String resourceName) {
+		Path encPath = getEncodedResourcePath(resourcePath, category, resourceName);
 		String key = getKey();
 		if (key == null) {
 			return false;
@@ -142,6 +157,11 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 
 	@Override
 	public boolean setResource(byte[] input, String resourcePath, String resourceName) {
+		return this.setResource(input, resourcePath, "", resourceName);
+	}
+
+	@Override
+	public boolean setResource(byte[] input, String resourcePath, String category, String resourceName) {
 		Path destPath = null;
 		String key = getKey();
 
@@ -160,9 +180,9 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 			}
 			if (cipher != null) {
 				outputBytes = cipher.doFinal(input);
-				destPath = getEncodedResourcePath(resourcePath, resourceName);
+				destPath = getEncodedResourcePath(resourcePath, category, resourceName);
 			} else {
-				destPath = getResourcePath(resourcePath, resourceName);
+				destPath = getResourcePath(resourcePath, category, resourceName);
 				outputBytes = input;
 			}
 			// Create parent folder if necessary
@@ -197,14 +217,19 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 	}
 
 	@Override
-	public boolean isResourceAvailable(String resourcePath, String resourceName) {
-		Path path = getResourcePath(resourcePath, resourceName);
+	public boolean isResourceAvailable(String resourcePath, String category, String resourceName) {
+		Path path = getResourcePath(resourcePath, category, resourceName);
 		boolean isAvailableUnencoded = (Files.exists(path) && Files.isRegularFile(path));
-		Path encpath = getEncodedResourcePath(resourcePath, resourceName);
+		Path encpath = getEncodedResourcePath(resourcePath, category, resourceName);
 		boolean isAvailableEncoded = (Files.exists(encpath) && Files.isRegularFile(encpath));
-		logger.info("Checking availability for file: \n" + path + "=" + isAvailableUnencoded + " \n" + encpath + "="
-				+ isAvailableEncoded);
+		//logger.info("Checking availability for file: \n" + path + "=" + isAvailableUnencoded + " \n" + encpath + "="
+		//		+ isAvailableEncoded);
 		return (isAvailableUnencoded || isAvailableEncoded);
+	}
+
+	@Override
+	public boolean isResourceAvailable(String resourcePath, String resourceName) {
+		return this.isResourceAvailable(resourcePath, "", resourceName);
 	}
 
 	/**
@@ -212,30 +237,45 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 	 * path:
 	 * [resourcePath]/[username]/[resourceName]
 	 * If not or if the session is anonymous, returns
-	 * [resourcePath]/[resourceName]
+	 * [resourcePath]/guest/[resourceName]
 	 * 
 	 * @param resourcePath
+	 * @param category
+	 *            structured like a folder structure. Defines the storage place
+	 *            in the cache folder. Avoids putting it all at the root of
+	 *            cache folder
 	 * @param resourceName
 	 * @return
 	 */
-	private Path getResourcePath(String resourcePath, String resourceName) {
+	private Path getResourcePath(String resourcePath, String category, String resourceName) {
 		Session session = sessionService.getSession();
 		String username = session.getUsername();
 		Path path;
-		if (username != null) {
-			path = Paths.get(resourcePath, username, resourceName);
-		} else {
-			path = Paths.get(resourcePath, resourceName);
+		if (username == null) {
+			username = guestUsername;
 		}
+		path = Paths.get(resourcePath, username, category, resourceName);
 		return path;
 	}
 
+	private Path getResourcePath(String resourcePath, String resourceName) {
+		return getResourcePath(resourcePath, "", resourceName);
+	}
+
+	private Path getPlainResourcePath(String resourcePath, String category, String resourceName) {
+		return Paths.get(resourcePath, guestUsername, category, resourceName);
+	}
+
 	private Path getPlainResourcePath(String resourcePath, String resourceName) {
-		return Paths.get(resourcePath, resourceName);
+		return getPlainResourcePath(resourcePath, "", resourceName);
+	}
+
+	private Path getEncodedResourcePath(String resourcePath, String category, String resourceName) {
+		return getResourcePath(resourcePath, category, resourceName + SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
 	}
 
 	private Path getEncodedResourcePath(String resourcePath, String resourceName) {
-		return getResourcePath(resourcePath, resourceName + SecureFileServiceImpl.ENCODED_FILE_SUFFIX);
+		return getEncodedResourcePath(resourcePath, "", resourceName);
 	}
 
 	/**
