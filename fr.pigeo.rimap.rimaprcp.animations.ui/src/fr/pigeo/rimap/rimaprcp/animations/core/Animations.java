@@ -4,6 +4,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -75,12 +81,12 @@ public class Animations {
 	@Translation
 	Messages messages;
 
-	private String animationsServiceUrl, animationsListfileServiceUrl, animationsListfileParamName, 
-	animationsGetImageServiceUrl,animationsGetImageParamName,animationsGetImageParamPath;
+	private String animationsServiceUrl, animationsListfileServiceUrl, animationsListfileParamName,
+			animationsGetImageServiceUrl, animationsGetImageParamName, animationsGetImageParamPath;
 	private List<AnimationsSource> AnimationDatasets;
 	private RenderableLayer wwjLayer;
 	private SurfaceImage wwjSurfaceImage;
-	private String storagePath="animations/";
+	private String storagePath = "animations/";
 
 	@Inject
 	public Animations(IPreferencesService prefsService) {
@@ -239,7 +245,7 @@ public class Animations {
 					JsonNode rec = it.next();
 					filenames.add(rec.get("name")
 							.asText());
-					//System.out.println(rec.get("name").asText());
+					// System.out.println(rec.get("name").asText());
 				}
 				dataset.setFilenames(filenames);
 				eventBroker.send(AnimationsEventConstants.ANIMATIONS_DATASET_CONFIGURED, dataset);
@@ -257,31 +263,46 @@ public class Animations {
 	/**
 	 * Loads the images through ResourceService, to make sure they are locally
 	 * available before we begin to play the animation
+	 * We store them in animations/[datasetId]/[filename] e.g.
+	 * animations/eumetsat/mpe_160922_1217.png
 	 * 
 	 * @param dataset
 	 */
 	private void preloadImages(AnimationsSource dataset) {
-		String category = this.storagePath+dataset.getId();
+		cleanExpiredFiles(dataset);
+		String category = this.storagePath + dataset.getId();
 		Iterator<String> it = dataset.getFilenames()
 				.iterator();
-		/*String url = animationsGetImageServiceUrl + "?" 
-				+ animationsGetImageParamPath + "=" + dataset.getServerPath() +"&"
-				+ animationsGetImageParamName + "=";*/
+		/*
+		 * String url = animationsGetImageServiceUrl + "?"
+		 * + animationsGetImageParamPath + "=" + dataset.getServerPath() +"&"
+		 * + animationsGetImageParamName + "=";
+		 */
 		int count = 0;
 		while (it.hasNext()) {
 			String name = it.next();
-			resourceService.getResource(getURL(dataset)+name, category, name, WebUsageLevel.PRIORITY_LOCAL);
+			resourceService.getResource(getURL(dataset) + name, category, name, WebUsageLevel.PRIORITY_LOCAL);
 			count++;
 			eventBroker.send(AnimationsEventConstants.ANIMATIONS_FILES_LOAD_PROGRESS, count);
 		}
 
 		eventBroker.send(AnimationsEventConstants.ANIMATIONS_FILES_LOAD_COMPLETE, dataset);
 	}
-	
+
+	/**
+	 * removes the files that will not be anymore useful (too old) for that
+	 * dataset
+	 * 
+	 * @param dataset
+	 */
+	private void cleanExpiredFiles(AnimationsSource dataset) {
+		resourceService.deleteResourcesNotListed(this.storagePath + dataset.getId(), dataset.getFilenames());
+	}
+
 	public BufferedImage getBufferedImage(AnimationsSource dataset, String name) {
-		String category = this.storagePath+dataset.getId();
+		String category = this.storagePath + dataset.getId();
 		BufferedImage bufferedImage = null;
-		byte[] file = resourceService.getResource(getURL(dataset)+name, category, name, WebUsageLevel.PRIORITY_LOCAL);
+		byte[] file = resourceService.getResource(getURL(dataset) + name, category, name, WebUsageLevel.PRIORITY_LOCAL);
 		InputStream in = new ByteArrayInputStream(file);
 		try {
 			bufferedImage = ImageIO.read(in);
@@ -294,45 +315,41 @@ public class Animations {
 	public List<AnimationsSource> getSources() {
 		return AnimationDatasets;
 	}
-	
+
 	private String getURL(AnimationsSource dataset) {
-		return animationsGetImageServiceUrl + "?" 
-				+ animationsGetImageParamPath + "=" + dataset.getServerPath() +"&"
+		return animationsGetImageServiceUrl + "?" + animationsGetImageParamPath + "=" + dataset.getServerPath() + "&"
 				+ animationsGetImageParamName + "=";
 	}
-	
 
 	public void showImage(AnimationsSource ds, int index) {
-		BufferedImage bi = getBufferedImage(ds, ds.getFilenames().get(index));
-		if (bi==null) {
+		BufferedImage bi = getBufferedImage(ds, ds.getFilenames()
+				.get(index));
+		if (bi == null) {
 			return;
 		}
-		if (wwjLayer==null) {
+		if (wwjLayer == null) {
 			wwjLayer = new RenderableLayer();
 			wwjLayer.setPickEnabled(false);
-			
-			wwjSurfaceImage = new SurfaceImage(bi, new ArrayList<LatLon>(Arrays.asList(
-	                LatLon.fromDegrees(ds.getMinlat(), ds.getMinlon()),
-	                LatLon.fromDegrees(ds.getMinlat(), ds.getMaxlon()),
-	                LatLon.fromDegrees(ds.getMaxlat(), ds.getMaxlon()),
-	                LatLon.fromDegrees(ds.getMaxlat(), ds.getMinlon())
-	            )));
+
+			wwjSurfaceImage = new SurfaceImage(bi,
+					new ArrayList<LatLon>(Arrays.asList(LatLon.fromDegrees(ds.getMinlat(), ds.getMinlon()),
+							LatLon.fromDegrees(ds.getMinlat(), ds.getMaxlon()),
+							LatLon.fromDegrees(ds.getMaxlat(), ds.getMaxlon()),
+							LatLon.fromDegrees(ds.getMaxlat(), ds.getMinlon()))));
 			wwjLayer.addRenderable(wwjSurfaceImage);
 		} else {
-			//then wwjSurfaceImage should already exist and be part of wwjLayer
-			wwjSurfaceImage.setImageSource(bi, new ArrayList<LatLon>(Arrays.asList(
-	                LatLon.fromDegrees(ds.getMinlat(), ds.getMinlon()),
-	                LatLon.fromDegrees(ds.getMinlat(), ds.getMaxlon()),
-	                LatLon.fromDegrees(ds.getMaxlat(), ds.getMaxlon()),
-	                LatLon.fromDegrees(ds.getMaxlat(), ds.getMinlon())
-	            )));
+			// then wwjSurfaceImage should already exist and be part of wwjLayer
+			wwjSurfaceImage.setImageSource(bi,
+					new ArrayList<LatLon>(Arrays.asList(LatLon.fromDegrees(ds.getMinlat(), ds.getMinlon()),
+							LatLon.fromDegrees(ds.getMinlat(), ds.getMaxlon()),
+							LatLon.fromDegrees(ds.getMaxlat(), ds.getMaxlon()),
+							LatLon.fromDegrees(ds.getMaxlat(), ds.getMinlon()))));
 		}
-		wwjLayer.setName("Animations ("+ds.getLabel()+")");
-		
-		//Will actually update the layer, if it is already in the model:
-        wwj.addLayer(wwjLayer);
-		
-	
+		wwjLayer.setName("Animations (" + ds.getLabel() + ")");
+
+		// Will actually update the layer, if it is already in the model:
+		wwj.addLayer(wwjLayer);
+
 	}
 
 }
