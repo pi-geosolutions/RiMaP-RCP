@@ -5,13 +5,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -222,7 +229,8 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 		boolean isAvailableUnencoded = (Files.exists(path) && Files.isRegularFile(path));
 		Path encpath = getEncodedResourcePath(resourcePath, category, resourceName);
 		boolean isAvailableEncoded = (Files.exists(encpath) && Files.isRegularFile(encpath));
-		//logger.info("Checking availability for file: \n" + path + "=" + isAvailableUnencoded + " \n" + encpath + "=" + isAvailableEncoded);
+		// logger.info("Checking availability for file: \n" + path + "=" +
+		// isAvailableUnencoded + " \n" + encpath + "=" + isAvailableEncoded);
 		return (isAvailableUnencoded || isAvailableEncoded);
 	}
 
@@ -286,4 +294,134 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 		return key;
 	}
 
+	@Override
+	public boolean deleteResource(String resourcePath, String resourceName) {
+		Path deletePath = getResourcePath(resourcePath, resourceName);
+		try {
+			Files.delete(deletePath);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean deleteResource(String resourcePath, String category, String resourceName) {
+		Path deletePath = getResourcePath(resourcePath, category, resourceName);
+		try {
+			Files.delete(deletePath);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public void deleteResources(String resourcePath, String category, String regex, boolean recursive) {
+		Path fullPath = getResourcePath(resourcePath, category);
+		if (recursive) {
+			try {
+				Files.walkFileTree(fullPath, new SimpleFileVisitor<Path>() {
+					@Override
+					public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+						if (Files.isRegularFile(file)) {
+							deleteIfRegexMatch(file, regex);
+						}
+						return FileVisitResult.CONTINUE;
+					}
+				});
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		} else {
+			DirectoryStream<Path> stream;
+			try {
+				stream = Files.newDirectoryStream(fullPath);
+				Iterator<Path> iter = stream.iterator();
+				while (iter.hasNext()) {
+					Path path = iter.next();
+					if (Files.isRegularFile(path)) {
+						deleteIfRegexMatch(path, regex);
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	protected void deleteIfRegexMatch(Path file, String regex) throws IOException {
+		if (Pattern.matches(regex, file.getFileName()
+				.toString())) {
+			Files.delete(file);
+		}
+	}
+
+	@Override
+	public void deleteResources(String resourcePath, String regex, boolean recursive) {
+		this.deleteResources(resourcePath, "", regex, recursive);
+	}
+
+	@Override
+	public void deleteResourcesListed(String resourcePath, String category, List<String> resourcesToDelete) {
+		Path fullPath = getResourcePath(resourcePath, category);
+		DirectoryStream<Path> stream;
+		try {
+			stream = Files.newDirectoryStream(fullPath);
+			Iterator<Path> iter = stream.iterator();
+			while (iter.hasNext()) {
+				Path path = iter.next();
+				if (Files.isRegularFile(path)) {
+					if (resourcesToDelete.contains(stripEnc(path.getFileName()
+							.toString()))) {
+						logger.info("Deleting expired file " + path.getFileName().toString() + " (" + path.toString() + ")");
+						Files.delete(path);
+					}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void deleteResourcesNotListed(String resourcePath, String category, List<String> resourcesToKeep) {
+		Path fullPath = getResourcePath(resourcePath, category);
+		DirectoryStream<Path> stream;
+		try {
+			stream = Files.newDirectoryStream(fullPath);
+			Iterator<Path> iter = stream.iterator();
+			while (iter.hasNext()) {
+				Path path = iter.next();
+				if (Files.isRegularFile(path)) {
+					if (!resourcesToKeep.contains(stripEnc(path.getFileName()
+							.toString()))) {
+						logger.info("Deleting expired file " + path.getFileName().toString() + " (" + path.toString() + ")");
+						Files.delete(path);
+					}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * If a file is encoded, it will be suffixed by .enc extension. We need to remove this 
+	 * for files comparison (e.g. when using deleteResourcesNotListed)
+	 * @param filename
+	 * @return
+	 */
+	private String stripEnc(String filename) {
+		//You can test the regex on http://www.regexplanet.com/advanced/java/index.html
+		String regex = "(.*)(\\"+ENCODED_FILE_SUFFIX+")$";
+		String replace = "$1";
+		return filename.replaceAll(regex, replace);
+	}
 }

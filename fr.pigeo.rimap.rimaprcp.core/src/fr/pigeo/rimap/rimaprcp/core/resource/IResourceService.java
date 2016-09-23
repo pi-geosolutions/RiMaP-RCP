@@ -1,5 +1,7 @@
 package fr.pigeo.rimap.rimaprcp.core.resource;
 
+import java.util.List;
+
 public interface IResourceService {
 
 	public byte[] getResource(String url, int web_usage_level);
@@ -45,4 +47,13 @@ public interface IResourceService {
 	byte[] getResourceFromURL(String url, String category, String name, boolean isFallback);
 
 	public String cleanURL(String url);
+
+	public boolean deleteResource(String category, String name);
+	public boolean deleteResource(String URL);
+
+	public void deleteResources(String category, String regex, boolean recursive);
+	public void deleteResources(String regex, boolean recursive);
+
+	public void deleteResourcesListed(String category, List<String> resourcesToDelete);
+	public void deleteResourcesNotListed(String category, List<String> resourcesToKeep);
 }

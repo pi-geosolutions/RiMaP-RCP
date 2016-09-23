@@ -2,6 +2,7 @@ package fr.pigeo.rimap.rimaprcp.core.services.resource.internal;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -148,6 +149,36 @@ public class ResourceServiceImpl implements IResourceService {
 			out = getResourceFromURL(url, category, name, true);
 		}
 		return out;
+	}
+
+	@Override
+	public boolean deleteResource(String category, String name) {
+		return secureResourceService.deleteResource(cachePath, category, name);
+	}
+
+	@Override
+	public boolean deleteResource(String url) {
+		return secureResourceService.deleteResource(cachePath, "", UrlToFilename(url));
+	}
+
+	@Override
+	public void deleteResources(String category, String regex, boolean recursive) {
+		secureResourceService.deleteResources(cachePath, category, regex, recursive);
+	}
+
+	@Override
+	public void deleteResources(String regex, boolean recursive) {
+		secureResourceService.deleteResources(cachePath, regex, recursive);
+	}
+
+	@Override
+	public void deleteResourcesListed(String category, List<String> resourcesToDelete) {
+		secureResourceService.deleteResourcesListed(cachePath, category, resourcesToDelete);
+	}
+
+	@Override
+	public void deleteResourcesNotListed(String category, List<String> resourcesToKeep) {
+		secureResourceService.deleteResourcesNotListed(cachePath, category, resourcesToKeep);
 	}
 
 }
