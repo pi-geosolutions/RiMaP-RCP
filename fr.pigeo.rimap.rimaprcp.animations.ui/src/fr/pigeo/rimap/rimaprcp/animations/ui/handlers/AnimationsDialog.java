@@ -112,7 +112,7 @@ public class AnimationsDialog extends Dialog {
 		btnLoad = new Button(container, SWT.NONE);
 		// btnLoad.setEnabled(false);
 		btnLoad.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		btnLoad.setText("Load");
+		btnLoad.setText("   Load   ");
 		btnLoad.addSelectionListener(this.getLoadButtonSelectionListener());
 
 		progressBar = new ProgressBar(container, SWT.NONE);
@@ -361,6 +361,9 @@ public class AnimationsDialog extends Dialog {
 	 * Resets the widgets' state
 	 */
 	private void reset() {
+		if (btnLoad != null) {
+			btnLoad.setText("   Load   ");
+		}
 		if (progressBar != null) {
 			// progressBar.setToolTipText("Please choose a dataset first...");
 			progressBar.setVisible(false);
@@ -453,6 +456,7 @@ public class AnimationsDialog extends Dialog {
 		scale.setSelection(max);
 		updateDate(ds, max);
 		animations.showImage(ds, max);
+		btnLoad.setText("Update");
 	}
 
 	@Inject
