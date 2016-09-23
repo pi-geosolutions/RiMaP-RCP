@@ -11,15 +11,15 @@ public interface IResourceService {
 	 * @param web_usage_level	see preferences
 	 * @return
 	 */
-	public byte[] getResource(String url, String category, int web_usage_level);
+	public byte[] getResource(String url, String category, String name, int web_usage_level);
 
 	public byte[] getResourceFromURL(String url);
 	
-	public byte[] getResourceFromURL(String url, String category);	
+	public byte[] getResourceFromURL(String url, String category, String name);	
 
 	public byte[] getResourceFromFile(String url);
 
-	public byte[] getResourceFromFile(String url, String category);
+	public byte[] getResourceFromFile(String url, String category, String name);
 
 	/**
 	 * 
@@ -30,7 +30,7 @@ public interface IResourceService {
 	 */
 	byte[] getResourceFromFile(String url, boolean isFallback);
 
-	byte[] getResourceFromFile(String url, String category, boolean isFallback);
+	byte[] getResourceFromFile(String url, String category, String name, boolean isFallback);
 
 	/**
 	 * 
@@ -42,7 +42,7 @@ public interface IResourceService {
 
 	byte[] getResourceFromURL(String url, boolean isFallback);
 
-	byte[] getResourceFromURL(String url, String category, boolean isFallback);
+	byte[] getResourceFromURL(String url, String category, String name, boolean isFallback);
 
 	public String cleanURL(String url);
 }

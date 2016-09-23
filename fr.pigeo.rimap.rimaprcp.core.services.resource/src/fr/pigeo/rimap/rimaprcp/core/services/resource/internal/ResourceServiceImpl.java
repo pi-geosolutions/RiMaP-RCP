@@ -37,7 +37,7 @@ public class ResourceServiceImpl implements IResourceService {
 
 	@Override
 	public byte[] getResource(String url, int web_usage_level) {
-		return this.getResource(url, "", web_usage_level);
+		return this.getResource(url, "", UrlToFilename(url), web_usage_level);
 	}
 
 	@Override
@@ -54,17 +54,12 @@ public class ResourceServiceImpl implements IResourceService {
 
 	@Override
 	public byte[] getResourceFromURL(String url, boolean isFallback) {
-		return this.getResourceFromURL(url,"",isFallback);
+		return this.getResourceFromURL(url,"", UrlToFilename(url),isFallback);
 	}
 
 	@Override
 	public byte[] getResourceFromFile(String url, boolean isFallback) {
-		byte[] out = secureResourceService.getResourceAsByteArray(cachePath, UrlToFilename(url));
-		if (out == null && !isFallback) {
-			// then we try to load it from the web
-			out = getResourceFromURL(url, true);
-		}
-		return out;
+		return this.getResourceFromFile(url, "", UrlToFilename(url), isFallback);
 	}
 
 	@Override
@@ -79,33 +74,33 @@ public class ResourceServiceImpl implements IResourceService {
 	}
 
 	@Override
-	public byte[] getResource(String url, String category, int web_usage_level) {
+	public byte[] getResource(String url, String category, String name, int web_usage_level) {
 		if (cachePath == null) {
 			return null;
 		}
 		url = cleanURL(url);
-		if (web_usage_level > 1 || !secureResourceService.isResourceAvailable(cachePath, category, UrlToFilename(url))) {
+		if (web_usage_level > 1 || !secureResourceService.isResourceAvailable(cachePath, category, name)) {
 			logger.info("Should load " + url + " from URL");
-			return getResourceFromURL(url, category);
+			return getResourceFromURL(url, category, name);
 		} else {
 			// Load from file
 			logger.info("Should load " + url + " from file");
-			return getResourceFromFile(url, category);
+			return getResourceFromFile(url, category, name);
 		}
 	}
 
 	@Override
-	public byte[] getResourceFromURL(String url, String category) {
-		return this.getResourceFromURL(url, category, false);
+	public byte[] getResourceFromURL(String url, String category, String name) {
+		return this.getResourceFromURL(url, category, name, false);
 	}
 
 	@Override
-	public byte[] getResourceFromFile(String url, String category) {
-		return this.getResourceFromFile(url, category, false);
+	public byte[] getResourceFromFile(String url, String category, String name) {
+		return this.getResourceFromFile(url, category, name, false);
 	}
 
 	@Override
-	public byte[] getResourceFromURL(String url, String category, boolean isFallback) {
+	public byte[] getResourceFromURL(String url, String category, String name, boolean isFallback) {
 		byte[] out=null;
 		try {
 			URL _url = new URL(url);
@@ -136,21 +131,21 @@ public class ResourceServiceImpl implements IResourceService {
 			} else {
 				msg += " Trying to fallback on cached file.";
 				logger.warn(msg);
-				return this.getResourceFromFile(url, category, true);
+				return this.getResourceFromFile(url, category, name, true);
 			}
 		}
 		// save it on disk (in cache location)
 		
-		secureResourceService.setResource(out, cachePath, category, UrlToFilename(url));
+		secureResourceService.setResource(out, cachePath, category, name);
 		return out;
 	}
 
 	@Override
-	public byte[] getResourceFromFile(String url, String category, boolean isFallback) {
-		byte[] out = secureResourceService.getResourceAsByteArray(cachePath, category, UrlToFilename(url));
+	public byte[] getResourceFromFile(String url, String category, String name, boolean isFallback) {
+		byte[] out = secureResourceService.getResourceAsByteArray(cachePath, category, name);
 		if (out == null && !isFallback) {
 			// then we try to load it from the web
-			out = getResourceFromURL(url, category, true);
+			out = getResourceFromURL(url, category, name, true);
 		}
 		return out;
 	}

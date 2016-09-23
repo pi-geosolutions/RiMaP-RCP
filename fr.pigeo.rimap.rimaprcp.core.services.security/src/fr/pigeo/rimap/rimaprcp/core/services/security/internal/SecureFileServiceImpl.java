@@ -222,8 +222,7 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 		boolean isAvailableUnencoded = (Files.exists(path) && Files.isRegularFile(path));
 		Path encpath = getEncodedResourcePath(resourcePath, category, resourceName);
 		boolean isAvailableEncoded = (Files.exists(encpath) && Files.isRegularFile(encpath));
-		//logger.info("Checking availability for file: \n" + path + "=" + isAvailableUnencoded + " \n" + encpath + "="
-		//		+ isAvailableEncoded);
+		//logger.info("Checking availability for file: \n" + path + "=" + isAvailableUnencoded + " \n" + encpath + "=" + isAvailableEncoded);
 		return (isAvailableUnencoded || isAvailableEncoded);
 	}
 

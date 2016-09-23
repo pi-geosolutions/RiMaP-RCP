@@ -26,6 +26,9 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -60,7 +63,7 @@ public class AnimationsDialog extends Dialog {
 
 	@Inject
 	IEventBroker eventBroker;
-	
+
 	private LocalResourceManager resManager;
 	private Text txtDate;
 	private Button btnLoad;
@@ -181,6 +184,21 @@ public class AnimationsDialog extends Dialog {
 			}
 		};
 		scale.addSelectionListener(scaleSelectionListener);
+		/*
+		 * //To get noticed only when the mouse is released
+		 * scale.addMouseListener(new MouseAdapter() {
+		 * 
+		 * @Override
+		 * public void mouseUp(MouseEvent e) {
+		 * if (currentDataset == null) {
+		 * return;
+		 * }
+		 * eventBroker.send(AnimationsEventConstants.
+		 * ANIMATIONS_SELECTED_DATE_CHANGED, scale.getSelection());
+		 * }
+		 * 
+		 * });
+		 */
 
 		SelectionListener btnFirstSelectionListener = new SelectionAdapter() {
 			@Override
@@ -255,7 +273,8 @@ public class AnimationsDialog extends Dialog {
 			index += interval;
 		}
 
-		//System.out.println(scale.getMinimum() + " / " + index + " / " + scale.getMaximum());
+		// System.out.println(scale.getMinimum() + " / " + index + " / " +
+		// scale.getMaximum());
 
 		scale.setSelection(index);
 		// setSelection does not trigger the scale's listener, hence we have to
@@ -329,7 +348,8 @@ public class AnimationsDialog extends Dialog {
 		};
 	}
 
-	//We do not dispose the dialog : it would dispose the contained widgets and generate an error if we try to open it again
+	// We do not dispose the dialog : it would dispose the contained widgets and
+	// generate an error if we try to open it again
 	@Override
 	public boolean close() {
 		this.getShell()
@@ -389,11 +409,21 @@ public class AnimationsDialog extends Dialog {
 		return resManager.createImage(image);
 	}
 
-	protected void updateDate(AnimationsSource ds, int index) {
+	/*
+	 * returns true if txtData needed an update (i.e. input != from its previous
+	 * value
+	 */
+	protected boolean updateDate(AnimationsSource ds, int index) {
 		String filename = ds.getFilenames()
 				.get(index);
 		String timestamp = filename.replaceAll(ds.getTimestampRegexMatch(), ds.getTimestampRegexFormat());
-		txtDate.setText(timestamp);
+		if (txtDate.getText()
+				.equals(timestamp)) {
+			return false;
+		} else {
+			txtDate.setText(timestamp);
+			return true;
+		}
 	}
 
 	@Inject
@@ -428,8 +458,9 @@ public class AnimationsDialog extends Dialog {
 	@Inject
 	@Optional
 	void selectedDateChanged(@UIEventTopic(AnimationsEventConstants.ANIMATIONS_SELECTED_DATE_CHANGED) int scaleIndex) {
-		updateDate(currentDataset, scaleIndex);
-		animations.showImage(currentDataset, scaleIndex);
+		if (updateDate(currentDataset, scaleIndex)) {
+			animations.showImage(currentDataset, scaleIndex);
+		}
 	}
 
 }
