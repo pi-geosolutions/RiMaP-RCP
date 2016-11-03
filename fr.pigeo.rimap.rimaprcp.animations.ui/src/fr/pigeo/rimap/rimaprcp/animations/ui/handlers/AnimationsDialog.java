@@ -1,9 +1,6 @@
 package fr.pigeo.rimap.rimaprcp.animations.ui.handlers;
 
-import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -11,6 +8,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -26,9 +24,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -52,10 +47,7 @@ import org.osgi.framework.FrameworkUtil;
 import fr.pigeo.rimap.rimaprcp.animations.constants.AnimationsEventConstants;
 import fr.pigeo.rimap.rimaprcp.animations.core.Animations;
 import fr.pigeo.rimap.rimaprcp.animations.core.AnimationsSource;
-import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.SurfaceImage;
+import fr.pigeo.rimap.rimaprcp.animations.i18n.Messages;
 
 public class AnimationsDialog extends Dialog {
 	@Inject
@@ -63,6 +55,10 @@ public class AnimationsDialog extends Dialog {
 
 	@Inject
 	IEventBroker eventBroker;
+
+	@Inject
+	@Translation
+	Messages messages;
 
 	private LocalResourceManager resManager;
 	private Text txtDate;
@@ -112,12 +108,12 @@ public class AnimationsDialog extends Dialog {
 		btnLoad = new Button(container, SWT.NONE);
 		// btnLoad.setEnabled(false);
 		btnLoad.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		btnLoad.setText("   Load   ");
+		btnLoad.setText(messages.animations_dialog_load);
 		btnLoad.addSelectionListener(this.getLoadButtonSelectionListener());
 
 		progressBar = new ProgressBar(container, SWT.NONE);
 		progressBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		progressBar.setToolTipText("Please choose a dataset first...");
+		progressBar.setToolTipText(messages.animations_dialog_choosedataset);
 		progressBar.setSize(200, 20);
 		// progressBar.setVisible(false);
 
@@ -134,10 +130,10 @@ public class AnimationsDialog extends Dialog {
 		GridData gd_lblDate = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		gd_lblDate.widthHint = 100;
 		lblDate.setLayoutData(gd_lblDate);
-		lblDate.setText("Date:");
+		lblDate.setText(messages.animations_dialog_date_label);
 
 		txtDate = new Text(compositeControls, SWT.BORDER);
-		txtDate.setText("");
+		txtDate.setText(messages.animations_dialog_date_text);
 		txtDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtDate.setEditable(false);
 
@@ -146,26 +142,33 @@ public class AnimationsDialog extends Dialog {
 		compositeButtons.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		btnFirst = new Button(compositeButtons, SWT.NONE);
-		btnFirst.setText("|<");
+		btnFirst.setText(messages.animations_dialog_btn_first);
+		btnFirst.setToolTipText(messages.animations_dialog_btn_first_ttip);
 
 		btnPrev = new Button(compositeButtons, SWT.NONE);
-		btnPrev.setText("<");
+		btnPrev.setText(messages.animations_dialog_btn_prev);
+		btnPrev.setToolTipText(messages.animations_dialog_btn_prev_ttip);
 
 		btnBPlay = new Button(compositeButtons, SWT.NONE);
-		btnBPlay.setText("b");
+		btnBPlay.setImage(this.getAnImage("anim_loop_backward.png", this.getShell()));
+		btnBPlay.setToolTipText(messages.animations_dialog_btn_playbackward_ttip);
 
 		buttonPause = new Button(compositeButtons, SWT.NONE);
-		buttonPause.setText("||");
+		buttonPause.setText(messages.animations_dialog_btn_pause);
+		buttonPause.setToolTipText(messages.animations_dialog_btn_pause_ttip);
 
 		buttonFPlay = new Button(compositeButtons, SWT.NONE);
 		buttonFPlay.setSelection(true);
-		buttonFPlay.setText("f");
+		buttonFPlay.setImage(this.getAnImage("anim_loop_forward.png", this.getShell()));
+		buttonFPlay.setToolTipText(messages.animations_dialog_btn_playforward_ttip);
 
 		buttonNext = new Button(compositeButtons, SWT.NONE);
-		buttonNext.setText(">");
+		buttonNext.setText(messages.animations_dialog_btn_next);
+		buttonNext.setToolTipText(messages.animations_dialog_btn_next_ttip);
 
 		buttonLast = new Button(compositeButtons, SWT.NONE);
-		buttonLast.setText(">|");
+		buttonLast.setText(messages.animations_dialog_btn_last);
+		buttonLast.setToolTipText(messages.animations_dialog_btn_last_ttip);
 
 		addListeners();
 
@@ -316,7 +319,7 @@ public class AnimationsDialog extends Dialog {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				progressBar.setToolTipText("Loading, please wait...");
+				progressBar.setToolTipText(messages.animations_dialog_progressbar_ttip_wait);
 				progressBar.setVisible(true);
 				if (currentDataset != null && animations != null) {
 					animations.loadDataset(currentDataset);
@@ -362,7 +365,7 @@ public class AnimationsDialog extends Dialog {
 	 */
 	private void reset() {
 		if (btnLoad != null) {
-			btnLoad.setText("   Load   ");
+			btnLoad.setText(messages.animations_dialog_load);
 		}
 		if (progressBar != null) {
 			// progressBar.setToolTipText("Please choose a dataset first...");
@@ -376,7 +379,7 @@ public class AnimationsDialog extends Dialog {
 			scale.setSelection(100);
 		}
 		if (txtDate != null) {
-			txtDate.setText("");
+			txtDate.setText(messages.animations_dialog_date_text);
 		}
 	}
 
@@ -385,14 +388,14 @@ public class AnimationsDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Animations");
+		newShell.setText(messages.animations_dialog_title);
 		newShell.setAlpha(200);
 		newShell.setImage(this.getAnImage("clock_play.png", newShell));
 	}
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CLOSE_LABEL, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, messages.CLOSE_LABEL, true);
 	}
 
 	@Override
@@ -446,7 +449,7 @@ public class AnimationsDialog extends Dialog {
 	@Inject
 	@Optional
 	void filesLoadComplete(@UIEventTopic(AnimationsEventConstants.ANIMATIONS_FILES_LOAD_COMPLETE) AnimationsSource ds) {
-		progressBar.setToolTipText("Ready to play !");
+		progressBar.setToolTipText(messages.animations_dialog_progressbar_ttip_ready);
 		compositeControls.setVisible(true);
 
 		// configure the scale bar
@@ -456,7 +459,7 @@ public class AnimationsDialog extends Dialog {
 		scale.setSelection(max);
 		updateDate(ds, max);
 		animations.showImage(ds, max);
-		btnLoad.setText("Update");
+		btnLoad.setText(messages.animations_dialog_update);
 	}
 
 	@Inject

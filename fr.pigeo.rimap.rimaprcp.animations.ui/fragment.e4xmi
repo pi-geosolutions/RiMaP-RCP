@@ -6,7 +6,7 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Y3QYIEg4EeaDHNbk2q9XIg" featurename="handlers" parentElementId="fr.pigeo.rimap.rimaprcp.application">
     <elements xsi:type="commands:Handler" xmi:id="_cyuIIEg4EeaDHNbk2q9XIg" elementId="fr.pigeo.rimap.rimaprcp.animations.ui.handler.open" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.animations.ui/fr.pigeo.rimap.rimaprcp.animations.ui.handlers.OpenAnimationWindowHandler" command="_PwGmYEg4EeaDHNbk2q9XIg"/>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_lJ5OcEg4EeaDHNbk2q9XIg" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar" positionInList="3">
-    <elements xsi:type="menu:HandledToolItem" xmi:id="_rQIz8Eg4EeaDHNbk2q9XIg" elementId="fr.pigeo.rimap.rimaprcp.animations.ui.handledtoolitem.open" label="Open Animations Tool" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.animations.ui/icons/clock_play.png" tooltip="Open Animations Tool Window" command="_PwGmYEg4EeaDHNbk2q9XIg"/>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_lJ5OcEg4EeaDHNbk2q9XIg" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar" positionInList="index:2">
+    <elements xsi:type="menu:HandledToolItem" xmi:id="_rQIz8Eg4EeaDHNbk2q9XIg" elementId="fr.pigeo.rimap.rimaprcp.animations.ui.handledtoolitem.open" label="%animations.ui.toolitem.label" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.animations.ui/icons/clock_play.png" tooltip="%animations.ui.toolitem.ttip" command="_PwGmYEg4EeaDHNbk2q9XIg"/>
   </fragments>
 </fragment:ModelFragments>

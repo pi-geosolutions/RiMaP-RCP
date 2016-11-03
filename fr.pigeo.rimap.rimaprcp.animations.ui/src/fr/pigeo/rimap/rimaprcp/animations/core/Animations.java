@@ -345,7 +345,7 @@ public class Animations {
 							LatLon.fromDegrees(ds.getMaxlat(), ds.getMaxlon()),
 							LatLon.fromDegrees(ds.getMaxlat(), ds.getMinlon()))));
 		}
-		wwjLayer.setName("Animations (" + ds.getLabel() + ")");
+		wwjLayer.setName(messages.animations_dialog_title+" (" + ds.getLabel() + ")");
 
 		// Will actually update the layer, if it is already in the model:
 		wwj.addLayer(wwjLayer);
