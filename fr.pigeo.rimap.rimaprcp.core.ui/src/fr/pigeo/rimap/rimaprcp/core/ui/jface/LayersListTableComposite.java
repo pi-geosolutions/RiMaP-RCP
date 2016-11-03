@@ -6,9 +6,12 @@ import javax.inject.Inject;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -31,6 +34,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
+import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
 import fr.pigeo.rimap.rimaprcp.core.ui.dnd.LayerDragListener;
@@ -50,6 +54,15 @@ public class LayersListTableComposite extends Composite {
 	protected TableViewer viewer;
 	@Inject
 	WwjInstance wwj;
+
+	@Inject
+	Logger logger;
+
+	@Inject
+	IEclipseContext context;
+	
+	@Inject MApplication application;
+
 	@Inject
 	IEventBroker eventBroker;
 
@@ -75,14 +88,16 @@ public class LayersListTableComposite extends Composite {
 		// set the content provider
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setInput(wwj.getLayersList());
-		
+
 	}
 
 	protected void createColumns(TableViewer tv, TableColumnLayout tcl) {
 		// create a column for the checkbox
 		TableViewerColumn visibleCol = new TableViewerColumn(tv, SWT.NONE);
-		visibleCol.getColumn().setAlignment(SWT.CENTER);
-		visibleCol.getColumn().setText("x");
+		visibleCol.getColumn()
+				.setAlignment(SWT.CENTER);
+		visibleCol.getColumn()
+				.setText("x");
 		visibleCol.setEditingSupport(new TableCheckEditingSupport(tv));
 		visibleCol.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -102,13 +117,15 @@ public class LayersListTableComposite extends Composite {
 
 		// create a column for the name
 		TableViewerColumn nameCol = new TableViewerColumn(tv, SWT.NONE);
-		nameCol.getColumn().setText("Layer name");
+		nameCol.getColumn()
+				.setText("Layer name");
 		nameCol.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
 				Layer l = (Layer) element;
 				return l.getName();
 			}
+
 			@Override
 			public Image getImage(Object element) {
 				if (element instanceof WMSTiledImageLayer) {
@@ -124,7 +141,8 @@ public class LayersListTableComposite extends Composite {
 		// create a column for the queryable boolean value
 		TableViewerColumn qCol = new TableViewerColumn(tv, SWT.NONE);
 		// qCol.getColumn().setAlignment(SWT.CENTER);
-		qCol.getColumn().setText("i");
+		qCol.getColumn()
+				.setText("i");
 		qCol.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -138,7 +156,7 @@ public class LayersListTableComposite extends Composite {
 					WMSTiledImageLayer l = (WMSTiledImageLayer) element;
 					if (l.hasKey(RimapAVKey.LAYER_PARENTNODE)) {
 						WmsNode node = (WmsNode) l.getValue(RimapAVKey.LAYER_PARENTNODE);
-						if (node !=null && node.isQueryable()) {
+						if (node != null && node.isQueryable()) {
 							return FEATUREINFO;
 						}
 					}
@@ -150,7 +168,8 @@ public class LayersListTableComposite extends Composite {
 		// create a column for the polygon_queryable boolean value
 		TableViewerColumn pqCol = new TableViewerColumn(tv, SWT.NONE);
 		// pqCol.getColumn().setAlignment(SWT.CENTER);
-		pqCol.getColumn().setText("pq");
+		pqCol.getColumn()
+				.setText("pq");
 		pqCol.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -165,7 +184,7 @@ public class LayersListTableComposite extends Composite {
 					WMSTiledImageLayer l = (WMSTiledImageLayer) element;
 					if (l.hasKey(RimapAVKey.LAYER_PARENTNODE)) {
 						WmsNode node = (WmsNode) l.getValue(RimapAVKey.LAYER_PARENTNODE);
-						if (node !=null && node.getPq_layer()!=null) {
+						if (node != null && node.getPolygonQueryParams() != null) {
 							return PQUERY;
 						}
 					}
@@ -177,7 +196,8 @@ public class LayersListTableComposite extends Composite {
 		// create a column telling if metadata is linked
 		TableViewerColumn mtdCol = new TableViewerColumn(tv, SWT.NONE);
 		// mtdCol.getColumn().setAlignment(SWT.CENTER);
-		mtdCol.getColumn().setText("M");
+		mtdCol.getColumn()
+				.setText("M");
 		mtdCol.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -191,7 +211,7 @@ public class LayersListTableComposite extends Composite {
 					WMSTiledImageLayer l = (WMSTiledImageLayer) element;
 					if (l.hasKey(RimapAVKey.LAYER_PARENTNODE)) {
 						WmsNode node = (WmsNode) l.getValue(RimapAVKey.LAYER_PARENTNODE);
-						if (node !=null && node.getMetadata_uuid()!="") {
+						if (node != null && node.getMetadata_uuid() != "") {
 							return METADATA;
 						}
 					}
@@ -210,17 +230,17 @@ public class LayersListTableComposite extends Composite {
 	}
 
 	/**
-	 *  make lines and header visible
+	 * make lines and header visible
 	 */
 	public void drawTableLines() {
 		final Table table = viewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 	}
-	
+
 	/**
 	 * @param filter
-	 * Filters the TableViewer using the provided filter value
+	 *            Filters the TableViewer using the provided filter value
 	 */
 	public void addWidgetFilter(boolean keep) {
 		viewer.addFilter(new WidgetsFilter(keep));
@@ -263,28 +283,29 @@ public class LayersListTableComposite extends Composite {
 	}
 
 	public void registerEvents() {
-		if (eventBroker==null) {
-			System.out.println("ERROR: EventBroker is Null");
+		if (eventBroker == null) {
+			logger.error("ERROR: EventBroker is Null");
 			return;
 		}
 		this.viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
+
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = viewer.getStructuredSelection();
+				//context.set(RimapConstants.RIMAP_SELECTEDLAYERS_CONTEXT_NAME, selection);
+				application.getContext().set(RimapConstants.RIMAP_SELECTEDLAYERS_CONTEXT_NAME, selection);
+				eventBroker.post(RiMaPEventConstants.LAYER_SELECTED_LAYERS, selection);
 				Object item = selection.getFirstElement();
 				if (item instanceof Layer) {
 					eventBroker.post(RiMaPEventConstants.LAYER_SELECTED, (Layer) item);
 				}
-				
 			}
 		});
 	}
-	
+
 	public IStructuredSelection getSelectedLayers() {
 		return this.viewer.getStructuredSelection();
 	}
-	
 
 	@Inject
 	@Optional

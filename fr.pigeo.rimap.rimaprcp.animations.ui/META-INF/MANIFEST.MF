@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Animations tool
+Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.animations.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150407-1430",
+ org.eclipse.e4.core.di,
+ org.eclipse.swt,
+ org.eclipse.osgi,
+ org.eclipse.core.runtime,
+ org.eclipse.jface,
+ fr.pigeo.rimap.rimaprcp.worldwind,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.core.services,
+ fr.pigeo.externals.org.apache.commons,
+ fr.pigeo.rimap.rimaprcp.core,
+ org.eclipse.e4.ui.di,
+ org.eclipse.e4.ui.workbench,
+ fr.pigeo.externals.com.fasterxml.jackson.core,
+ gov.nasa.worldwind
+Import-Package: javax.inject;version="1.0.0",
+ org.eclipse.jface.dialogs,
+ org.eclipse.jface.window,
+ org.jdom2,
+ org.jdom2.input
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy

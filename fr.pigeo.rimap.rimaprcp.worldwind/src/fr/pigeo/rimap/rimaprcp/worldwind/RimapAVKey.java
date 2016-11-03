@@ -7,4 +7,6 @@ public interface RimapAVKey extends AVKey {
 	
 	//Layer related
     final String LAYER_PARENTNODE = "fr.pigeo.rimap.worldwind.avkey.ParentNode";
+    final String LAYER_ISPOLYGONQUERYABLE = "fr.pigeo.rimap.worldwind.avkey.IsPolygonQueryable";
+    final String LAYER_POLYGONQUERYPARAMS = "fr.pigeo.rimap.worldwind.avkey.PolygonQuery.params";
 }

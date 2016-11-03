@@ -1,13 +1,17 @@
 package fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.swt.graphics.Image;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,6 +24,7 @@ import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
 import fr.pigeo.rimap.rimaprcp.core.wms.IWmsService;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
+import fr.pigeo.rimap.rimaprcp.worldwind.layers.PolygonQueryableParams;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.avlist.AVListImpl;
@@ -34,8 +39,8 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	public static Image checkedImage;
 	public static Image uncheckedImage;
 	public static Image wmsImage;
-	
-	protected double detailhint=0.1;
+
+	protected double detailhint = 0.1;
 
 	protected LayerType type = LayerType.WMS;
 	protected RimapWMSTiledImageLayer layer;
@@ -52,7 +57,7 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	protected String legendurl;
 	protected String metadata_uuid;
 	protected String format = "image/png";
-	protected String pq_layer;
+	protected PolygonQueryableParams polygonQueryParams;
 	protected boolean tiled = true;
 	protected boolean queryable = true;
 	protected boolean checked = false;
@@ -73,12 +78,13 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	@Inject
 	IWmsService wmsService;
 	
-	
+	@Inject Logger logger;
 
 	@Override
 	public void loadFromJson(JsonNode node) {
 		if (!NodeUtils.isValid(node, this.type)) {
-			System.out.println("ERROR: error parsing JsonNode in " + this.getClass().getName());
+			logger.error("ERROR: error parsing JsonNode in " + this.getClass()
+					.getName());
 			return;
 		}
 		this.id = NodeUtils.parseString(node, "id", null);
@@ -96,7 +102,27 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		this.tiled = NodeUtils.parseBool(node, "TILED", this.tiled);
 		this.queryable = NodeUtils.parseBool(node, "queryable", this.queryable);
 		this.checked = NodeUtils.parseBool(node, "checked", this.checked);
-		this.pq_layer = NodeUtils.parseString(node, "pq_layer", null);
+		// polygon query params
+		String pq_layer = NodeUtils.parseString(node, "pq_layer", null);
+		if (pq_layer != null) {
+			int pq_bandnb = NodeUtils.parseInt(node, "pq_bandnb", 0);
+			String pq_header = NodeUtils.parseString(node, "pq_header", "");
+			int pq_round = NodeUtils.parseInt(node, "pq_round", 0);
+			JsonNode n = node.get("pq_rastertype_fields");
+			Iterator<Entry<String, JsonNode>> it = n.fields();
+			List<String> pq_fields = new ArrayList();
+
+			//System.out.println("    -> polygon query fields:");
+			while (it.hasNext()) {
+				Entry<String, JsonNode> entry = it.next();
+				if (entry.getValue().asBoolean(false)) {
+					pq_fields.add(entry.getKey());
+					//System.out.println("        - "+entry.getKey());
+				}
+			}
+			this.polygonQueryParams = new PolygonQueryableParams(pq_layer, pq_header, pq_bandnb, pq_round, pq_fields);
+			
+		}
 
 		wmsService.registerServerCapability(this.url);
 
@@ -105,12 +131,12 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 				catalogState.addCheckedNode(this);
 			}
 		} else {
-			System.out.println("################ catalogState context var is null #################");
+			logger.error("catalogState context var is null");
 		}
-		
+
 		if (prefsService != null) {
-			this.detailhint = prefsService.getDouble(RimapConstants.WW_DEFAULT_PREFERENCE_NODE, RimapConstants.WW_DEFAULT_LAYER_DETAILSHINT,
-					this.detailhint, null);
+			this.detailhint = prefsService.getDouble(RimapConstants.WW_DEFAULT_PREFERENCE_NODE,
+					RimapConstants.WW_DEFAULT_LAYER_DETAILSHINT, this.detailhint, null);
 		}
 
 	}
@@ -203,9 +229,9 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	@Override
 	public Layer getLayer() {
 		if (this.layer == null) {
-			
+
 			WMSCapabilities caps = wmsService.getServerCapabilities(this.url);
-			
+
 			AVList layerParams = new AVListImpl();
 			// System.out.println(this.layers);
 			layerParams.setValue(AVKey.LAYER_NAMES, this.layers);
@@ -216,14 +242,23 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 			try {
 				this.layer = new RimapWMSTiledImageLayer(caps, layerParams);
 				this.layer.setName(this.name);
+				this.layer.setParent(this);
+				//redundant with previous...
 				this.layer.setValue(RimapAVKey.LAYER_PARENTNODE, this);
 				this.layer.setValue(RimapAVKey.HAS_RIMAP_EXTENSIONS, true);
+				if ((this.polygonQueryParams!=null) && (this.polygonQueryParams.isValid())) {
+					this.layer.setValue(RimapAVKey.LAYER_ISPOLYGONQUERYABLE, true);
+					this.layer.setValue(RimapAVKey.LAYER_POLYGONQUERYPARAMS, this.polygonQueryParams);
+				} else {
+					this.layer.setValue(RimapAVKey.LAYER_ISPOLYGONQUERYABLE, false);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		if (this.layer != null) {
-			// Loading from caps may fail. In this case, layer, will still be null
+			// Loading from caps may fail. In this case, layer, will still be
+			// null
 			layer.setEnabled(this.checked);
 		}
 		return this.layer;
@@ -325,14 +360,6 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		this.format = format;
 	}
 
-	public String getPq_layer() {
-		return pq_layer;
-	}
-
-	public void setPq_layer(String pq_layer) {
-		this.pq_layer = pq_layer;
-	}
-
 	public boolean isTiled() {
 		return tiled;
 	}
@@ -340,7 +367,6 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	public void setTiled(boolean tiled) {
 		this.tiled = tiled;
 	}
-
 
 	public void setQueryable(boolean queryable) {
 		this.queryable = queryable;
@@ -354,4 +380,11 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		return this.queryable;
 	}
 
+	public PolygonQueryableParams getPolygonQueryParams() {
+		return polygonQueryParams;
+	}
+
+	public void setPolygonQueryParams(PolygonQueryableParams polygonQueryParams) {
+		this.polygonQueryParams = polygonQueryParams;
+	}
 }

@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_IpHPUAJMEeaqnpp0Mlm3BA">
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_IpHPUQJMEeaqnpp0Mlm3BA" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar">
-    <elements xsi:type="menu:HandledToolItem" xmi:id="_XZwKIALxEeabqZ-3rtVCCw" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handledtoolitem.featureinfo" label="Get Feature Info (Query)" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/icons/icon_featureinfo_16px.png" type="Check" command="_OTXigALzEeabqZ-3rtVCCw"/>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_IpHPUQJMEeaqnpp0Mlm3BA" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar" positionInList="index:0">
+    <elements xsi:type="menu:HandledToolItem" xmi:id="_XZwKIALxEeabqZ-3rtVCCw" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handledtoolitem.featureinfo" label="%handledtoolitem.label.featureinfo" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/icons/icon_featureinfo_16px.png" type="Check" command="_OTXigALzEeabqZ-3rtVCCw">
+      <tags>mapCheckButton</tags>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_jxBR8IPLEeaWHrljJW1EEg" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar" positionInList="after:fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handledtoolitem.featureinfo">
+    <elements xsi:type="menu:HandledToolItem" xmi:id="_JmrrQDxqEeaIDbJaL82TYg" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handledtoolitem.polygonquery" label="%handledtoolitem.label.polygonquery" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/icons/polygon_query_16px.png" tooltip="%handledtoolitem.tooltip.polygonquery" type="Check" command="_b02r4DxqEeaIDbJaL82TYg">
+      <tags>mapCheckButton</tags>
+    </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_oI59IALzEeabqZ-3rtVCCw" featurename="commands" parentElementId="fr.pigeo.rimap.rimaprcp.application">
-    <elements xsi:type="commands:Command" xmi:id="_OTXigALzEeabqZ-3rtVCCw" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.command.featureinfo" commandName="Activate FeatureInfo Tool"/>
+    <elements xsi:type="commands:Command" xmi:id="_OTXigALzEeabqZ-3rtVCCw" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.command.featureinfo" commandName="%command.commandname.featureinfo"/>
+    <elements xsi:type="commands:Command" xmi:id="_b02r4DxqEeaIDbJaL82TYg" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.command.activatepolygonquerytool" commandName="%command.commandname.activatepolygonquerytool"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_LQhnIAL0EeabqZ-3rtVCCw" featurename="handlers" parentElementId="fr.pigeo.rimap.rimaprcp.application">
     <elements xsi:type="commands:Handler" xmi:id="_OxJOMAL0EeabqZ-3rtVCCw" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handler.featureinfo" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handlers.FeatureInfoCommandHandler" command="_OTXigALzEeabqZ-3rtVCCw"/>
+    <elements xsi:type="commands:Handler" xmi:id="_gPgSQDxqEeaIDbJaL82TYg" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handler.polygonquery" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.handlers.PolygonQueryHandler" command="_b02r4DxqEeaIDbJaL82TYg"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_2oDkwAfJEeaRbecOnodQ-g" featurename="descriptors" parentElementId="fr.pigeo.rimap.rimaprcp.application">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_87TEcAfJEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.partdescriptor.fi" label="Query results" allowMultiple="true" closeable="true" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views.FeatureInfoResultsPart">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_87TEcAfJEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.partdescriptor.fi" label="%partdescriptor.label.fi" allowMultiple="true" closeable="true" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views.FeatureInfoResultsPart">
       <tags>FeatureInfo</tags>
+    </elements>
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_NIaXQEHpEeaNDrNqtJio1w" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.partdescriptor.pq" label="%partdescriptor.label.pq" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/icons/polygon_query_16px.png" tooltip="%partdescriptor.tooltip.pq" allowMultiple="true" closeable="true" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views.PolygonQueryResultsPart">
+      <tags>PolygonQuery</tags>
     </elements>
   </fragments>
 </fragment:ModelFragments>

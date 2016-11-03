@@ -2,6 +2,7 @@ package fr.pigeo.rimap.rimaprcp.core.constants;
 
 public interface RimapConstants {
 	public static String RIMAP_CACHE_PATH_CONTEXT_NAME = "fr/pigeo/rimap/rimaprcp/cache/path";
+	public static String RIMAP_SELECTEDLAYERS_CONTEXT_NAME = "fr/pigeo/rimap/rimaprcp/layers/selected";
 	
 	public static String RIMAP_DEFAULT_PREFERENCE_NODE="fr.pigeo.rimap.rimaprcp.core";
 	public static String PREFERENCES_CONFIG_NODE_TAG  ="config";

@@ -23,7 +23,7 @@
     </Layer>
     <Layer href="customconfig/Earth/BMNGWMSLayer2.xml" actuate="onLoad"/>
     <Layer href="customconfig/Earth/LandsatI3WMSLayer2.xml" actuate="onLoad"/>
-    <Layer href="customconfig/Earth/MSVirtualEarthAerialLayer.xml" actuate="onRequest"/>
+    <!-- <Layer href="customconfig/Earth/MSVirtualEarthAerialLayer.xml" actuate="onRequest"/>-->
     <Layer href="customconfig/Earth/BingImagery.xml" actuate="onRequest"/>
     <Layer className="gov.nasa.worldwind.layers.Earth.CountryBoundariesLayer" actuate="onRequest"/>
     <Layer href="customconfig/Earth/OpenStreetMap.xml" actuate="onRequest"/>

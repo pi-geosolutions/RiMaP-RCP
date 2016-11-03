@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -29,12 +30,17 @@ import org.eclipse.swt.widgets.Table;
 
 import fr.pigeo.rimap.rimaprcp.core.ui.core.Central;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.FeatureInfoTarget;
+import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n.Messages;
 
 public class FeatureInfoResultsPart {
 	private TableViewer viewer;
 	private Browser browser;
 	private Locale locale;
 
+	@Inject
+	@Translation
+	Messages messages;
+	
 	@Inject
 	public FeatureInfoResultsPart() {
 
@@ -68,8 +74,8 @@ public class FeatureInfoResultsPart {
 
 		Label lblPos = new Label(parent, SWT.NONE);
 		lblPos.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-		lblPos.setText("Latitude " + targets.get(0).getPosition().getLatitude().toDMSString() + " | Longitude "
-				+ targets.get(0).getPosition().getLongitude().toDMSString() + " | Altitude "
+		lblPos.setText(messages.fi_results_latitude+" " + targets.get(0).getPosition().getLatitude().toDMSString() + " | "+messages.fi_results_longitude+" "
+				+ targets.get(0).getPosition().getLongitude().toDMSString() + " | "+messages.fi_results_altitude+" "
 				+ String.format("%.2f", targets.get(0).getPosition().getAltitude()) + " m");
 
 		// define the TableViewer
@@ -95,7 +101,7 @@ public class FeatureInfoResultsPart {
 			}
 		});
 		colName.getColumn().setWidth(200);
-		colName.getColumn().setText("Layers");
+		colName.getColumn().setText(messages.fi_results_layers);
 
 		browser = new Browser(parent, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -112,7 +118,7 @@ public class FeatureInfoResultsPart {
 				if (selection.size() > 0) {
 					FeatureInfoTarget target = (FeatureInfoTarget) selection.getFirstElement();
 					URL fiurl = target.getLayer().buildFeatureInfoRequest(target.getPosition(), locale.getISO3Country());
-					System.out.println(fiurl.toString());
+					//System.out.println(fiurl.toString());
 					browser.setUrl(fiurl.toString());
 				}
 			}

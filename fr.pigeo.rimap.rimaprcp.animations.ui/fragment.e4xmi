@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_Akv2gEg4EeaDHNbk2q9XIg">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_CBzqYEg4EeaDHNbk2q9XIg" featurename="commands" parentElementId="fr.pigeo.rimap.rimaprcp.application">
+    <elements xsi:type="commands:Command" xmi:id="_PwGmYEg4EeaDHNbk2q9XIg" elementId="fr.pigeo.rimap.rimaprcp.animations.ui.command.open" commandName="Open Animation Tool" description="Open Animation Tool"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Y3QYIEg4EeaDHNbk2q9XIg" featurename="handlers" parentElementId="fr.pigeo.rimap.rimaprcp.application">
+    <elements xsi:type="commands:Handler" xmi:id="_cyuIIEg4EeaDHNbk2q9XIg" elementId="fr.pigeo.rimap.rimaprcp.animations.ui.handler.open" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.animations.ui/fr.pigeo.rimap.rimaprcp.animations.ui.handlers.OpenAnimationWindowHandler" command="_PwGmYEg4EeaDHNbk2q9XIg"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_lJ5OcEg4EeaDHNbk2q9XIg" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar" positionInList="index:2">
+    <elements xsi:type="menu:HandledToolItem" xmi:id="_rQIz8Eg4EeaDHNbk2q9XIg" elementId="fr.pigeo.rimap.rimaprcp.animations.ui.handledtoolitem.open" label="%animations.ui.toolitem.label" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.animations.ui/icons/clock_play.png" tooltip="%animations.ui.toolitem.ttip" command="_PwGmYEg4EeaDHNbk2q9XIg"/>
+  </fragments>
+</fragment:ModelFragments>
