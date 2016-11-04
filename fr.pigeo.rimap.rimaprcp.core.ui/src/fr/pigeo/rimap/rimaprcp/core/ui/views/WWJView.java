@@ -1,6 +1,8 @@
 
 package fr.pigeo.rimap.rimaprcp.core.ui.views;
 
+import java.awt.BorderLayout;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -13,6 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import gov.nasa.worldwind.util.StatusBar;
 
 public class WWJView {
 	/**
@@ -41,7 +44,9 @@ public class WWJView {
 		//gov.nasa.worldwindx.examples.ApplicationTemplate.insertBeforePlacenames(wwd, new LatLonGraticuleLayer());
 		wwj.initialize(prefs);
 		panel.add(wwj.getWwd(), java.awt.BorderLayout.CENTER);
-		
+		StatusBar statusBar = new StatusBar();
+		panel.add(statusBar, BorderLayout.PAGE_END);
+        statusBar.setEventSource(wwj.getWwd());
 	}
 
 }

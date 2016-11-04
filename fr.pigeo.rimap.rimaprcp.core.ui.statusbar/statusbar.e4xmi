@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_z0J68KGyEea3fKIU6tyy4A">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_z0J68aGyEea3fKIU6tyy4A" featurename="trimBars" parentElementId="fr.pigeo.rimap.rimaprcp.trimmedwindow.rimap3d">
+    <elements xsi:type="basic:TrimBar" xmi:id="_z0J68qGyEea3fKIU6tyy4A" elementId="fr.pigeo.rimap.rimaprcp.core.ui.trimbar.0" side="Bottom">
+      <children xsi:type="menu:ToolBar" xmi:id="_z0J686GyEea3fKIU6tyy4A" elementId="fr.pigeo.rimap.rimaprcp.core.ui.toolbar.statusbar">
+        <children xsi:type="menu:ToolControl" xmi:id="_YBhFAKGzEea3fKIU6tyy4A" elementId="fr.pigeo.rimap.rimaprcp.core.ui.statusbar.toolcontrol.0" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui.statusbar/fr.pigeo.rimap.rimaprcp.core.ui.statusbar.jface.StatusBar"/>
+        <children xsi:type="menu:DirectToolItem" xmi:id="_lNldsKGzEea3fKIU6tyy4A" elementId="fr.pigeo.rimap.rimaprcp.core.ui.statusbar.directtoolitem.sdfgsdfg" label="sdfgsdfg"/>
+      </children>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>
