@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: StatusBar
+Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.core.ui.statusbar;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: pi-Geosolutions
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.jface,
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.ui.di
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
