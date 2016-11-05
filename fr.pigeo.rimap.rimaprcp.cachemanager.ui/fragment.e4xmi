@@ -11,14 +11,12 @@
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_XURu4DiUEeaeP4om2KZOEg" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.perspectivestack.main">
     <elements xsi:type="advanced:Perspective" xmi:id="_b2jnQDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.cachemanager.ui.perspective.main">
       <children xsi:type="basic:PartSashContainer" xmi:id="_gaVUcDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partsashcontainer.0">
-        <children xsi:type="basic:PartStack" xmi:id="_jPzswDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partstack.0" containerData="500">
-          <children xsi:type="basic:Part" xmi:id="_pWJ_8DiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.part.mainview" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.cachemanager.ui/fr.pigeo.rimap.rimaprcp.cachemanager.ui.views.CacheTable" label="Main View"/>
-        </children>
         <children xsi:type="basic:PartSashContainer" xmi:id="_lWxZQDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partsashcontainer.1" containerData="500" horizontal="true">
-          <children xsi:type="basic:PartStack" xmi:id="_8pKhsDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partstack.1" containerData="500">
-            <children xsi:type="basic:Part" xmi:id="_9Xkf0DiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.part.bulkdownload" containerData="" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.cachemanager.ui/fr.pigeo.rimap.rimaprcp.cachemanager.ui.views.BulkTable" label="Bulk Download Panel"/>
+          <children xsi:type="basic:PartStack" xmi:id="_8pKhsDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partstack.1" containerData="700">
+            <children xsi:type="basic:Part" xmi:id="_pWJ_8DiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.part.mainview" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.cachemanager.ui/fr.pigeo.rimap.rimaprcp.cachemanager.ui.views.CachedLayersTable" label="Main View"/>
+            <children xsi:type="basic:Part" xmi:id="_9Xkf0DiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.part.bulkdownload" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.cachemanager.ui/fr.pigeo.rimap.rimaprcp.cachemanager.ui.views.BulkTable" label="Bulk Download Panel"/>
           </children>
-          <children xsi:type="advanced:Placeholder" xmi:id="_IjZfEDiVEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.placeholder.0" containerData="500" ref="_fj0_sDiTEeaeP4om2KZOEg"/>
+          <children xsi:type="advanced:Placeholder" xmi:id="_IjZfEDiVEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.placeholder.0" containerData="300" ref="_fj0_sDiTEeaeP4om2KZOEg"/>
         </children>
       </children>
     </elements>

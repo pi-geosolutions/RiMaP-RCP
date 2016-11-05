@@ -4,69 +4,48 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import gov.nasa.worldwind.cache.BasicDataFileStore;
 import gov.nasa.worldwind.cache.FileStore;
-import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.CacheDataSet;
 
-public class XMLFileImport {
+public class CacheUtil {
 
-	private FileStore store = new BasicDataFileStore();
-	// private File cacheRoot = store.getWriteLocation();
-	private List<CacheDataSet> xfl = new ArrayList();
-
-	public XMLFileImport() {
-
+	public static List<CachedDataSet> listCachedLayers(FileStore store) {
+		return scanFile(store.getWriteLocation());
 	}
 
-	public List<CacheDataSet> listXML() {
-		scanFile(store.getWriteLocation());
-		return xfl;
-	}
-
-	// test sur la présence d'un fichier xml ou présence de fichier 2 digits
-	// numeric
-
-	private void scanFile(File dir) {
-		// System.out.println("test0 " + dir.getPath());
+	private static List<CachedDataSet> scanFile(File dir) {
 		if (!dir.isDirectory()) {
-			return;
+			return null;
 		}
 
+		List<CachedDataSet> xfl = new ArrayList();
+
 		if (isSingleDataSet(dir.listFiles())) {
-			CacheDataSet xmldoc = findxml(dir);
-			if (xmldoc != null) {
-				xfl.add(xmldoc);
+			CachedDataSet cds = findDatasetDefinition(dir);
+			if (cds != null) {
+				xfl.add(cds);
 			}
 		}
 
 		else {
 			for (File sd : dir.listFiles()) {
-				scanFile(sd);
+				xfl.addAll(scanFile(sd));
 			}
 		}
-		// return XMLFileList;
+		return xfl;
 	}
 
-	private CacheDataSet findxml(File dir) {
+	/*
+	 * Looks for an .xml file to get the dataset definition. 
+	 * If no xml file found, it won't consider this as a dataset
+	 */
+	private static CachedDataSet findDatasetDefinition(File dir) {
 		for (File sd : dir.listFiles()) {
 			if (sd.isFile()) {
-
-				// File pathname = sd.getAbsoluteFile();
 				String filename = sd.getPath();
+				//System.out.println("test_filename " + filename);
 
-				System.out.println("test_filename " + filename);
-
-				// String ext = filename.substring(filename.lastIndexOf(".") +
-				// 1, filename.length());
-
-				if (filename.endsWith(".xml"))
-
-				{
-
-					// System.out.println("test0 " + filename);
-
-					return new CacheDataSet(filename, sd);
+				if (filename.endsWith(".xml")) {
+					return new CachedDataSet(filename, sd);
 				}
 			}
 		}

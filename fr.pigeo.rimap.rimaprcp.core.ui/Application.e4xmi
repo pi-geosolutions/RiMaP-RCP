@@ -59,7 +59,7 @@
     <parameters xmi:id="_SKPgoMaeEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" name="Reference to the WWJ widget to show/hide" typeId="" optional="false"/>
   </commands>
   <commands xmi:id="_38TBgCNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.command.switchperspective" commandName="Switch Perspective">
-    <parameters xmi:id="_8Az_0CNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid" name="Perspective ID" optional="false"/>
+    <parameters xmi:id="_8Az_0CNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid" name="Perspective ID (destination)" optional="false"/>
   </commands>
   <addons xmi:id="_o0Uz4ZzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_o0Uz4pzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>

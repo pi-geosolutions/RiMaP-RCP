@@ -230,4 +230,9 @@ public class WwjInstance {
 		}
 		this.getWwd().redraw();
 	}
+	
+	public void removeLayer(Layer layer) {
+		LayerList layers = wwd.getModel().getLayers();
+		layers.remove(layer);
+	}
 }
