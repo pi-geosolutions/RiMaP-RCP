@@ -4,15 +4,34 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 import gov.nasa.worldwind.cache.FileStore;
 
+/**
+ * @author jean.pommier@pi-geosolutions.fr
+ *
+ */
+@Creatable
+@Singleton
 public class CacheUtil {
+	@Inject
+	IEclipseContext context;
+	
+	@Inject
+	IEventBroker evtBroker;
 
-	public static List<CachedDataSet> listCachedLayers(FileStore store) {
+	public List<CachedDataSet> listCachedLayers(FileStore store) {
 		return scanFile(store.getWriteLocation());
 	}
 
-	private static List<CachedDataSet> scanFile(File dir) {
+	private List<CachedDataSet> scanFile(File dir) {
 		if (!dir.isDirectory()) {
 			return null;
 		}
@@ -38,14 +57,18 @@ public class CacheUtil {
 	 * Looks for an .xml file to get the dataset definition. 
 	 * If no xml file found, it won't consider this as a dataset
 	 */
-	private static CachedDataSet findDatasetDefinition(File dir) {
+	private CachedDataSet findDatasetDefinition(File dir) {
 		for (File sd : dir.listFiles()) {
 			if (sd.isFile()) {
 				String filename = sd.getPath();
 				//System.out.println("test_filename " + filename);
 
 				if (filename.endsWith(".xml")) {
-					return new CachedDataSet(filename, sd);
+					
+					CachedDataSet cds = new CachedDataSet(filename, sd, evtBroker);
+					/*ContextInjectionFactory.inject(cds, context);*/
+					//CachedDataSet cds = ContextInjectionFactory.make(CachedDataSet.class, context);
+					return cds;
 				}
 			}
 		}
@@ -66,7 +89,7 @@ public class CacheUtil {
 	 * @return {@code true} if the directories should be treated as a single
 	 *         data set.
 	 */
-	protected static boolean isSingleDataSet(File[] subDirs) {
+	protected boolean isSingleDataSet(File[] subDirs) {
 		boolean onlyNumericDirs = true;
 
 		for (File sd : subDirs) {
@@ -87,7 +110,7 @@ public class CacheUtil {
 	 *
 	 * @return {@code true} if {@code s} contains only digits.
 	 */
-	protected static boolean isNumeric(String s) {
+	protected boolean isNumeric(String s) {
 		for (char c : s.toCharArray()) {
 			if (!Character.isDigit(c))
 				return false;

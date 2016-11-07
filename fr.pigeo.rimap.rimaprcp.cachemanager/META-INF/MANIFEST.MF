@@ -15,7 +15,9 @@ Require-Bundle: fr.pigeo.externals.org.apache.commons;bundle-version="1.0.0",
  fr.pigeo.rimap.rimaprcp.core,
  org.eclipse.e4.ui.di,
  org.eclipse.e4.core.di.annotations,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.core.di;bundle-version="1.5.0"
 Export-Package: fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
   uses:="gov.nasa.worldwind.layers,
    gov.nasa.worldwind.cache,

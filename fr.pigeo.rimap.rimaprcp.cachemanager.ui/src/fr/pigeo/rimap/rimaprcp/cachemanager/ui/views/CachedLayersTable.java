@@ -10,8 +10,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -38,6 +41,7 @@ import fr.pigeo.rimap.rimaprcp.cachemanager.ui.utils.CachedDataSetViewerComparat
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.CacheUtil;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.CachedDataSet;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.RenderableManager;
+import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import gov.nasa.worldwind.cache.BasicDataFileStore;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.geom.LatLon;
@@ -53,7 +57,7 @@ public class CachedLayersTable {
 	protected String searchString = "";
 
 	@PostConstruct
-	public void postConstruct(Composite parent, RenderableManager renderableManager) {
+	public void postConstruct(Composite parent, RenderableManager renderableManager, CacheUtil cacheUtil) {
 		parent.setLayout(new GridLayout(1, false));
 
 		Text search = new Text(parent, SWT.SEARCH | SWT.CANCEL | SWT.ICON_SEARCH);
@@ -89,7 +93,7 @@ public class CachedLayersTable {
 
 		// Liste des fichiers XML disponibles sous le répertoire de cache
 
-		List<CachedDataSet> list = CacheUtil.listCachedLayers(store);
+		List<CachedDataSet> list = cacheUtil.listCachedLayers(store);
 
 		// define the TableViewer
 		tableViewer = new TableViewer(parent,
@@ -235,7 +239,7 @@ public class CachedLayersTable {
 		collatsw.getColumn()
 				.setWidth(100);
 		collatsw.getColumn()
-				.setText("SW Lat");
+				.setText("MinLat");
 
 		// create column for number of layer levels property
 		TableViewerColumn collonsw = new TableViewerColumn(viewer, SWT.NONE);
@@ -252,7 +256,7 @@ public class CachedLayersTable {
 		collonsw.getColumn()
 				.setWidth(100);
 		collonsw.getColumn()
-				.setText("SW Lon");
+				.setText("MinLon");
 
 		// create column for number of layer levels property
 		TableViewerColumn collatne = new TableViewerColumn(viewer, SWT.NONE);
@@ -269,7 +273,7 @@ public class CachedLayersTable {
 		collatne.getColumn()
 				.setWidth(100);
 		collatne.getColumn()
-				.setText("NE Lat");
+				.setText("MaxLat");
 
 		// create column for number of layer levels property
 		TableViewerColumn collonne = new TableViewerColumn(viewer, SWT.NONE);
@@ -286,21 +290,21 @@ public class CachedLayersTable {
 		collonne.getColumn()
 				.setWidth(100);
 		collonne.getColumn()
-				.setText("NE Lon");
+				.setText("MaxLon");
 
 		// create column for size of layer
-		col = createTableViewerColumn("Size Mo", 100, 2);
+		col = createTableViewerColumn("Size", 100, 2);
 		col.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
 			public String getText(Object element) {
 				CachedDataSet cd = (CachedDataSet) element; // cast
-				long num = cd.getDirectorySize();
-				Formatter formatter = new Formatter();
-				Float mu = (float) num;
-				return formatter.format("%5.1f", ((float) mu) / (1e6))
-						.toString();
-
+				Long num = cd.getDirectorySize();
+				if (num==null) {
+					return "...";
+				}
+				Double mb = ((double) num) / (1024*1024);
+				return String.format("%5.1f %s", mb, "Mb");
 			}
 		});
 
@@ -317,9 +321,6 @@ public class CachedLayersTable {
 				cal.setTimeInMillis(num);// fsds.getLastModified());
 				SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy, hh:mm a");
 				return sdf.format(cal.getTime());
-
-				// return nu;
-
 			}
 		});
 
@@ -406,5 +407,12 @@ public class CachedLayersTable {
 		};
 		return selectionAdapter;
 	}
+	
+	@Inject
+	@Optional
+	void exitingPerspective(@UIEventTopic("updatedCDS") CachedDataSet cds) {
+		tableViewer.refresh(cds);
+	}
+
 
 }
