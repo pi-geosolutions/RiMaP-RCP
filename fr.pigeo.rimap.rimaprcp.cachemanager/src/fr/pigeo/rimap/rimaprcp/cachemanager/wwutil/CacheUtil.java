@@ -1,63 +1,16 @@
 package fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
-import gov.nasa.worldwind.cache.FileStore;
-
-/**
- * @author jean.pommier@pi-geosolutions.fr
- *
- */
-@Creatable
-@Singleton
 public class CacheUtil {
-	@Inject
-	IEclipseContext context;
-	
-	@Inject
-	IEventBroker evtBroker;
-
-	public List<CachedDataSet> listCachedLayers(FileStore store) {
-		return scanFile(store.getWriteLocation());
-	}
-
-	private List<CachedDataSet> scanFile(File dir) {
-		if (!dir.isDirectory()) {
-			return null;
-		}
-
-		List<CachedDataSet> xfl = new ArrayList();
-
-		if (isSingleDataSet(dir.listFiles())) {
-			CachedDataSet cds = findDatasetDefinition(dir);
-			if (cds != null) {
-				xfl.add(cds);
-			}
-		}
-
-		else {
-			for (File sd : dir.listFiles()) {
-				xfl.addAll(scanFile(sd));
-			}
-		}
-		return xfl;
-	}
 
 	/*
 	 * Looks for an .xml file to get the dataset definition. 
 	 * If no xml file found, it won't consider this as a dataset
 	 */
-	private CachedDataSet findDatasetDefinition(File dir) {
+	public static CachedDataSet findDatasetDefinition(File dir, IEventBroker evtBroker) {
 		for (File sd : dir.listFiles()) {
 			if (sd.isFile()) {
 				String filename = sd.getPath();
@@ -66,8 +19,6 @@ public class CacheUtil {
 				if (filename.endsWith(".xml")) {
 					
 					CachedDataSet cds = new CachedDataSet(filename, sd, evtBroker);
-					/*ContextInjectionFactory.inject(cds, context);*/
-					//CachedDataSet cds = ContextInjectionFactory.make(CachedDataSet.class, context);
 					return cds;
 				}
 			}
@@ -89,7 +40,7 @@ public class CacheUtil {
 	 * @return {@code true} if the directories should be treated as a single
 	 *         data set.
 	 */
-	protected boolean isSingleDataSet(File[] subDirs) {
+	public static boolean isSingleDataSet(File[] subDirs) {
 		boolean onlyNumericDirs = true;
 
 		for (File sd : subDirs) {
@@ -110,7 +61,7 @@ public class CacheUtil {
 	 *
 	 * @return {@code true} if {@code s} contains only digits.
 	 */
-	protected boolean isNumeric(String s) {
+	protected static boolean isNumeric(String s) {
 		for (char c : s.toCharArray()) {
 			if (!Character.isDigit(c))
 				return false;

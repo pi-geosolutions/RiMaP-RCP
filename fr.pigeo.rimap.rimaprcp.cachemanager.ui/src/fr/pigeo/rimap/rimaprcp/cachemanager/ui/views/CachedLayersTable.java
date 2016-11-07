@@ -1,10 +1,10 @@
 
 package fr.pigeo.rimap.rimaprcp.cachemanager.ui.views;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -13,8 +13,14 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -41,7 +47,6 @@ import fr.pigeo.rimap.rimaprcp.cachemanager.ui.utils.CachedDataSetViewerComparat
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.CacheUtil;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.CachedDataSet;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.RenderableManager;
-import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import gov.nasa.worldwind.cache.BasicDataFileStore;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.geom.LatLon;
@@ -56,8 +61,21 @@ public class CachedLayersTable {
 	private CachedDataSetViewerComparator comparator;
 	protected String searchString = "";
 
+	private List<CachedDataSet> cdsList = new ArrayList<CachedDataSet>();
+
+	@Inject
+	@Optional
+	IEventBroker evtBroker;
+
+	@Inject
+	@Optional
+	UISynchronize synch;
+
 	@PostConstruct
-	public void postConstruct(Composite parent, RenderableManager renderableManager, CacheUtil cacheUtil) {
+	public void postConstruct(Composite parent, RenderableManager renderableManager,
+			IEventBroker eventBroker, final UISynchronize synch) {
+		this.evtBroker = eventBroker;
+		this.synch = synch;
 		parent.setLayout(new GridLayout(1, false));
 
 		Text search = new Text(parent, SWT.SEARCH | SWT.CANCEL | SWT.ICON_SEARCH);
@@ -86,15 +104,6 @@ public class CachedLayersTable {
 			}
 		});
 
-		// String configpath = "/home/msi/var/cache/WorldWindData";
-		FileStore store = new BasicDataFileStore();
-
-		// System.out.println(store.getWriteLocation().getPath());
-
-		// Liste des fichiers XML disponibles sous le répertoire de cache
-
-		List<CachedDataSet> list = cacheUtil.listCachedLayers(store);
-
 		// define the TableViewer
 		tableViewer = new TableViewer(parent,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
@@ -111,7 +120,8 @@ public class CachedLayersTable {
 
 		// set the content provider
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		tableViewer.setInput(list.toArray());
+		tableViewer.setInput(cdsList.toArray());
+		this.listCachedLayers();
 		// tableViewer.setInput(FileStoreDataSet.getDataSets(cacheRoot).toArray());
 
 		// Delete Layer button
@@ -193,10 +203,48 @@ public class CachedLayersTable {
 						.contains(searchString);
 			}
 		});
-		
+
 		// Set the sorter for the table
-        comparator = new CachedDataSetViewerComparator();
-        tableViewer.setComparator(comparator);
+		comparator = new CachedDataSetViewerComparator();
+		tableViewer.setComparator(comparator);
+	}
+
+	private void listCachedLayers() {
+		FileStore store = new BasicDataFileStore();
+		scanFile(store.getWriteLocation());
+	}
+
+	private void scanFile(File dir) {
+		if (!dir.isDirectory()) {
+			return;
+		}
+
+		if (CacheUtil.isSingleDataSet(dir.listFiles())) {
+			Job job = new Job("Read Cached Dataset params "+dir.getAbsolutePath()) {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					synch.asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							CachedDataSet cds = CacheUtil.findDatasetDefinition(dir, evtBroker);
+							if (cds != null) {
+								cdsList.add(cds);
+								tableViewer.setInput(cdsList);
+							}
+						}
+					});
+					return Status.OK_STATUS;
+				}
+			};
+			// Start the Job
+			job.schedule();
+		}
+
+		else {
+			for (File sd : dir.listFiles()) {
+				scanFile(sd);
+			}
+		}
 	}
 
 	private void createColumns(TableViewer viewer) {
@@ -218,7 +266,8 @@ public class CachedLayersTable {
 			@Override
 			public String getText(Object element) {
 				CachedDataSet cd = (CachedDataSet) element; // cast
-				String num = cd.getNumLevels().toString();
+				String num = cd.getNumLevels()
+						.toString();
 				return num;
 
 			}
@@ -300,10 +349,10 @@ public class CachedLayersTable {
 			public String getText(Object element) {
 				CachedDataSet cd = (CachedDataSet) element; // cast
 				Long num = cd.getDirectorySize();
-				if (num==null) {
+				if (num == null) {
 					return "...";
 				}
-				Double mb = ((double) num) / (1024*1024);
+				Double mb = ((double) num) / (1024 * 1024);
 				return String.format("%5.1f %s", mb, "Mb");
 			}
 		});
@@ -407,12 +456,10 @@ public class CachedLayersTable {
 		};
 		return selectionAdapter;
 	}
-	
+
 	@Inject
 	@Optional
 	void exitingPerspective(@UIEventTopic("updatedCDS") CachedDataSet cds) {
 		tableViewer.refresh(cds);
 	}
-
-
 }

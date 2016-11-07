@@ -45,7 +45,13 @@ public class CachedDataSetViewerComparator extends ViewerComparator {
 			rc = c1.getNumLevels() > c2.getNumLevels() ? 1 : -1;
 			break;
 		case 2:
-			rc = c1.getDirectorySize() > c2.getDirectorySize() ? 1 : -1;
+			if (c1.getDirectorySize() == null) {
+				rc = -1;
+			} else if (c2.getDirectorySize() == null) {
+				rc = 1;
+			} else {
+				rc = c1.getDirectorySize() > c2.getDirectorySize() ? 1 : -1;
+			}
 			break;
 		case 3:
 			rc = c1.getLastModif() > c2.getLastModif() ? 1 : -1;

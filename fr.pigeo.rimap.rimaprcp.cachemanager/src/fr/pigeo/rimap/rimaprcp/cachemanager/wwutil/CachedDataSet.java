@@ -78,7 +78,7 @@ public class CachedDataSet {
 		return dir.lastModified();
 	}
 
-	public long getDirectorySize() {
+	public Long getDirectorySize() {
 		return dataSize;
 	}
 }
