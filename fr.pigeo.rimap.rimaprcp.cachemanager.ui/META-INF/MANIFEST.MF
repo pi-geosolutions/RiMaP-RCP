@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.core.runtime,
  fr.pigeo.rimap.rimaprcp.worldwind,
  fr.pigeo.rimap.rimaprcp.core,
  org.eclipse.e4.core.contexts,
- fr.pigeo.rimap.rimaprcp.core.ui;bundle-version="1.0.0"
+ fr.pigeo.rimap.rimaprcp.core.ui;bundle-version="1.0.0",
+ fr.pigeo.rimap.rimaprcp.core.services.catalog
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: fr.pigeo.rimap.rimaprcp.cachemanager.wwutil,
  javax.annotation;version="1.0.0";resolution:=optional,

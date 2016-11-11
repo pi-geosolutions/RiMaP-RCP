@@ -122,7 +122,6 @@ public class CachedLayersTable {
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(cdsList.toArray());
 		this.listCachedLayers();
-		// tableViewer.setInput(FileStoreDataSet.getDataSets(cacheRoot).toArray());
 
 		// Delete Layer button
 		Button buttonDelete = new Button(parent, SWT.PUSH);

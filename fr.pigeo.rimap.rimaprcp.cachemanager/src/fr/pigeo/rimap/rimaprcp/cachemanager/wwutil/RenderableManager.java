@@ -28,6 +28,11 @@ public class RenderableManager {
 	@Inject
 	WwjInstance wwj;
 
+	public RenderableLayer getRenderableLayer() {
+		wwj.addLayer(renderableLayer);
+		return this.renderableLayer;
+	}
+	
 	/*
 	 * Use this when you want to replace previous renderables by this one
 	 */

@@ -69,4 +69,15 @@ public class CacheUtil {
 		return true;
 	}
 
+	
+    public static String makeSizeDescription(long size)
+    {
+        double sizeInMegaBytes = size / 1024 / 1024;
+        if (sizeInMegaBytes < 1024)
+            return String.format("%,.1f MB", sizeInMegaBytes);
+        else if (sizeInMegaBytes < 1024 * 1024)
+            return String.format("%,.1f GB", sizeInMegaBytes / 1024);
+        return String.format("%,.1f TB", sizeInMegaBytes / 1024 / 1024);
+    }
+
 }

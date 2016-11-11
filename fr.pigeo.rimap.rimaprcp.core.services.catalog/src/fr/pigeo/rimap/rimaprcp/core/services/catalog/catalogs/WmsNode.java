@@ -239,6 +239,7 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 			layerParams.setValue(AVKey.TILE_WIDTH, 256);
 			layerParams.setValue(AVKey.TILE_HEIGHT, 256);
 			layerParams.setValue(AVKey.DETAIL_HINT, this.detailhint);
+			layerParams.setValue(AVKey.FORMAT_SUFFIX, "png");
 			try {
 				this.layer = new RimapWMSTiledImageLayer(caps, layerParams);
 				this.layer.setName(this.name);
