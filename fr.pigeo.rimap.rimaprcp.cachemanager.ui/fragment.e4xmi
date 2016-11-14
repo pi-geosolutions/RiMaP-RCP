@@ -9,7 +9,7 @@
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_XURu4DiUEeaeP4om2KZOEg" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.perspectivestack.main">
-    <elements xsi:type="advanced:Perspective" xmi:id="_b2jnQDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.cachemanager.ui.perspective.main">
+    <elements xsi:type="advanced:Perspective" xmi:id="_b2jnQDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.cachemanager.ui.perspective.main" selectedElement="_gaVUcDiUEeaeP4om2KZOEg" label="Cache Manager">
       <children xsi:type="basic:PartSashContainer" xmi:id="_gaVUcDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partsashcontainer.0">
         <children xsi:type="basic:PartSashContainer" xmi:id="_lWxZQDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partsashcontainer.1" containerData="500" horizontal="true">
           <children xsi:type="basic:PartStack" xmi:id="_8pKhsDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partstack.1" containerData="700">

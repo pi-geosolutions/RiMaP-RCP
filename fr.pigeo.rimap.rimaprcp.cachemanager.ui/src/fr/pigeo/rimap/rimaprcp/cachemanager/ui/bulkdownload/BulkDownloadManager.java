@@ -5,14 +5,20 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UISynchronize;
 
 import fr.pigeo.rimap.rimaprcp.cachemanager.events.CacheManagerEventConstants;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.Downloadable;
@@ -48,6 +54,9 @@ public class BulkDownloadManager {
 
 	@Inject
 	Downloadables downloadables;
+
+	@Inject
+	UISynchronize sync;
 
 	@Inject
 	public BulkDownloadManager(WwjInstance wwjInst, IEventBroker evtBroker, RenderableManager rmanager) {
@@ -98,18 +107,71 @@ public class BulkDownloadManager {
 
 	public long getFreeSpace() {
 		File file = new File(cachePath);
-    	long freeSpace = file.getFreeSpace(); //unallocated / free disk space in bytes.
-    	return freeSpace;
+		long freeSpace = file.getFreeSpace(); // unallocated / free disk space
+												// in bytes.
+		return freeSpace;
 	}
 	
-	public void startBulkDownload() {
-		//get the list of Downloadable set as to-download
-		Iterator<Downloadable> it = downloadables.getDownloadList().iterator();
+	protected boolean hasActiveDownloadThreads() {
+		Iterator<Downloadable> it = downloadables.getDownloadList()
+				.iterator();
 		while (it.hasNext()) {
 			Downloadable d = it.next();
-			BulkRetrievalThread brthread = d.getDownloadThread();
-			System.out.println("Bulk retrieval thread ("+d.getLayer().getName()+") status : " +brthread.getState());
+			if (d.isDownloadThreadActive()) {
+				return true;
+			}
 		}
+		return false;
+	}
+
+	public void startBulkDownload() {
+		// get the list of Downloadable set as to-download
+		Iterator<Downloadable> it = downloadables.getDownloadList()
+				.iterator();
+		while (it.hasNext()) {
+			Downloadable d = it.next();
+			BulkRetrievalThread brthread = d.startDownloadThread();
+			System.out.println("Bulk retrieval thread (" + d.getLayer()
+					.getName() + ") status : " + brthread.getState());
+		}
+
+		Job job = new Job("Update Download Progress") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				while (hasActiveDownloadThreads()) {
+					try {
+						evtBroker.post(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE, null);
+						TimeUnit.SECONDS.sleep(1);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return Status.CANCEL_STATUS;
+					}
+				}
+				//Last update
+				evtBroker.post(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE, null);
+				/*
+				// set total number of work units
+				monitor.beginTask("Doing something time consuming here", 100);
+				for (int i = 0; i < 5; i++) {
+					try {
+						// sleep a second
+						TimeUnit.SECONDS.sleep(1);
+
+						monitor.subTask("I'm doing something here " + i);
+
+						// report that 20 additional units are done
+						monitor.worked(20);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+						return Status.CANCEL_STATUS;
+					}
+				}*/
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+		
 	}
 
 }

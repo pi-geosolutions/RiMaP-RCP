@@ -11,6 +11,7 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.TiledImageLayer;
 import gov.nasa.worldwind.retrieve.BulkRetrievable;
 import gov.nasa.worldwind.retrieve.BulkRetrievalThread;
+import gov.nasa.worldwind.retrieve.Progress;
 import gov.nasa.worldwind.util.Level;
 import gov.nasa.worldwind.util.LevelSet;
 
@@ -25,6 +26,7 @@ public class Downloadable {
 	private double downloadprogress = -1;
 	private double maxResolution = 0;
 	private double[] resolutions = null;
+	protected BulkRetrievalThread thread = null;
 
 	public Downloadable(Layer layer, WwjInstance wwj, IEventBroker evtBroker) {
 		super();
@@ -167,8 +169,8 @@ public class Downloadable {
 		}
 	}
 
-	public BulkRetrievalThread getDownloadThread() {
-		BulkRetrievalThread thread = ((BulkRetrievable) layer).makeLocal(this.currentSector, getMaxResolutionInRadians(),
+	public BulkRetrievalThread startDownloadThread() {
+		this.thread = ((BulkRetrievable) layer).makeLocal(this.currentSector, getMaxResolutionInRadians(),
 				new BulkRetrievalListener() {
 					public void eventOccurred(BulkRetrievalEvent event) {
 						// This is how you'd include a retrieval listener.
@@ -190,9 +192,26 @@ public class Downloadable {
 		thread.setName("Bulk retrieval thread (" + layer.getName() + ")");
 		return thread;
 	}
+	
+	public boolean isDownloadThreadActive() {
+		if (this.thread == null) {
+			return false;
+		}
+		return thread.isAlive();
+	}
 
-	public double getDownloadProgress() {
-		// TODO Auto-generated method stub
-		return downloadprogress;
+	public String getDownloadProgress() {
+		if (this.thread == null) {
+			return "-";
+		}
+		if (!this.thread.isAlive()) {
+			return "completed";
+		}
+        Progress progress = thread.getProgress();
+        int percent = 0;
+        if (progress.getTotalCount() > 0) {
+            percent = (int) ((float) progress.getCurrentCount() / progress.getTotalCount() * 100f);
+        }
+        return Math.min(percent, 100)+" %";
 	}
 }

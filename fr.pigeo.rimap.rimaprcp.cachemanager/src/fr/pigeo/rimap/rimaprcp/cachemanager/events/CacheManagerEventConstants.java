@@ -5,4 +5,5 @@ public interface CacheManagerEventConstants {
 	String SECTORSELECTOR_DRAWING			="fr/pigeo/rimap/rimaprcp/cachemanager/sectorselector/drawing";
 	String SECTORSELECTOR_FINISHED			="fr/pigeo/rimap/rimaprcp/cachemanager/sectorselector/finished";
 	String MAXRESOLUTION_CHANGED			="fr/pigeo/rimap/rimaprcp/cachemanager/maxresolution/changed";
+	String DOWNLOAD_PROGRESS_UPDATE			="fr/pigeo/rimap/rimaprcp/cachemanager/download/progress/update";
 }

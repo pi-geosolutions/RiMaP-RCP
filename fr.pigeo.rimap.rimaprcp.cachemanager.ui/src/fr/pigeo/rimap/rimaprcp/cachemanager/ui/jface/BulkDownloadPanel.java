@@ -140,6 +140,7 @@ public class BulkDownloadPanel extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				super.widgetSelected(e);
 				bulkManager.startBulkDownload();
+				btn_startDownload.setEnabled(false);
 			}
 		});
 	}

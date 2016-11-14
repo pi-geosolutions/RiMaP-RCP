@@ -295,13 +295,16 @@ public class BulkDownloadLayersTable extends Composite {
 			public String getText(Object element) {
 				Downloadable d = ((Downloadable) element);
 				if (d.doDownload()) {
-					double p = d.getDownloadProgress();
+					/*
+					rd.getDownloadProgress();
 					if (p < 0) {
 						//means it has not yet been started
 						return "-";
 					} else {
 						return String.format("%,.1f", p)+" %";
-					}
+					}*/
+
+					return d.getDownloadProgress();
 				} else {
 					return "";
 				}
@@ -395,4 +398,11 @@ public class BulkDownloadLayersTable extends Composite {
 		// Start the Job
 		job.schedule();
 	}
+	
+	@Inject
+	@Optional
+	void updateProgress(@UIEventTopic(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE) String s) {
+		viewer.refresh();
+	}
+
 }
