@@ -36,11 +36,11 @@ public class Downloadables {
 	@Inject
 	public Downloadables(WwjInstance wwj) {
 		this.wwj = wwj;
-		layers = wwj.getLayersList();
 	}
 
 	public List<Downloadable> getList() {
-		if (downloadables == null) {
+		layers = wwj.getLayersList();
+		if (downloadables == null || downloadables.isEmpty()) {
 			downloadables = new ArrayList<Downloadable>();
 			for (Layer l : layers) {
 				if (l instanceof BulkRetrievable) {// filter-out layers that
@@ -49,9 +49,20 @@ public class Downloadables {
 					downloadables.add(d);
 				}
 			}
-		}
+		} 
 		return downloadables;
 	}
+	
+	public List<Downloadable> getList(boolean reset) {
+		if(reset) {
+			for (Downloadable d : downloadables) {
+				d.stopThread();
+			}
+			downloadables.clear();
+		}
+		return this.getList();
+	}
+
 	
 	public List<Downloadable> getDownloadList() {
 		//not sure it will work with java < 1.8

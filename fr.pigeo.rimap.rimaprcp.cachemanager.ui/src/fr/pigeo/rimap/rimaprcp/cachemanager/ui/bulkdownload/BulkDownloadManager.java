@@ -57,6 +57,8 @@ public class BulkDownloadManager {
 
 	@Inject
 	UISynchronize sync;
+	
+	@Inject RenderableManager rmanager;
 
 	@Inject
 	public BulkDownloadManager(WwjInstance wwjInst, IEventBroker evtBroker, RenderableManager rmanager) {
@@ -82,6 +84,7 @@ public class BulkDownloadManager {
 	}
 
 	public void enableSectorSelector() {
+		rmanager.clearLayer();
 		selector.enable();
 	}
 

@@ -127,6 +127,7 @@ public class SectorSelector extends WWObjectImpl
 	}
 
 	public void enable() {
+		((RenderableLayer) this.layer).addRenderable(this.shape);
 		this.getShape()
 				.setStartPosition(null);
 

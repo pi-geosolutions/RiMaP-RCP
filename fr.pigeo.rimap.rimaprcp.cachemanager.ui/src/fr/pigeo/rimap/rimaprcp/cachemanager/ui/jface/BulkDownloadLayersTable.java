@@ -404,5 +404,13 @@ public class BulkDownloadLayersTable extends Composite {
 	void updateProgress(@UIEventTopic(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE) String s) {
 		viewer.refresh();
 	}
-
+	
+	@Inject
+	@Optional
+	void reloadTable(@UIEventTopic(CacheManagerEventConstants.BULKDOWNLOAD_TABLE_RELOAD) String s) {
+		viewer.setInput(downloadables.getList(true)
+				.toArray());
+		viewer.refresh();
+	}
+	
 }

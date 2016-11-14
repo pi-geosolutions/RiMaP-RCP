@@ -214,4 +214,10 @@ public class Downloadable {
         }
         return Math.min(percent, 100)+" %";
 	}
+	
+	public void stopThread() {
+		if (this.thread!=null && this.thread.isAlive()) {
+			this.thread.interrupt();
+		}
+	}
 }

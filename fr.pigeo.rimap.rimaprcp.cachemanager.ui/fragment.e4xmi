@@ -14,7 +14,11 @@
         <children xsi:type="basic:PartSashContainer" xmi:id="_lWxZQDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partsashcontainer.1" containerData="1000" horizontal="true">
           <children xsi:type="basic:PartStack" xmi:id="_8pKhsDiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.partstack.1" containerData="700">
             <children xsi:type="basic:Part" xmi:id="_pWJ_8DiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.part.mainview" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.cachemanager.ui/fr.pigeo.rimap.rimaprcp.cachemanager.ui.views.CachedLayersTable" label="Main View"/>
-            <children xsi:type="basic:Part" xmi:id="_9Xkf0DiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.part.bulkdownload" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.cachemanager.ui/fr.pigeo.rimap.rimaprcp.cachemanager.ui.views.BulkDownload" label="Bulk Download Panel"/>
+            <children xsi:type="basic:Part" xmi:id="_9Xkf0DiUEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.part.bulkdownload" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.cachemanager.ui/fr.pigeo.rimap.rimaprcp.cachemanager.ui.views.BulkDownload" label="Bulk Download Panel">
+              <toolbar xmi:id="_NCZlkKqGEeatzY3qVeLpgg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.toolbar.0">
+                <children xsi:type="menu:DirectToolItem" xmi:id="_N8YhkKqGEeatzY3qVeLpgg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.directtoolitem.reload" label="Reload" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.cachemanager.ui/icons/arrow_refresh.png" tooltip="Reload table" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.cachemanager.ui/fr.pigeo.rimap.rimaprcp.cachemanager.ui.jface.BulkDownloadReloadTableButton"/>
+              </toolbar>
+            </children>
           </children>
           <children xsi:type="advanced:Placeholder" xmi:id="_IjZfEDiVEeaeP4om2KZOEg" elementId="fr.pigeo.rimap.rimaprcp.cachemanager.ui.placeholder.0" containerData="300" ref="_fj0_sDiTEeaeP4om2KZOEg"/>
         </children>

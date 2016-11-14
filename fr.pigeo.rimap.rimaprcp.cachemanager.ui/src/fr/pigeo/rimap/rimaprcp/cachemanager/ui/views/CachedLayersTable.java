@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
+import fr.pigeo.rimap.rimaprcp.cachemanager.events.CacheManagerEventConstants;
 import fr.pigeo.rimap.rimaprcp.cachemanager.ui.utils.CachedDataSetViewerComparator;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.CacheUtil;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.CachedDataSet;
@@ -72,7 +73,7 @@ public class CachedLayersTable {
 	UISynchronize synch;
 
 	@PostConstruct
-	public void postConstruct(Composite parent, RenderableManager renderableManager,
+	public void postConstruct(Composite parent, final RenderableManager renderableManager,
 			IEventBroker eventBroker, final UISynchronize synch) {
 		this.evtBroker = eventBroker;
 		this.synch = synch;
@@ -213,7 +214,7 @@ public class CachedLayersTable {
 		scanFile(store.getWriteLocation());
 	}
 
-	private void scanFile(File dir) {
+	private void scanFile(final File dir) {
 		if (!dir.isDirectory()) {
 			return;
 		}
@@ -458,7 +459,7 @@ public class CachedLayersTable {
 
 	@Inject
 	@Optional
-	void exitingPerspective(@UIEventTopic("updatedCDS") CachedDataSet cds) {
+	void updateRow(@UIEventTopic(CacheManagerEventConstants.CACHEDDATASET_UPDATE) CachedDataSet cds) {
 		tableViewer.refresh(cds);
 	}
 }

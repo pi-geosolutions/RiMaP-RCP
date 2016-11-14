@@ -27,6 +27,8 @@ public class RenderableManager {
 
 	@Inject
 	WwjInstance wwj;
+	
+	Renderable bounds;
 
 	public RenderableLayer getRenderableLayer() {
 		wwj.addLayer(renderableLayer);
