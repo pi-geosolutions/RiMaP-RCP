@@ -261,7 +261,7 @@ public class CachedLayersTable {
 		});
 
 		// create column for number of layer levels property
-		col = createTableViewerColumn("Levels", 100, 1);
+		col = createTableViewerColumn("Levels", 60, 1);
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -286,7 +286,7 @@ public class CachedLayersTable {
 			}
 		});
 		collatsw.getColumn()
-				.setWidth(100);
+				.setWidth(60);
 		collatsw.getColumn()
 				.setText("MinLat");
 
@@ -303,7 +303,7 @@ public class CachedLayersTable {
 			}
 		});
 		collonsw.getColumn()
-				.setWidth(100);
+				.setWidth(60);
 		collonsw.getColumn()
 				.setText("MinLon");
 
@@ -320,7 +320,7 @@ public class CachedLayersTable {
 			}
 		});
 		collatne.getColumn()
-				.setWidth(100);
+				.setWidth(60);
 		collatne.getColumn()
 				.setText("MaxLat");
 
@@ -337,12 +337,12 @@ public class CachedLayersTable {
 			}
 		});
 		collonne.getColumn()
-				.setWidth(100);
+				.setWidth(60);
 		collonne.getColumn()
 				.setText("MaxLon");
 
 		// create column for size of layer
-		col = createTableViewerColumn("Size", 100, 2);
+		col = createTableViewerColumn("Size", 60, 2);
 		col.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
