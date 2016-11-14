@@ -8,5 +8,29 @@
             uri="fragment.e4xmi">
       </fragment>
    </extension>
-
+   <extension
+         id="fr.pigeo.rimap.cachemanager.ui.proptester"
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester class="fr.pigeo.rimap.rimaprcp.cachemanager.ui.propertytester.PerspectivePropertyTester"
+            id="fr.pigeo.rimap.rimaprcp.cachemanager.ui.propertytester.PerspectivePropertyTester"
+            namespace="fr.pigeo.rimap.rimaprcp.property"
+            properties="perspectiveId"
+            type="org.eclipse.e4.ui.model.application.ui.advanced.MPerspective">
+      </propertyTester>
+   </extension>
+   <extension
+         id="fr.pigeo.rimap.cachemanager.ui.proptesterexpression"
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="fr.pigeo.rimap.rimaprcp.cachemanager.expression.isCMPerspective">
+         <with
+               variable="org.eclipse.e4.ui.model.application.ui.advanced.MPerspective">
+            <test
+                  forcePluginActivation="true"
+                  property="fr.pigeo.rimap.rimaprcp.property.perspectiveId"
+                  value="fr.pigeo.rimap.cachemanager.ui.perspective.main">
+            </test>
+         </with>
+      </definition>
+   </extension>
 </plugin>

@@ -53,6 +53,11 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.views.WWJView" label="%part.label.5">
       <toolbar xmi:id="_tezsEAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar"/>
     </sharedElements>
+    <trimBars xmi:id="_wA6wAKpcEeatzY3qVeLpgg" elementId="fr.pigeo.rimap.rimaprcp.core.ui.trimbar.main" toBeRendered="false" visible="false">
+      <children xsi:type="menu:ToolBar" xmi:id="_jFi7YKqAEeatzY3qVeLpgg" elementId="fr.pigeo.rimap.rimaprcp.core.ui.toolbar.0">
+        <children xsi:type="menu:DirectToolItem" xmi:id="_kXPz0KqAEeatzY3qVeLpgg" elementId="fr.pigeo.rimap.rimaprcp.core.ui.directtoolitem.ze" label=" ze" type="Check"/>
+      </children>
+    </trimBars>
   </children>
   <handlers xmi:id="_IfKW4CNuEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handler.0" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.handlers.PerspectiveSwitchHandler" command="_38TBgCNtEeaurtXB4vEzfw"/>
   <commands xmi:id="_NRVm4MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.command.showWidget" commandName="%command.commandname.1" description="%command.description.1">
