@@ -41,7 +41,9 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_ubYowMajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.atmosphere" toBeRendered="false" visible="false" label="%handledmenuitem.label.5" tooltip="%handledmenuitem.tooltip.5" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
           <parameters xmi:id="_ubYowcajEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.parameter.4" name="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" value="gov.nasa.worldwind.layers.SkyGradientLayer"/>
         </children>
-        <children xsi:type="menu:DynamicMenuContribution" xmi:id="_xWlnkMgBEeWZzdusKGuDEw" elementId="fr.pigeo.rimap.rimaprcp.dynamicmenucontribution.0" label="%dynamicmenucontribution.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.menus.WidgetMenuItem"/>
+        <children xsi:type="menu:Menu" xmi:id="_hWVDsKqEEeatzY3qVeLpgg" elementId="fr.pigeo.rimap.rimaprcp.core.ui.menu.widgets" label="Widgets">
+          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_xWlnkMgBEeWZzdusKGuDEw" elementId="fr.pigeo.rimap.rimaprcp.dynamicmenucontribution.0" label="%dynamicmenucontribution.label.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.menus.WidgetMenuItem"/>
+        </children>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_w5uWoCNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.menu.menuwindow" label="%menu.window">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_zdnPsCNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.switchtomainperspective" label="%menu.window.switchperspective.main" command="_38TBgCNtEeaurtXB4vEzfw">
