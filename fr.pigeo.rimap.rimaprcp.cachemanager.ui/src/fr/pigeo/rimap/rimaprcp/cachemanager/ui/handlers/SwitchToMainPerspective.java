@@ -12,7 +12,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
  * Unused class. Just kept here for reference..
  */
 
-public class LayersCache {
+public class SwitchToMainPerspective {
 	@Execute
 	public void execute(MApplication app, EPartService partService, EModelService modelService) {
 		MPerspective element = (MPerspective) modelService.find("fr.pigeo.rimap.cachemanager.ui.perspective.main",

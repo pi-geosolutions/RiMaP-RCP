@@ -5,8 +5,10 @@ Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.core.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: pi-Geosolutions
 Export-Package: fr.pigeo.rimap.rimaprcp.core.ui.core,
+ fr.pigeo.rimap.rimaprcp.core.ui.dnd,
  fr.pigeo.rimap.rimaprcp.core.ui.jface,
- fr.pigeo.rimap.rimaprcp.core.ui.views
+ fr.pigeo.rimap.rimaprcp.core.ui.views,
+ org.eclipse.wb.swt
 Require-Bundle: org.eclipse.swt;bundle-version="3.104.1",
  gov.nasa.worldwind;bundle-version="2.0.0",
  org.eclipse.e4.core.contexts,
@@ -34,7 +36,8 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.104.1",
  fr.pigeo.externals.org.apache.commons,
  fr.pigeo.rimap.rimaprcp.core,
  org.eclipse.core.jobs,
- fr.pigeo.rimap.rimaprcp.core.services.catalog
+ fr.pigeo.rimap.rimaprcp.core.services.catalog,
+ org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0",

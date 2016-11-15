@@ -27,4 +27,8 @@ public interface RiMaPEventConstants {
 	String SESSION_GUEST			="fr/pigeo/rimap/rimaprcp/session/guest";
 	String SESSION_SERVER_VALIDATED	="fr/pigeo/rimap/rimaprcp/session/servervalidated";
 	String SESSION_LOCALLY_VALIDATED="fr/pigeo/rimap/rimaprcp/session/locallyvalidated";
+	
+
+	//Perspective related
+	String LEAVING_PERSPECTIVE			="fr/pigeo/rimap/rimaprcp/perspective/leaving";
 }

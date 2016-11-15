@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Cachemanager
 Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.cachemanager
 Bundle-Version: 1.0.1.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: fr.pigeo.externals.org.apache.commons;bundle-version="1.0.0",
  gov.nasa.worldwind;bundle-version="2.0.0",
  org.eclipse.swt,
@@ -15,8 +15,11 @@ Require-Bundle: fr.pigeo.externals.org.apache.commons;bundle-version="1.0.0",
  fr.pigeo.rimap.rimaprcp.core,
  org.eclipse.e4.ui.di,
  org.eclipse.e4.core.di.annotations,
- org.eclipse.core.runtime
-Export-Package: fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
+ org.eclipse.core.runtime,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.core.di;bundle-version="1.5.0"
+Export-Package: fr.pigeo.rimap.rimaprcp.cachemanager.events,
+ fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
   uses:="gov.nasa.worldwind.layers,
    gov.nasa.worldwind.cache,
    org.eclipse.swt.graphics,
