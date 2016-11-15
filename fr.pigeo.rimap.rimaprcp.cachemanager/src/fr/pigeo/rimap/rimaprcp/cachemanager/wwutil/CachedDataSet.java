@@ -26,7 +26,7 @@ public class CachedDataSet {
 		super();
 		this.filename = filename;
 		this.dir = dir;
-		CachedDataSet me = this;
+		final CachedDataSet me = this;
 		xmldoc = WWXML.openDocumentFile(filename, null);
 		elem = xmldoc.getDocumentElement();
 		Thread computeSize = new Thread(new Runnable() {

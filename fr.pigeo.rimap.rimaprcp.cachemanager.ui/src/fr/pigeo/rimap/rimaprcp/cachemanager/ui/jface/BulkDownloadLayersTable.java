@@ -381,7 +381,7 @@ public class BulkDownloadLayersTable extends Composite {
 	
 	@Inject
 	@Optional
-	void updateSector(@UIEventTopic(CacheManagerEventConstants.SECTORSELECTOR_FINISHED) Sector s) {
+	void updateSector(@UIEventTopic(CacheManagerEventConstants.SECTORSELECTOR_FINISHED) final Sector s) {
 		Job job = new Job("Compute download sizes") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
