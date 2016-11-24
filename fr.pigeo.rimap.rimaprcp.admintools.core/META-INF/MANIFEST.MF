@@ -9,6 +9,7 @@ Require-Bundle: fr.pigeo.rimap.rimaprcp.core.services.catalog,
  fr.pigeo.externals.com.fasterxml.jackson.core,
  javax.inject,
  org.eclipse.equinox.preferences,
- org.eclipse.e4.core.di.annotations
+ org.eclipse.e4.core.di.annotations,
+ org.eclipse.e4.core.services
 Export-Package: fr.pigeo.rimap.rimaprcp.admintools.core.constants,
  fr.pigeo.rimap.rimaprcp.admintools.core.editors

@@ -1,9 +1,9 @@
 package fr.pigeo.rimap.rimaprcp.admintools.core.editors;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import org.eclipse.e4.core.services.log.Logger;
 
 import javax.inject.Inject;
 
@@ -27,13 +27,16 @@ import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.CatalogConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
 
 public class PadreCatalogEditor {
-	@Inject IResourceService resourceService;
+	@Inject
+	IResourceService resourceService;
 
 	PadreCatalog catalog;
 	JsonNode jsonOriginal, jsonCurrent;
-	private String childrentag = "children", 
-			layertree_service_url;
-	private boolean dirty=false;
+	private String childrentag = "children", layertree_service_url;
+	private boolean dirty = false;
+
+	@Inject
+	Logger logger;
 
 	@Inject
 	public PadreCatalogEditor(PadreCatalog catalog, @Optional IPreferencesService prefsService) {
@@ -63,7 +66,7 @@ public class PadreCatalogEditor {
 		// Lazy init. We initialize working json (current) to original value
 		if (this.jsonCurrent == null) {
 			if (this.jsonOriginal == null) {
-				//we get the resource from the web (imperative !)
+				// we get the resource from the web (imperative !)
 				byte[] b = resourceService.getResource(layertree_service_url, 9);
 				if (b != null) {
 					String lt = new String(b, StandardCharsets.UTF_8);
@@ -101,13 +104,13 @@ public class PadreCatalogEditor {
 	public String toString() {
 		return toString(false);
 	}
-	
+
 	public void reset() {
-		jsonCurrent=null;
-		jsonOriginal=null;
-		dirty=false;
+		jsonCurrent = null;
+		jsonOriginal = null;
+		dirty = false;
 	}
-	
+
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -147,11 +150,10 @@ public class PadreCatalogEditor {
 			break;
 		case CHART:
 
-			System.out.println("TODO : fix chart layers");
+			logger.info("TODO : fix chart layers");
 			break;
 		default:
-			System.out
-					.println("encountered weird layertree node while parsing Layertree from json: " + type.toString());
+			logger.warn("encountered weird layertree node while parsing Layertree from json: " + type.toString());
 			break;
 		}
 
@@ -168,21 +170,33 @@ public class PadreCatalogEditor {
 		String layer = NodeUtils.parseString(node, "layers", "");
 		String name = NodeUtils.parseString(node, "text", "no name");
 		String[] layerparts = layer.split(":");
-		if (layerparts.length == 2) { // the only case we know how to deal with
-			ObjectNode o = (ObjectNode) node;
-			System.out.println("Fixing Node " + name +"[LAYERS="+layer+" / URL="+url+"]");
 
+		//fixing URL
+		//replace all double / with single ones, except for http:// part
+		ObjectNode o = (ObjectNode) node;
+		url = url.replaceAll("(?<!:)(\\/){2}", "/");
+		o.put("url", url);
+		
+		//deal with the Philippe's case : the namespace is given in the layer's anme. 
+		//And sometime in the url at the same time...
+		if (layerparts.length == 2) { 
+			//ObjectNode o = (ObjectNode) node;
+			logger.info("Fixing Node " + name + "[LAYERS=" + layer + " / URL=" + url + "]");
+
+			//fixing layer name
 			String ns = layerparts[0];
 			String l = layerparts[1];
-			String u = url;
 			o.put("layers", l);
-			if (!url.matches("(.*)(/" + ns + "/wms?)")) {
+			
+			String u = url;
+			//add the namespace in the URL if Philippe hasn't put it yet, redundantly
+			if (!url.matches("(.*)(\\/" + ns + "\\/wms\\?)")) {
 				u = url.substring(0, url.length() - 4) + ns + "/wms?";
 				o.put("url", u);
 			}
 
-			System.out.println("       to [LAYERS="+l+" / URL="+u+"]");
-			this.dirty=true;
+			logger.info("       to [LAYERS=" + l + " / URL=" + u + "]");
+			this.dirty = true;
 		}
 	}
 
