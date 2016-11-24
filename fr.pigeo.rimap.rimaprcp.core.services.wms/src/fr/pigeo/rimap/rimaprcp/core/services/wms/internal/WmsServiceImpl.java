@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -58,6 +59,10 @@ public class WmsServiceImpl implements IWmsService {
 		if (capability == null) {
 			capability = makeCapability(url);
 		}
+		if (capability == null) {
+			// means no way we can get it
+			return null;
+		}
 		return capability.getCapabilities();
 	}
 
@@ -90,13 +95,20 @@ public class WmsServiceImpl implements IWmsService {
 				WMSCapabilities caps = new WMSCapabilities(new ByteArrayInputStream(b));
 
 				// caps = new WMSCapabilities(request);
-				caps.parse();
-				capability = new ServerCapability(url, caps);
-				serverCapabilitiesList.put(url.toLowerCase(), capability);
-			} catch (URISyntaxException e) {
+				try {
+					caps.parse();
+					capability = new ServerCapability(url, caps);
+					serverCapabilitiesList.put(url.toLowerCase(), capability);
+				} catch (XMLStreamException e) {
+					logger.error("XMLStreamException : could not retrieve capabilities from "+url);
+					// we delete the corrupted resource
+					resourceService.deleteResource(address);
+					return null;
+
+				}
+			} catch (URISyntaxException | MalformedURLException e) {
 				e.printStackTrace();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
+				return null;
 			}
 
 		} catch (Exception e) {
@@ -128,7 +140,9 @@ public class WmsServiceImpl implements IWmsService {
 				public void run() {
 					try {
 						ServerCapability c = makeCapability(url);
-						serverCapabilitiesList.put(url.toLowerCase(), c);
+						if (c != null) {
+							serverCapabilitiesList.put(url.toLowerCase(), c);
+						}
 
 					} catch (Exception e) {
 						e.printStackTrace();

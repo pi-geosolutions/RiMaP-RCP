@@ -113,7 +113,6 @@ public class LoginDialog extends Dialog {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ESC) {
-					System.out.println("canceled");
 					cancelPressed();
 				}
 			}

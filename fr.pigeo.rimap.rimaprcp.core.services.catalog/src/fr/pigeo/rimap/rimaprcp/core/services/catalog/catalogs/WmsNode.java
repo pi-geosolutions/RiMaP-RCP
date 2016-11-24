@@ -35,9 +35,11 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	private static String IMAGE_WMSICON = "icons/wms.png";
 	private static String IMAGE_CHECKED = "icons/16px-checkbox-checked.png";
 	private static String IMAGE_UNCHECKED = "icons/16px-checkbox-unchecked.png";
+	private static String IMAGE_DISABLED = "icons/16px-checkbox-disabled.png";
 
 	public static Image checkedImage;
 	public static Image uncheckedImage;
+	public static Image disabledImage;
 	public static Image wmsImage;
 
 	protected double detailhint = 0.1;
@@ -184,6 +186,12 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	@Override
 	public Image getImage() {
 		// return NodeUtils.getImage(WmsNode.IMAGE_WMSICON);
+		if (!this.isAvailable()) {
+			if (WmsNode.disabledImage == null) {
+				WmsNode.disabledImage = NodeUtils.getImage(WmsNode.IMAGE_DISABLED);
+			}
+			return WmsNode.disabledImage;
+		}
 		if (this.checked) {
 			if (WmsNode.checkedImage == null) {
 				WmsNode.checkedImage = NodeUtils.getImage(WmsNode.IMAGE_CHECKED);
@@ -231,6 +239,9 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		if (this.layer == null) {
 
 			WMSCapabilities caps = wmsService.getServerCapabilities(this.url);
+			if (caps==null) {
+				return null;
+			}
 
 			AVList layerParams = new AVListImpl();
 			// System.out.println(this.layers);
@@ -239,13 +250,14 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 			layerParams.setValue(AVKey.TILE_WIDTH, 256);
 			layerParams.setValue(AVKey.TILE_HEIGHT, 256);
 			layerParams.setValue(AVKey.DETAIL_HINT, this.detailhint);
-			layerParams.setValue(AVKey.FORMAT_SUFFIX, "png");
+			layerParams.setValue(AVKey.FORMAT_SUFFIX, ".png");
 			try {
 				this.layer = new RimapWMSTiledImageLayer(caps, layerParams);
 				this.layer.setName(this.name);
 				this.layer.setParent(this);
 				//redundant with previous...
 				this.layer.setValue(RimapAVKey.LAYER_PARENTNODE, this);
+				this.layer.setValue(AVKey.FORMAT_SUFFIX, ".png");
 				this.layer.setValue(RimapAVKey.HAS_RIMAP_EXTENSIONS, true);
 				if ((this.polygonQueryParams!=null) && (this.polygonQueryParams.isValid())) {
 					this.layer.setValue(RimapAVKey.LAYER_ISPOLYGONQUERYABLE, true);
@@ -387,5 +399,10 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 
 	public void setPolygonQueryParams(PolygonQueryableParams polygonQueryParams) {
 		this.polygonQueryParams = polygonQueryParams;
+	}
+
+	@Override
+	public boolean isAvailable() {
+		return (this.getLayer() !=null);
 	}
 }

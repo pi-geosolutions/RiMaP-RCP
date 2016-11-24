@@ -35,6 +35,7 @@ import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalog;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalogService;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.IExpandableNode;
+import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.MessageNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.RootNode;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
@@ -91,19 +92,22 @@ public class CatalogTabPart {
 				// first one of the array
 				if (tree.getSelection().length > 0) {
 					TreeItem item = tree.getSelection()[0];
-					if (item.getImage() != null) {
-						if ((e.x > item.getImageBounds(0).x) && (e.x < (item.getImageBounds(0).x + item.getImage()
-								.getBounds().width))) {
-							if ((e.y > item.getImageBounds(0).y) && (e.y < (item.getImageBounds(0).y + item.getImage()
-									.getBounds().height))) {
-								if (item.getData() instanceof ICheckableNode) {
-									ICheckableNode node = (ICheckableNode) item.getData();
-									node.toggleChecked();
-									item.setImage(node.getImage());
+					if (item.getData() instanceof ICheckableNode) {
+						ICheckableNode node = (ICheckableNode) item.getData();
+						if (node.isAvailable()) {
+							if (item.getImage() != null) {
+								if ((e.x > item.getImageBounds(0).x) && (e.x < (item.getImageBounds(0).x + item.getImage()
+										.getBounds().width))) {
+									if ((e.y > item.getImageBounds(0).y) && (e.y < (item.getImageBounds(0).y + item.getImage()
+											.getBounds().height))) {
+											node.toggleChecked();
+											item.setImage(node.getImage());
+									}
 								}
 							}
 						}
 					}
+					
 				}
 
 			}
@@ -166,7 +170,7 @@ public class CatalogTabPart {
 				}
 			}
 		});
-		Job job = new Job("My Job") {
+		Job job = new Job("Load Main Catalog Job (thread)") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				success = mainCatalog.load();

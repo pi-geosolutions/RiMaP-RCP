@@ -120,4 +120,9 @@ public class MessageNode implements INode {
 		return this.getName();
 	}
 
+	@Override
+	public boolean isAvailable() {
+		return true;
+	}
+
 }

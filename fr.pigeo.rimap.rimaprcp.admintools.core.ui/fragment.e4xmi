@@ -22,7 +22,7 @@
       </toolbar>
     </elements>
   </fragments>
-  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_cxX80DPKEea4hpsAeB2m5A" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.core.ui.menu.show">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_cxX80DPKEea4hpsAeB2m5A" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.menu.display">
     <elements xsi:type="menu:HandledMenuItem" xmi:id="_vMmiADPKEea4hpsAeB2m5A" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handledmenuitem.show.layertreeeditor" label="Show Layertree Editor" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.admintools.core.ui/icons/page_white_edit.png" command="_KmZksDPLEea4hpsAeB2m5A">
       <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_BD7EsDPSEea4hpsAeB2m5A" coreExpressionId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.show.layertree.editor"/>
     </elements>

@@ -12,6 +12,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.swt.graphics.Image;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,7 +29,7 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 
 	public static Image foldedImage;
 	public static Image unfoldedImage;
-	
+
 	protected LayerType type = LayerType.FOLDER;
 	private INode parent = null;
 	private List<INode> leaves = null;
@@ -43,7 +44,7 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 	@Inject
 	@Optional
 	IPreferencesService prefsService;
-	
+
 	@Inject
 	@Optional
 	IEclipseContext context;
@@ -51,12 +52,16 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 	@Inject
 	@Optional
 	IEventBroker eventBroker;
-	
-	//Custom injected resource
+
+	@Inject
+	@Optional
+	Logger logger;
+
+	// Custom injected resource
 	@Inject
 	@Optional
 	PadreCatalogState catalogState;
-	
+
 	private String childrentag = "children";
 
 	@Inject
@@ -68,15 +73,17 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 					CatalogConstants.CHILDREN_PREF_DEFAULT, null);
 		}
 	}
-	
+
 	public FolderNode() {
-		
+
 	}
-	
+
 	@Override
 	public void loadFromJson(JsonNode node) {
 		if (!NodeUtils.isValid(node, this.type)) {
-			System.out.println("ERROR: error parsing JsonNode in " + this.getClass().getName());
+			if (logger != null)
+				logger.error("ERROR: error parsing JsonNode in " + this.getClass()
+					.getName());
 			return;
 		}
 		if (!this.isRootNode()) {
@@ -96,27 +103,30 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 		// if (this.expanded) {
 		// PadreCatalog.addExpandedFolder(this);
 		// }
-		if (catalogState!=null) {
+		if (catalogState != null) {
 			if (this.expanded) {
 				catalogState.addExpandedNode(this);
 			}
 		} else {
-			System.out.println("################ catalogState context var is null #################");
+			if (logger != null)
+				logger.error("################ catalogState context var is null #################");
 		}
 	}
 
 	private List<INode> loadLeaves(JsonNode list) {
-		System.out.println("loading leaves for node "+this.name);
+		// System.out.println("loading leaves for node "+this.name);
 		AbstractNode layer = null;
 		List<INode> layers = new ArrayList();
 		Iterator<JsonNode> itr = list.iterator();
 		while (itr.hasNext()) {
 			JsonNode child = itr.next();
-			LayerType type = LayerType.valueOf(child.get("type").asText().toUpperCase()); // convert
-																							// e.g.
-																							// 'folder'
-																							// to
-																							// LayerType.FOLDER
+			LayerType type = LayerType.valueOf(child.get("type")
+					.asText()
+					.toUpperCase()); // convert
+										// e.g.
+										// 'folder'
+										// to
+										// LayerType.FOLDER
 			switch (type) {
 			case FOLDER:
 				layer = ContextInjectionFactory.make(FolderNode.class, context);
@@ -135,8 +145,8 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 				System.out.println("TODO : load chart layers");
 				break;
 			default:
-				System.out.println(
-						"encountered weird layertree node while parsing Layertree from json: " + type.toString());
+				// System.out.println("encountered weird layertree node while
+				// parsing Layertree from json: " + type.toString());
 				break;
 			}
 		}
@@ -177,7 +187,7 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 	public String getName() {
 		return name;
 	}
-	
+
 	@Override
 	public void setName(String name) {
 		this.name = name;
@@ -185,7 +195,7 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 
 	@Override
 	public Image getImage() {
-		//return NodeUtils.getImage(FolderNode.IMAGE_FOLDERICON);
+		// return NodeUtils.getImage(FolderNode.IMAGE_FOLDERICON);
 		if (this.expanded) {
 			if (FolderNode.unfoldedImage == null) {
 				FolderNode.unfoldedImage = NodeUtils.getImage(FolderNode.IMAGE_FOLDERICON_OPEN);
@@ -198,6 +208,7 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 			return FolderNode.foldedImage;
 		}
 	}
+
 	@Override
 	public void setExpanded(boolean expand) {
 		if (expand == this.expanded) {
@@ -208,22 +219,26 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 			eventBroker.post(RiMaPEventConstants.FOLDERNODE_EXPANDCHANGE, this);
 		}
 	}
-	
+
 	@Override
 	public void toggleExpanded() {
 		setExpanded(!expanded);
 	}
-	
 
 	@Override
 	public void changeState() {
-		System.out.println("State changed for node "+this.getName());
+		// System.out.println("State changed for node "+this.getName());
 		toggleExpanded();
 	}
 
 	@Override
 	public boolean getExpanded() {
 		return expanded;
+	}
+
+	@Override
+	public boolean isAvailable() {
+		return true;
 	}
 
 }

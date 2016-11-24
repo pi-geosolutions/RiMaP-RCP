@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -311,6 +312,9 @@ public class SecureFileServiceImpl implements ISecureResourceService {
 		Path deletePath = getResourcePath(resourcePath, category, resourceName);
 		try {
 			Files.delete(deletePath);
+			return true;
+		} catch (NoSuchFileException e) {
+			//in case the file doesn't exist (already deleted, for instance)
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -83,4 +83,9 @@ public class RootNode implements INode {
 	public void changeState() {
 	}
 
+	@Override
+	public boolean isAvailable() {
+		return true;
+	}
+
 }

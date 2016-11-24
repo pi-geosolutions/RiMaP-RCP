@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.IOUtils;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -27,6 +26,7 @@ import fr.pigeo.rimap.rimaprcp.core.security.ISecureResourceService;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.core.security.Session;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import gov.nasa.worldwind.layers.Layer;
 
 public class PadreCatalog implements ICatalog {
 
@@ -87,7 +87,7 @@ public class PadreCatalog implements ICatalog {
 	public boolean load() {
 		if (sessionService == null) {
 			// we abort
-			logger.info("Aborting catalog "+params.getName()+" loading : session is not set yet" );
+			logger.info("Aborting catalog " + params.getName() + " loading : session is not set yet");
 			return false;
 		}
 		Session session = sessionService.getSession();
@@ -144,7 +144,7 @@ public class PadreCatalog implements ICatalog {
 		}
 		return node;
 	}
-	
+
 	@Override
 	public INode getRootNode() {
 		return this.rootNode;
@@ -194,7 +194,10 @@ public class PadreCatalog implements ICatalog {
 				.iterator();
 		while (itr.hasNext()) {
 			ICheckableNode node = itr.next();
-			wwj.addLayer(node.getLayer());
+			Layer l = node.getLayer();
+			if (l != null) {
+				wwj.addLayer(node.getLayer());
+			}
 		}
 	}
 
