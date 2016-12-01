@@ -28,6 +28,9 @@ import fr.pigeo.rimap.rimaprcp.worldwind.layers.PolygonQueryableParams;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 
@@ -276,6 +279,49 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		}
 		return this.layer;
 	}
+	/*
+	 * Tries to make a layer from scratch, i.e. without the help of the capabilities. 
+	 * Some layers are not published in the caps, but exist nonetheless
+	 * Of course, it means we won't be able to pre-detect erroneous layers...
+	 */
+	public Layer guessLayer() {
+		AVList layerParams = new AVListImpl();
+		// System.out.println(this.layers);
+		layerParams.setValue(AVKey.LAYER_NAMES, this.layers);
+		layerParams.setValue(AVKey.DISPLAY_NAME, this.name);
+		layerParams.setValue(AVKey.DETAIL_HINT, this.detailhint);
+		
+		//set defaults
+		Angle delta = Angle.fromDegrees(36);
+		layerParams.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
+		layerParams.setValue(AVKey.TILE_WIDTH, 256);
+		layerParams.setValue(AVKey.TILE_HEIGHT, 256);
+		layerParams.setValue(AVKey.FORMAT_SUFFIX, ".png");
+		layerParams.setValue(AVKey.NUM_LEVELS, 19); // approximately 0.1 meters per pixel
+		layerParams.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
+		//Sector sector = new Sector();
+		//layerParams.setValue(AVKey.SECTOR, sector);
+		
+		this.layer = new RimapWMSTiledImageLayer(layerParams);
+		this.layer.setName(this.name);
+		this.layer.setParent(this);
+		//redundant with previous...
+		this.layer.setValue(RimapAVKey.LAYER_PARENTNODE, this);
+		this.layer.setValue(AVKey.FORMAT_SUFFIX, ".png");
+		this.layer.setValue(RimapAVKey.HAS_RIMAP_EXTENSIONS, true);
+		if ((this.polygonQueryParams!=null) && (this.polygonQueryParams.isValid())) {
+			this.layer.setValue(RimapAVKey.LAYER_ISPOLYGONQUERYABLE, true);
+			this.layer.setValue(RimapAVKey.LAYER_POLYGONQUERYPARAMS, this.polygonQueryParams);
+		} else {
+			this.layer.setValue(RimapAVKey.LAYER_ISPOLYGONQUERYABLE, false);
+		}
+		if (this.layer != null) {
+			// Loading from caps may fail. In this case, layer, will still be
+			// null
+			layer.setEnabled(this.checked);
+		}
+		return this.layer;
+	}
 
 	public LayerType getType() {
 		return type;
@@ -404,5 +450,10 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	@Override
 	public boolean isAvailable() {
 		return (this.getLayer() !=null);
+	}
+
+	@Override
+	public Image getIcon() {
+		return NodeUtils.getImage(WmsNode.IMAGE_WMSICON);
 	}
 }

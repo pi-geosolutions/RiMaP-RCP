@@ -26,6 +26,8 @@ public interface INode {
 	public void setName(String name);
 
 	public Image getImage();
+	
+	public Image getIcon();
 
 	public void changeState();
 

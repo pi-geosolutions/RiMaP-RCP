@@ -241,4 +241,9 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 		return true;
 	}
 
+	@Override
+	public Image getIcon() {
+		return null;
+	}
+
 }

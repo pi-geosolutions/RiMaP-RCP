@@ -88,4 +88,9 @@ public class RootNode implements INode {
 		return true;
 	}
 
+	@Override
+	public Image getIcon() {
+		return null;
+	}
+
 }

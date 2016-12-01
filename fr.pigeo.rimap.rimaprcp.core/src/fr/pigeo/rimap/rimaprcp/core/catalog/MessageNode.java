@@ -125,4 +125,9 @@ public class MessageNode implements INode {
 		return true;
 	}
 
+	@Override
+	public Image getIcon() {
+		return null;
+	}
+
 }
