@@ -1,5 +1,11 @@
 package fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 import fr.pigeo.rimap.rimaprcp.cachemanager.events.CacheManagerEventConstants;
@@ -7,7 +13,9 @@ import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.event.BulkRetrievalEvent;
 import gov.nasa.worldwind.event.BulkRetrievalListener;
 import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.layers.BasicTiledImageLayer;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.layers.TiledImageLayer;
 import gov.nasa.worldwind.retrieve.BulkRetrievable;
 import gov.nasa.worldwind.retrieve.BulkRetrievalThread;
@@ -27,6 +35,7 @@ public class Downloadable {
 	private double maxResolution = 0;
 	private double[] resolutions = null;
 	protected BulkRetrievalThread thread = null;
+	protected String packageDestination = "";
 
 	public Downloadable(Layer layer, WwjInstance wwj, IEventBroker evtBroker) {
 		super();
@@ -58,7 +67,6 @@ public class Downloadable {
 	public void setDownload(boolean download) {
 		this.download = download;
 		updateSize();
-		downloadprogress = download ? 0.2 : -1;
 	}
 
 	public int getLevel(String leveltype) {
@@ -101,21 +109,26 @@ public class Downloadable {
 	public void setMaxLevel(int maxLevel) {
 		this.maxLevel = maxLevel;
 	}
-	
+
 	public double getMaxResolution() {
 		if (maxResolution == 0) {
 			if (layer instanceof TiledImageLayer) {
 				TiledImageLayer l = (TiledImageLayer) layer;
-				maxResolution = l.getLevels().getLastLevel().getTexelSize() * wwj.getModel()
-						.getGlobe()
-						.getRadius();
+				maxResolution = l.getLevels()
+						.getLastLevel()
+						.getTexelSize()
+						* wwj.getModel()
+								.getGlobe()
+								.getRadius();
 			}
 		}
 		return maxResolution;
 	}
-	
+
 	public double getMaxResolutionInRadians() {
-		return maxResolution / wwj.getModel().getGlobe().getRadius();
+		return maxResolution / wwj.getModel()
+				.getGlobe()
+				.getRadius();
 	}
 
 	public void setMaxResolution(double res) {
@@ -137,9 +150,8 @@ public class Downloadable {
 							.getRadius();
 					resolutions[i] = res;
 				}
-			}
-			else {
-				resolutions = new double[]{100,50,20,5,1,0.5,0.1};
+			} else {
+				resolutions = new double[] { 100, 50, 20, 5, 1, 0.5, 0.1 };
 			}
 		}
 		return resolutions;
@@ -153,9 +165,18 @@ public class Downloadable {
 		this.estimatedSize = estimatedSize;
 	}
 
+	public String getPackageDestination() {
+		return packageDestination;
+	}
+
+	public void setPackageDestination(String packageDestination) {
+		this.packageDestination = packageDestination;
+	}
+
 	public void updateSize() {
 		if (download && currentSector != null) {
-			this.estimatedSize = ((BulkRetrievable) layer).getEstimatedMissingDataSize(currentSector, getMaxResolutionInRadians());
+			this.estimatedSize = ((BulkRetrievable) layer).getEstimatedMissingDataSize(currentSector,
+					getMaxResolutionInRadians());
 		} else {
 			estimatedSize = 0;
 		}
@@ -192,7 +213,7 @@ public class Downloadable {
 		thread.setName("Bulk retrieval thread (" + layer.getName() + ")");
 		return thread;
 	}
-	
+
 	public boolean isDownloadThreadActive() {
 		if (this.thread == null) {
 			return false;
@@ -207,17 +228,54 @@ public class Downloadable {
 		if (!this.thread.isAlive()) {
 			return "completed";
 		}
-        Progress progress = thread.getProgress();
-        int percent = 0;
-        if (progress.getTotalCount() > 0) {
-            percent = (int) ((float) progress.getCurrentCount() / progress.getTotalCount() * 100f);
-        }
-        return Math.min(percent, 100)+" %";
+		Progress progress = thread.getProgress();
+		int percent = 0;
+		if (progress.getTotalCount() > 0) {
+			percent = (int) ((float) progress.getCurrentCount() / progress.getTotalCount() * 100f);
+		}
+		return Math.min(percent, 100) + " %";
 	}
-	
+
+	public Sector getCurrentSector() {
+		return currentSector;
+	}
+
+	public void setCurrentSector(Sector currentSector) {
+		this.currentSector = currentSector;
+	}
+
 	public void stopThread() {
-		if (this.thread!=null && this.thread.isAlive()) {
+		if (this.thread != null && this.thread.isAlive()) {
 			this.thread.interrupt();
 		}
 	}
+
+	public boolean canExportPackage() {
+		return getDownloadProgress().equalsIgnoreCase("completed");
+	}
+
+	public void exportPackage() {
+		// if (canExportPackage()) {
+		evtBroker.post(CacheManagerEventConstants.EXPORT_PACKAGE, this);
+		// }
+	}
+
+	public Path getCacheLocation(boolean fullpath) {
+		BasicTiledImageLayer l = (BasicTiledImageLayer) this.layer;
+		Path full = Paths.get(l.getDataFileStore()
+				.getWriteLocation()
+				.getAbsolutePath(),
+				l.getLevels()
+						.getFirstLevel()
+						.getPath())
+				.getParent();
+		Path relative = Paths.get(l.getLevels()
+				.getFirstLevel()
+				.getPath())
+				.getParent();
+		System.out.println("full cache location path:" + full.toString());
+		System.out.println("relative cache location path: " + relative.toString());
+		return fullpath ? full : relative;
+	}
+
 }

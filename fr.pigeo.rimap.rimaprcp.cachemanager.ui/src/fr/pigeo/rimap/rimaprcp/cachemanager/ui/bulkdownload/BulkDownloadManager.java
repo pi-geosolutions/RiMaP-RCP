@@ -17,10 +17,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Shell;
 
 import fr.pigeo.rimap.rimaprcp.cachemanager.events.CacheManagerEventConstants;
+import fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards.ExportPackageWizard;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.Downloadable;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.Downloadables;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.RenderableManager;
@@ -59,6 +64,8 @@ public class BulkDownloadManager {
 	UISynchronize sync;
 	
 	@Inject RenderableManager rmanager;
+	
+	@Inject Shell shell;
 
 	@Inject
 	public BulkDownloadManager(WwjInstance wwjInst, IEventBroker evtBroker, RenderableManager rmanager) {
@@ -134,8 +141,8 @@ public class BulkDownloadManager {
 		while (it.hasNext()) {
 			Downloadable d = it.next();
 			BulkRetrievalThread brthread = d.startDownloadThread();
-			System.out.println("Bulk retrieval thread (" + d.getLayer()
-					.getName() + ") status : " + brthread.getState());
+			//System.out.println("Bulk retrieval thread (" + d.getLayer()
+			//		.getName() + ") status : " + brthread.getState());
 		}
 
 		Job job = new Job("Update Download Progress") {
@@ -175,6 +182,16 @@ public class BulkDownloadManager {
 		};
 		job.schedule();
 		
+	}
+	
+	@Inject
+	@Optional
+	void updateProgress(@UIEventTopic(CacheManagerEventConstants.EXPORT_PACKAGE) Downloadable d) {
+		WizardDialog dialog = new WizardDialog(shell, new ExportPackageWizard(d));
+	    if (dialog.open() == WizardDialog.OK) {
+
+			System.out.println("exported");
+	    }
 	}
 
 }

@@ -7,5 +7,6 @@ public interface CacheManagerEventConstants {
 	String MAXRESOLUTION_CHANGED			="fr/pigeo/rimap/rimaprcp/cachemanager/maxresolution/changed";
 	String DOWNLOAD_PROGRESS_UPDATE			="fr/pigeo/rimap/rimaprcp/cachemanager/download/progress/update";
 	String CACHEDDATASET_UPDATE			="fr/pigeo/rimap/rimaprcp/cachemanager/CachedDataset/update";
-	String BULKDOWNLOAD_TABLE_RELOAD			="fr/pigeo/rimap/rimaprcp/cachemanager/bulkdownloadtable/relaod";
+	String BULKDOWNLOAD_TABLE_RELOAD			="fr/pigeo/rimap/rimaprcp/cachemanager/bulkdownloadtable/reload";
+	String EXPORT_PACKAGE			="fr/pigeo/rimap/rimaprcp/cachemanager/bulkdownloadtable/package/export";
 }

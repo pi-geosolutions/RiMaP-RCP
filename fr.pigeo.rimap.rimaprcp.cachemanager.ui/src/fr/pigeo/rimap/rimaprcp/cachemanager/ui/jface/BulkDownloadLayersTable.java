@@ -72,17 +72,15 @@ public class BulkDownloadLayersTable extends Composite {
 
 	@Inject
 	IEventBroker eventBroker;
-	
+
 	@Inject
 	@Optional
 	UISynchronize synch;
 
-	protected final Image CHECKED = getImage("checked.png");
-	protected final Image UNCHECKED = getImage("unchecked.png");
-	protected final Image FEATUREINFO = getImage("icon_featureinfo_16px.png");
-	protected final Image METADATA = getImage("icon_metadata_16px.png");
-	protected final Image PQUERY = getImage("polygon_query_16px.png");
-	protected final Image WMSICON = getImage("wms.png");
+	protected final Image CHECKED = getImage("checked.png", OrganizeTabPart.class);
+	protected final Image UNCHECKED = getImage("unchecked.png", OrganizeTabPart.class);
+	protected final Image WMSICON = getImage("wms.png", OrganizeTabPart.class);
+	protected final Image ZIP = getImage("package_go.png");
 
 	public BulkDownloadLayersTable(Composite parent, int style, BulkDownloadManager bulkManager) {
 		super(parent, style);
@@ -241,7 +239,7 @@ public class BulkDownloadLayersTable extends Composite {
 				Downloadable d = ((Downloadable) element);
 				if (d.doDownload()) {
 					double res = d.getMaxResolution();
-					return String.format("%.2f m",res);
+					return String.format("%.2f m", res);
 				} else {
 					return "-";
 				}
@@ -252,8 +250,8 @@ public class BulkDownloadLayersTable extends Composite {
 				return null;
 			}
 		});
-		tcl.setColumnData(col.getColumn(), new ColumnPixelData(150));
-		
+		tcl.setColumnData(col.getColumn(), new ColumnPixelData(100));
+
 		// Estimated size column
 		col = new TableViewerColumn(tv, SWT.NONE);
 		col.getColumn()
@@ -267,7 +265,7 @@ public class BulkDownloadLayersTable extends Composite {
 				if (d.doDownload()) {
 					long size = d.getEstimatedSize();
 					if (size == 0) {
-						//means it has not yet been computed
+						// means it has not yet been computed
 						return "-";
 					} else {
 						return CacheUtil.makeSizeDescription(size);
@@ -283,8 +281,8 @@ public class BulkDownloadLayersTable extends Composite {
 			}
 		});
 		tcl.setColumnData(col.getColumn(), new ColumnPixelData(100));
-		
-		// Estimated size column
+
+		// Download progress column
 		col = new TableViewerColumn(tv, SWT.NONE);
 		col.getColumn()
 				.setAlignment(SWT.CENTER);
@@ -296,13 +294,14 @@ public class BulkDownloadLayersTable extends Composite {
 				Downloadable d = ((Downloadable) element);
 				if (d.doDownload()) {
 					/*
-					rd.getDownloadProgress();
-					if (p < 0) {
-						//means it has not yet been started
-						return "-";
-					} else {
-						return String.format("%,.1f", p)+" %";
-					}*/
+					 * rd.getDownloadProgress();
+					 * if (p < 0) {
+					 * //means it has not yet been started
+					 * return "-";
+					 * } else {
+					 * return String.format("%,.1f", p)+" %";
+					 * }
+					 */
 
 					return d.getDownloadProgress();
 				} else {
@@ -317,10 +316,32 @@ public class BulkDownloadLayersTable extends Composite {
 		});
 		tcl.setColumnData(col.getColumn(), new ColumnPixelData(100));
 
-
 		// sets the width for each column
 		tcl.setColumnData(visibleCol.getColumn(), new ColumnPixelData(20));
 		tcl.setColumnData(nameCol.getColumn(), new ColumnWeightData(20, 200, true));
+
+		// Zip package column
+		col = new TableViewerColumn(tv, SWT.NONE);
+		col.getColumn()
+				.setAlignment(SWT.CENTER);
+		col.getColumn().setImage(ZIP);
+		col.setEditingSupport(new LayerExportPackageEditingSupport(tv));
+		col.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return null;
+				//Downloadable d = ((Downloadable) element);
+				//return d.getDownloadProgress().equalsIgnoreCase("completed") ? "ZIP" : " ";
+			}
+
+			@Override
+			public Image getImage(Object element) {
+				Downloadable d = ((Downloadable) element);
+				return d.canExportPackage() ? ZIP : null;
+			}
+		});
+		tcl.setColumnData(col.getColumn(), new ColumnPixelData(30));
+
 
 	}
 
@@ -336,8 +357,18 @@ public class BulkDownloadLayersTable extends Composite {
 	// helper method to load the images
 	// ensure to dispose the images in your @PreDestroy method
 	protected static Image getImage(String file) {
+		return getImage(file, null);
+	}
+	
+	// helper method to load the images
+	// ensure to dispose the images in your @PreDestroy method
+	protected static Image getImage(String file, Class refclass ) {
+		if (refclass==null) {
+			//we assume we are using this bundle
+			refclass= BulkDownloadLayersTable.class;
+		}
 		// assume that the current class is called View.java
-		Bundle bundle = FrameworkUtil.getBundle(OrganizeTabPart.class);
+		Bundle bundle = FrameworkUtil.getBundle(refclass);
 		URL url = FileLocator.find(bundle, new Path("icons/" + file), null);
 		ImageDescriptor image = ImageDescriptor.createFromURL(url);
 		return image.createImage();
@@ -356,6 +387,8 @@ public class BulkDownloadLayersTable extends Composite {
 	public void dispose() {
 		CHECKED.dispose();
 		UNCHECKED.dispose();
+		WMSICON.dispose();
+		ZIP.dispose();
 		super.dispose();
 	}
 
@@ -378,7 +411,7 @@ public class BulkDownloadLayersTable extends Composite {
 		downloadables.setSector(null);
 		viewer.refresh();
 	}
-	
+
 	@Inject
 	@Optional
 	void updateSector(@UIEventTopic(CacheManagerEventConstants.SECTORSELECTOR_FINISHED) final Sector s) {
@@ -398,13 +431,13 @@ public class BulkDownloadLayersTable extends Composite {
 		// Start the Job
 		job.schedule();
 	}
-	
+
 	@Inject
 	@Optional
 	void updateProgress(@UIEventTopic(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE) String s) {
 		viewer.refresh();
 	}
-	
+
 	@Inject
 	@Optional
 	void reloadTable(@UIEventTopic(CacheManagerEventConstants.BULKDOWNLOAD_TABLE_RELOAD) String s) {
@@ -412,5 +445,5 @@ public class BulkDownloadLayersTable extends Composite {
 				.toArray());
 		viewer.refresh();
 	}
-	
+
 }
