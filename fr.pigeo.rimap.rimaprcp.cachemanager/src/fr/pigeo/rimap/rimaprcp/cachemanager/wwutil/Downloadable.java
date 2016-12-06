@@ -3,7 +3,6 @@ package fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -12,6 +11,7 @@ import fr.pigeo.rimap.rimaprcp.cachemanager.events.CacheManagerEventConstants;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.event.BulkRetrievalEvent;
 import gov.nasa.worldwind.event.BulkRetrievalListener;
+import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.BasicTiledImageLayer;
 import gov.nasa.worldwind.layers.Layer;
@@ -22,6 +22,7 @@ import gov.nasa.worldwind.retrieve.BulkRetrievalThread;
 import gov.nasa.worldwind.retrieve.Progress;
 import gov.nasa.worldwind.util.Level;
 import gov.nasa.worldwind.util.LevelSet;
+import gov.nasa.worldwind.util.Tile;
 
 public class Downloadable {
 	private Layer layer;
@@ -29,10 +30,10 @@ public class Downloadable {
 	private IEventBroker evtBroker;
 	private Sector currentSector;
 	private boolean download = false;
-	private int minLevel = 0, maxLevel = 19;
-	private long estimatedSize = 0;
+	private long estimatedSize = -1;
 	private double downloadprogress = -1;
 	private double maxResolution = 0;
+	private int maxLevel = 19;
 	private double[] resolutions = null;
 	protected BulkRetrievalThread thread = null;
 	protected String packageDestination = "";
@@ -69,45 +70,13 @@ public class Downloadable {
 		updateSize();
 	}
 
-	public int getLevel(String leveltype) {
-		if (leveltype.equalsIgnoreCase("min")) {
-			return getMinLevel();
-		} else if (leveltype.equalsIgnoreCase("max")) {
-			return getMaxLevel();
-		}
-		return 0;
-	}
-
-	public void setLevel(String leveltype, int level) {
-		if (leveltype.equalsIgnoreCase("min")) {
-			setMinLevel(level);
-		} else if (leveltype.equalsIgnoreCase("max")) {
-			setMaxLevel(level);
-		}
-	}
-
-	public String getLevelAsString(String levelType) {
-		return String.format("%d", getLevel(levelType));
-	}
-
-	public void setLevelFromString(String levelType, String level) {
-		setLevel(levelType, Integer.parseInt(level));
-	}
-
-	public int getMinLevel() {
-		return minLevel;
-	}
-
-	public void setMinLevel(int minLevel) {
-		this.minLevel = minLevel;
-	}
-
 	public int getMaxLevel() {
-		return maxLevel;
+		return this.maxLevel;
 	}
 
-	public void setMaxLevel(int maxLevel) {
-		this.maxLevel = maxLevel;
+	public void setMaxLevel(int lev) {
+		this.maxLevel = lev;
+		this.setMaxResolution(this.getResolutions()[lev]);
 	}
 
 	public double getMaxResolution() {
@@ -133,7 +102,6 @@ public class Downloadable {
 
 	public void setMaxResolution(double res) {
 		this.maxResolution = res;
-
 		evtBroker.post(CacheManagerEventConstants.MAXRESOLUTION_CHANGED, this);
 	}
 
@@ -201,13 +169,12 @@ public class Downloadable {
 						// with AWT or Swing must be within a
 						// SwingUtilities.invokeLater() runnable.
 
-						// System.out.printf("%s: item %s\n",
-						// event.getEventType().equals(BulkRetrievalEvent.RETRIEVAL_SUCCEEDED)
-						// ? "Succeeded"
-						// :
-						// event.getEventType().equals(BulkRetrievalEvent.RETRIEVAL_FAILED)
-						// ? "Failed"
-						// : "Unknown event type", event.getItem());
+//						System.out.printf("%s: item %s\n", event.getEventType()
+//								.equals(BulkRetrievalEvent.RETRIEVAL_SUCCEEDED) ? "Succeeded"
+//										: event.getEventType()
+//												.equals(BulkRetrievalEvent.RETRIEVAL_FAILED) ? "Failed"
+//														: "Unknown event type",
+//								event.getItem());
 					}
 				});
 		thread.setName("Bulk retrieval thread (" + layer.getName() + ")");
@@ -276,6 +243,77 @@ public class Downloadable {
 		System.out.println("full cache location path:" + full.toString());
 		System.out.println("relative cache location path: " + relative.toString());
 		return fullpath ? full : relative;
+	}
+
+	/*
+	 * Too memory consuming, don't use this on large sectors
+	 */
+	public List<Path> getFilesInCurrentSector() {
+		if (this.currentSector == null) {
+			return null;
+		}
+		List<Path> paths = new ArrayList<Path>();
+		BasicTiledImageLayer l = (BasicTiledImageLayer) this.layer;
+		for (Level lev : l.getLevels()
+				.getLevels()) {
+			if (lev.getLevelNumber() > this.getMaxLevel()) {
+				continue;
+			}
+			TextureTile[][] tiles = l.getTilesInSector(this.currentSector, lev.getLevelNumber());
+			for (TextureTile[] row : tiles) {
+				for (TextureTile tile : row) {
+					Path tilepath = Paths.get(l.getDataFileStore()
+							.getWriteLocation()
+							.getAbsolutePath(), tile.getPath());
+					paths.add(tilepath);
+				}
+			}
+		}
+		return paths;
+	}
+
+	public boolean putThisTileInThePacket(Path tileRelativePath) {
+		if (tileRelativePath.toString()
+				.endsWith(".xml")) {
+			// we keep all xml files. Normally there should only be the one
+			// defining the layer
+			return true;
+		}
+		if (currentSector==null) {
+			return true;
+		}
+		boolean pttitp = false;
+		try {
+			String tilename = tileRelativePath.getFileName()
+					.toString();
+			int row = Integer.parseInt(tileRelativePath.getParent()
+					.getFileName()
+					.toString());
+			int level = Integer.parseInt(tileRelativePath.getParent()
+					.getParent()
+					.getFileName()
+					.toString());
+			String srow = tilename.split("_")[1].split("\\.")[0];
+			int col = Integer.parseInt(srow);
+			
+			TiledImageLayer l = (TiledImageLayer) layer;
+			//taken from BasicElevationModel.createTile combined with Level.computeSectorForPosition
+			 // Compute the tile's SW lat/lon based on its row/col in the level's data set.
+	        Angle dLat = l.getLevels().getLevel(level).getTileDelta().getLatitude();
+	        Angle dLon = l.getLevels().getLevel(level).getTileDelta().getLongitude();
+	        Angle latOrigin = l.getLevels().getTileOrigin().getLatitude();
+	        Angle lonOrigin = l.getLevels().getTileOrigin().getLongitude();
+	        Angle minLatitude = Tile.computeRowLatitude(row, dLat, latOrigin);
+	        Angle minLongitude = Tile.computeColumnLongitude(col, dLon, lonOrigin);
+	        Sector tileSector = new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
+	        pttitp = currentSector.intersects(tileSector);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return pttitp;
 	}
 
 }

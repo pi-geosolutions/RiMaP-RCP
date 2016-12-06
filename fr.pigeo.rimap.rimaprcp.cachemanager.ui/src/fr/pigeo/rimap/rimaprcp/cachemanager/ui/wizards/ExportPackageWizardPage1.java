@@ -2,6 +2,8 @@ package fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -47,6 +49,13 @@ public class ExportPackageWizardPage1 extends WizardPage {
 		fileName = new Text(container, SWT.BORDER);
 		fileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		fileName.setText(d.getPackageDestination());
+		fileName.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent event) {
+				d.setPackageDestination(fileName.getText());
+				getWizard().getContainer().updateButtons();
+			}
+		});
 
 		Button btnFile = new Button(container, SWT.NONE);
 		GridData gd_btnFile = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
@@ -62,8 +71,6 @@ public class ExportPackageWizardPage1 extends WizardPage {
 				String fn = dlg.open();
 				if (fn != null) {
 					fileName.setText(fn);
-					d.setPackageDestination(fn);
-					getWizard().getContainer().updateButtons();
 				}
 			}
 		});

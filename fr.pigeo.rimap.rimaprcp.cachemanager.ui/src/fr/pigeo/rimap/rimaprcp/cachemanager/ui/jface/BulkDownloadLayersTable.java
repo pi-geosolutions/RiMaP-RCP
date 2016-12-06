@@ -264,7 +264,7 @@ public class BulkDownloadLayersTable extends Composite {
 				Downloadable d = ((Downloadable) element);
 				if (d.doDownload()) {
 					long size = d.getEstimatedSize();
-					if (size == 0) {
+					if (size < 0) {
 						// means it has not yet been computed
 						return "-";
 					} else {

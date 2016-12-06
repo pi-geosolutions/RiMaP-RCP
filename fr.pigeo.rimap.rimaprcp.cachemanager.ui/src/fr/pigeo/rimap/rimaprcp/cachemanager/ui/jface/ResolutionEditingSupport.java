@@ -53,7 +53,7 @@ public class ResolutionEditingSupport extends EditingSupport {
 
 	@Override
 	protected void setValue(Object element, Object userInputValue) {
-		((Downloadable) element).setMaxResolution( ((Downloadable) element).getResolutions()[(int) userInputValue]);
+		((Downloadable) element).setMaxLevel((int) userInputValue);
 		((Downloadable) element).updateSize();
 		viewer.update(element, null);
 	}

@@ -2,7 +2,6 @@ package fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
@@ -14,6 +13,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.wizard.WizardPage;
@@ -93,17 +93,15 @@ public class ExportPackageWizardPage2 extends WizardPage {
 	private void zip() {
 		Map<String, String> attributes = new HashMap<>();
 		attributes.put("create", "true");
-		try {
+		try {			
 			String pd = d.getPackageDestination();
 			URI zipFile = URI.create("jar:file:" + d.getPackageDestination());
 			try (FileSystem zipFileSys = FileSystems.newFileSystem(zipFile, attributes);) {
-				String dest = d.getCacheLocation(false)
-						.toString();
-				String src = d.getCacheLocation(true)
-						.toString();
-				Files.walkFileTree(d.getCacheLocation(true), EnumSet.of(FileVisitOption.FOLLOW_LINKS),
-						Integer.MAX_VALUE, new ExtractAndCopyTiles(d.getCacheLocation(true), d.getCacheLocation(false),
-								zipFileSys, d.getCurrentSector()));
+				Path dest = d.getCacheLocation(false);
+				Path src = d.getCacheLocation(true);
+				Files.walkFileTree(src, EnumSet.of(FileVisitOption.FOLLOW_LINKS),
+						Integer.MAX_VALUE, new ExtractAndCopyTiles(src, dest,
+								zipFileSys));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -113,44 +111,51 @@ public class ExportPackageWizardPage2 extends WizardPage {
 	private class ExtractAndCopyTiles extends SimpleFileVisitor<Path> {
 		private Path source;
 		private Path target;
-		private Sector sector;
 		private FileSystem zipFileSys;
 
-		public ExtractAndCopyTiles(Path source, Path target, FileSystem zipFileSys, Sector sector) {
+		public ExtractAndCopyTiles(Path source, Path target, FileSystem zipFileSys) {
 			this.source = source;
 			this.target = target;
-			this.sector = sector;
 			this.zipFileSys = zipFileSys;
 		}
 
 		@Override
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
-			copyToZip(file);
-			return FileVisitResult.CONTINUE;
+			return copyToZip(file);
 		}
 
 		@Override
 		public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attributes) throws IOException {
-			copyToZip(directory);
-			return FileVisitResult.CONTINUE;
+			return copyToZip(directory);
 		}
 
-		private void copyToZip(Path p) {
-			Path targetInZip = zipFileSys.getPath(target.resolve(source.relativize(p)).toString());
+		private FileVisitResult copyToZip(Path p) {
+			if (Files.isDirectory(p)) {
+				return FileVisitResult.CONTINUE;
+			}
+			if (!d.putThisTileInThePacket(p)) {
+				System.out.println("Excluding file "+p+" (off limits)");
+				return FileVisitResult.CONTINUE;
+			}
+			Path targetInZip = zipFileSys.getPath(target.resolve(source.relativize(p))
+					.toString());
 			try {
 				if (Files.isDirectory(p)) {
-					//create non-already created intermediary directories
-					System.out.println("creating directory "+targetInZip+" (in FS "+targetInZip.getFileSystem()+")");
+					// create non-already created intermediary directories
 					Files.createDirectories(targetInZip);
+					System.out.println("creating directory " + targetInZip + " (in FS " + targetInZip.getFileSystem() + ")");
+				} else {
+					// create non-already created intermediary directories : due to the filter in the beginning of the function,
+					// directories will be filtered out
+					Files.createDirectories(targetInZip.getParent());
+					System.out.println("copying file " + p + " to " + targetInZip.toString() + "(in FS "+ targetInZip.getFileSystem() + ")");
+					Files.copy(p, targetInZip, StandardCopyOption.REPLACE_EXISTING);
 				}
-
-				Path dest = targetInZip;
-				System.out.println("copying file "+p +" to "+dest.toString()+"(in FS "+targetInZip.getFileSystem()+")");
-				Files.copy(p, dest, StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			return FileVisitResult.CONTINUE;
 		}
 	}
 }
