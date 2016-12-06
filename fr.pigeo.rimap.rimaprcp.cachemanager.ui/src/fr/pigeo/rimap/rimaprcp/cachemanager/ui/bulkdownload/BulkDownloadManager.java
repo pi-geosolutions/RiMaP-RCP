@@ -4,7 +4,21 @@ import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -62,10 +76,12 @@ public class BulkDownloadManager {
 
 	@Inject
 	UISynchronize sync;
-	
-	@Inject RenderableManager rmanager;
-	
-	@Inject Shell shell;
+
+	@Inject
+	RenderableManager rmanager;
+
+	@Inject
+	Shell shell;
 
 	@Inject
 	public BulkDownloadManager(WwjInstance wwjInst, IEventBroker evtBroker, RenderableManager rmanager) {
@@ -121,7 +137,7 @@ public class BulkDownloadManager {
 												// in bytes.
 		return freeSpace;
 	}
-	
+
 	protected boolean hasActiveDownloadThreads() {
 		Iterator<Downloadable> it = downloadables.getDownloadList()
 				.iterator();
@@ -141,8 +157,8 @@ public class BulkDownloadManager {
 		while (it.hasNext()) {
 			Downloadable d = it.next();
 			BulkRetrievalThread brthread = d.startDownloadThread();
-			//System.out.println("Bulk retrieval thread (" + d.getLayer()
-			//		.getName() + ") status : " + brthread.getState());
+			// System.out.println("Bulk retrieval thread (" + d.getLayer()
+			// .getName() + ") status : " + brthread.getState());
 		}
 
 		Job job = new Job("Update Download Progress") {
@@ -158,40 +174,40 @@ public class BulkDownloadManager {
 						return Status.CANCEL_STATUS;
 					}
 				}
-				//Last update
+				// Last update
 				evtBroker.post(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE, null);
 				/*
-				// set total number of work units
-				monitor.beginTask("Doing something time consuming here", 100);
-				for (int i = 0; i < 5; i++) {
-					try {
-						// sleep a second
-						TimeUnit.SECONDS.sleep(1);
-
-						monitor.subTask("I'm doing something here " + i);
-
-						// report that 20 additional units are done
-						monitor.worked(20);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-						return Status.CANCEL_STATUS;
-					}
-				}*/
+				 * // set total number of work units
+				 * monitor.beginTask("Doing something time consuming here",
+				 * 100);
+				 * for (int i = 0; i < 5; i++) {
+				 * try {
+				 * // sleep a second
+				 * TimeUnit.SECONDS.sleep(1);
+				 * 
+				 * monitor.subTask("I'm doing something here " + i);
+				 * 
+				 * // report that 20 additional units are done
+				 * monitor.worked(20);
+				 * } catch (InterruptedException e1) {
+				 * e1.printStackTrace();
+				 * return Status.CANCEL_STATUS;
+				 * }
+				 * }
+				 */
 				return Status.OK_STATUS;
 			}
 		};
 		job.schedule();
-		
+
 	}
-	
+
 	@Inject
 	@Optional
 	void updateProgress(@UIEventTopic(CacheManagerEventConstants.EXPORT_PACKAGE) Downloadable d) {
 		WizardDialog dialog = new WizardDialog(shell, new ExportPackageWizard(d));
-	    if (dialog.open() == WizardDialog.OK) {
-
+		if (dialog.open() == WizardDialog.OK) {
 			System.out.println("exported");
-	    }
+		}
 	}
-
 }

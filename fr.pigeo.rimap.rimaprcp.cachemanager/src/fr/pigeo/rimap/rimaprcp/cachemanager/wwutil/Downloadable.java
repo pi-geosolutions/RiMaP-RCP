@@ -1,10 +1,27 @@
 package fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 import fr.pigeo.rimap.rimaprcp.cachemanager.events.CacheManagerEventConstants;
@@ -37,6 +54,8 @@ public class Downloadable {
 	private double[] resolutions = null;
 	protected BulkRetrievalThread thread = null;
 	protected String packageDestination = "";
+	protected Job zipJob;
+	protected boolean cancelZipJob=false;
 
 	public Downloadable(Layer layer, WwjInstance wwj, IEventBroker evtBroker) {
 		super();
@@ -314,6 +333,118 @@ public class Downloadable {
 		}
 
 		return pttitp;
+	}
+	
+	public void zip() {
+		Downloadable d = this; 
+		this.cancelZipJob=false;
+		zipJob = new Job("Zip " + d.getLayer()
+				.getName()) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				Map<String, String> attributes = new HashMap<>();
+				attributes.put("create", "true");
+				try {
+					String pd = d.getPackageDestination();
+					URI zipFile = URI.create("jar:file:" + d.getPackageDestination());
+					try (FileSystem zipFileSys = FileSystems.newFileSystem(zipFile, attributes);) {
+						Path src = d.getCacheLocation(true);
+						Files.walkFileTree(src, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
+								new ExtractAndCopyTiles(d, zipFileSys));
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+
+		// Start the Job
+		zipJob.schedule();
+
+	}
+
+	private class ExtractAndCopyTiles extends SimpleFileVisitor<Path> {
+		private Path source;
+		private Path target;
+		private FileSystem zipFileSys;
+		private Downloadable downloadable;
+
+		public ExtractAndCopyTiles(Downloadable d, FileSystem zipFileSys) {
+			this.source = d.getCacheLocation(true);
+			this.target = d.getCacheLocation(false);
+			this.zipFileSys = zipFileSys;
+			this.downloadable = d;
+		}
+
+		@Override
+		public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
+			return copyToZip(file);
+		}
+
+		@Override
+		public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attributes) throws IOException {
+			if (downloadable.isCancelZipJob()) {
+				try {
+					zipFileSys.close();
+					Files.deleteIfExists(Paths.get(downloadable.getPackageDestination()));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return FileVisitResult.TERMINATE;
+			}
+			return copyToZip(directory);
+		}
+
+		private FileVisitResult copyToZip(Path p) {
+			if (Files.isDirectory(p)) {
+				return FileVisitResult.CONTINUE;
+			}
+			if (!downloadable.putThisTileInThePacket(p)) {
+				System.out.println("Excluding file " + p + " (off limits)");
+				return FileVisitResult.CONTINUE;
+			}
+			Path targetInZip = zipFileSys.getPath(target.resolve(source.relativize(p))
+					.toString());
+			try {
+				if (Files.isDirectory(p)) {
+					// create non-already created intermediary directories
+					Files.createDirectories(targetInZip);
+					System.out.println(
+							"creating directory " + targetInZip + " (in FS " + targetInZip.getFileSystem() + ")");
+				} else {
+					// create non-already created intermediary directories : due
+					// to the filter in the beginning of the function,
+					// directories will be filtered out
+					Files.createDirectories(targetInZip.getParent());
+					System.out.println("copying file " + p + " to " + targetInZip.toString() + "(in FS "
+							+ targetInZip.getFileSystem() + ")");
+					Files.copy(p, targetInZip, StandardCopyOption.REPLACE_EXISTING);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return FileVisitResult.CONTINUE;
+		}
+	}
+
+	public boolean isCancelZipJob() {
+		return cancelZipJob;
+	}
+	
+	public void cancelZipping() {
+		this.cancelZipJob=true;
+		/*if (zipJob!=null) {
+			zipJob.cancel();
+			try {
+				Files.deleteIfExists(Paths.get(this.getPackageDestination()));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}*/
 	}
 
 }
