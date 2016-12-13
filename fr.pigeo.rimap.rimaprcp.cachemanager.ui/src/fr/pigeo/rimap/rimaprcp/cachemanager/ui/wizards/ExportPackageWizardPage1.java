@@ -1,5 +1,7 @@
 package fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards;
 
+import javax.inject.Inject;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -17,20 +19,18 @@ import org.eclipse.swt.widgets.Text;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.Downloadable;
 
 public class ExportPackageWizardPage1 extends WizardPage {
-	private Downloadable d;
+	@Inject Downloadable d;
 	private Text fileName;
 	private final String[] FILTER_NAMES = { "Zip files (*.zip)", "All Files (*.*)" };
 
 	// These filter extensions are used to filter which files are displayed.
 	private final String[] FILTER_EXTS = { "*.zip", "*.*" };
 
-	protected ExportPackageWizardPage1(Downloadable downloadable) {
+	@Inject
+	public ExportPackageWizardPage1() {
 		super("Export Package");
-		this.d = downloadable;
 		this.setPageComplete(false);
-		this.
-		setTitle("Export Package for layer \n" + d.getLayer()
-				.getName());
+		this.setTitle("Export Package");
 		setDescription("Extracts and packages the corresponding cache file in a ZIP archive");
 	}
 
@@ -53,7 +53,12 @@ public class ExportPackageWizardPage1 extends WizardPage {
 			@Override
 			public void modifyText(ModifyEvent event) {
 				d.setPackageDestination(fileName.getText());
-				getWizard().getContainer().updateButtons();
+				getWizard().getContainer()
+						.updateButtons();
+				if (getNextPage() instanceof ExportPackageWizardPage2) {
+					ExportPackageWizardPage2 page2 =(ExportPackageWizardPage2) getNextPage();
+					page2.updateConsole();
+				}
 			}
 		});
 
@@ -78,8 +83,9 @@ public class ExportPackageWizardPage1 extends WizardPage {
 
 	@Override
 	public boolean canFlipToNextPage() {
-		//return Files.isRegularFile(Paths.get(fileName.getText()));
-		return !fileName.getText().isEmpty();
+		// return Files.isRegularFile(Paths.get(fileName.getText()));
+		return !fileName.getText()
+				.isEmpty();
 	}
 
 }

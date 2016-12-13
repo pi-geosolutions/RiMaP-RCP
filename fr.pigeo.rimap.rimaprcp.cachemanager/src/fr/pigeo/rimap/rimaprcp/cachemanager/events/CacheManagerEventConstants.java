@@ -9,4 +9,5 @@ public interface CacheManagerEventConstants {
 	String CACHEDDATASET_UPDATE			="fr/pigeo/rimap/rimaprcp/cachemanager/CachedDataset/update";
 	String BULKDOWNLOAD_TABLE_RELOAD			="fr/pigeo/rimap/rimaprcp/cachemanager/bulkdownloadtable/reload";
 	String EXPORT_PACKAGE			="fr/pigeo/rimap/rimaprcp/cachemanager/bulkdownloadtable/package/export";
+	String EXPORT_PACKAGE_CONSOLE_MESSAGE="fr/pigeo/rimap/rimaprcp/cachemanager/bulkdownloadtable/package/export/console/message";
 }

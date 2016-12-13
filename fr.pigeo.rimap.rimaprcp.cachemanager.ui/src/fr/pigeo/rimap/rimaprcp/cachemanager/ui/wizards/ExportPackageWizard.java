@@ -4,16 +4,20 @@ import javax.inject.Inject;
 
 import org.eclipse.jface.wizard.Wizard;
 
-import fr.pigeo.rimap.rimaprcp.cachemanager.ui.bulkdownload.BulkDownloadManager;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.Downloadable;
 
 public class ExportPackageWizard extends Wizard {
-	protected Downloadable d;
+	@Inject
+	Downloadable d;
 
 	@Inject
-	public ExportPackageWizard(Downloadable dl) {
-		this.d = dl;
-		setWindowTitle("New Wizard");
+	ExportPackageWizardPage1 page1;
+	@Inject
+	ExportPackageWizardPage2 page2;
+
+	@Inject
+	public ExportPackageWizard() {
+		setWindowTitle("Export Package Wizard");
 	}
 
 	@Override
@@ -24,8 +28,8 @@ public class ExportPackageWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		addPage(new ExportPackageWizardPage1(d));
-		addPage(new ExportPackageWizardPage2(d));
+		addPage(page1);
+		addPage(page2);
 	}
 
 	@Override

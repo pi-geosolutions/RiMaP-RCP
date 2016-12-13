@@ -4,21 +4,7 @@ import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitOption;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -29,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -40,6 +27,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import fr.pigeo.rimap.rimaprcp.cachemanager.events.CacheManagerEventConstants;
 import fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards.ExportPackageWizard;
+import fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards.ExportPackageWizardPage1;
+import fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards.ExportPackageWizardPage2;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.Downloadable;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.Downloadables;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.RenderableManager;
@@ -204,10 +193,22 @@ public class BulkDownloadManager {
 
 	@Inject
 	@Optional
-	void updateProgress(@UIEventTopic(CacheManagerEventConstants.EXPORT_PACKAGE) Downloadable d) {
-		WizardDialog dialog = new WizardDialog(shell, new ExportPackageWizard(d));
+	void updateProgress(@UIEventTopic(CacheManagerEventConstants.EXPORT_PACKAGE) Downloadable d,
+			IEclipseContext context) {
+		// create new context
+		IEclipseContext wizardCtx = context.createChild();
+		wizardCtx.set(Downloadable.class, d);
+		// create WizardPages via CIF
+		ExportPackageWizardPage1 page1 = ContextInjectionFactory.make(ExportPackageWizardPage1.class, wizardCtx);
+	    wizardCtx.set(ExportPackageWizardPage1.class, page1);
+	    // no context needed for the creation
+	    ExportPackageWizardPage2 page2 = ContextInjectionFactory.make(ExportPackageWizardPage2.class, wizardCtx);
+	    wizardCtx.set(ExportPackageWizardPage2.class, page2);
+	    
+	    ExportPackageWizard wizard = ContextInjectionFactory.make(ExportPackageWizard.class, wizardCtx);
+		
+		WizardDialog dialog = new WizardDialog(shell, wizard);
 		if (dialog.open() == WizardDialog.OK) {
-			System.out.println("exported");
 		}
 	}
 }
