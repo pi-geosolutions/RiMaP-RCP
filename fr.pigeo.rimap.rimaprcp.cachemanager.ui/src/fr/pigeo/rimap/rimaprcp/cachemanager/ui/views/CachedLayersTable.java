@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -30,6 +32,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -39,14 +42,19 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 import fr.pigeo.rimap.rimaprcp.cachemanager.events.CacheManagerEventConstants;
 import fr.pigeo.rimap.rimaprcp.cachemanager.ui.utils.CachedDataSetViewerComparator;
+import fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards.ImportPackageWizard;
+import fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards.ImportPackageWizardPage1;
+import fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards.ImportPackageWizardPage2;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.CacheUtil;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.CachedDataSet;
+import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.ImportableCachePacks;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.RenderableManager;
 import gov.nasa.worldwind.cache.BasicDataFileStore;
 import gov.nasa.worldwind.cache.FileStore;
@@ -73,8 +81,9 @@ public class CachedLayersTable {
 	UISynchronize synch;
 
 	@PostConstruct
-	public void postConstruct(Composite parent, final RenderableManager renderableManager,
-			IEventBroker eventBroker, final UISynchronize synch) {
+	public void postConstruct(Composite parent, final RenderableManager renderableManager, IEventBroker eventBroker,
+			IEclipseContext context, Display display, final UISynchronize synch) {
+		
 		this.evtBroker = eventBroker;
 		this.synch = synch;
 		parent.setLayout(new GridLayout(1, false));
@@ -129,16 +138,11 @@ public class CachedLayersTable {
 		buttonDelete.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false, 1, 1));
 		buttonDelete.setText("Delete selection");
 		buttonDelete.addSelectionListener(new SelectionAdapter() {
-
 			@Override
-
 			public void widgetSelected(SelectionEvent e) {
-
 				if (!tableViewer.getSelection()
 						.isEmpty()) {
-
 					IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-
 					// Object firstElement = selection.getFirstElement();
 					Iterator itr = selection.iterator();
 					while (itr.hasNext()) {
@@ -153,13 +157,37 @@ public class CachedLayersTable {
 								e1.printStackTrace();
 							}
 						}
-
 						tableViewer.remove(element);
 					}
 				}
-
 			}
 
+		});
+
+		// ImportPackages button
+		Button btnImport = new Button(parent, SWT.PUSH);
+		btnImport.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false, 1, 1));
+		btnImport.setText("Import Packages");
+		btnImport.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// create new context
+				IEclipseContext wizardCtx = context.createChild();
+
+				wizardCtx.set(ImportableCachePacks.class, new ImportableCachePacks());
+				// create WizardPages via CIF
+				ImportPackageWizardPage1 page1 = ContextInjectionFactory.make(ImportPackageWizardPage1.class, wizardCtx);
+			    wizardCtx.set(ImportPackageWizardPage1.class, page1);
+			    // no context needed for the creation
+			    ImportPackageWizardPage2 page2 = ContextInjectionFactory.make(ImportPackageWizardPage2.class, wizardCtx);
+			    wizardCtx.set(ImportPackageWizardPage2.class, page2);
+			    
+			    ImportPackageWizard wizard = ContextInjectionFactory.make(ImportPackageWizard.class, wizardCtx);
+				
+				WizardDialog dialog = new WizardDialog(display.getActiveShell(), wizard);
+				if (dialog.open() == WizardDialog.OK) {
+				}
+			}
 		});
 
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -220,7 +248,7 @@ public class CachedLayersTable {
 		}
 
 		if (CacheUtil.isSingleDataSet(dir.listFiles())) {
-			Job job = new Job("Read Cached Dataset params "+dir.getAbsolutePath()) {
+			Job job = new Job("Read Cached Dataset params " + dir.getAbsolutePath()) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					synch.asyncExec(new Runnable() {

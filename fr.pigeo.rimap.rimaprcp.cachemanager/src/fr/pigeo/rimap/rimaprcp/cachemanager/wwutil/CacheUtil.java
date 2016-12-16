@@ -61,7 +61,7 @@ public class CacheUtil {
 	 *
 	 * @return {@code true} if {@code s} contains only digits.
 	 */
-	protected static boolean isNumeric(String s) {
+	public static boolean isNumeric(String s) {
 		for (char c : s.toCharArray()) {
 			if (!Character.isDigit(c))
 				return false;
