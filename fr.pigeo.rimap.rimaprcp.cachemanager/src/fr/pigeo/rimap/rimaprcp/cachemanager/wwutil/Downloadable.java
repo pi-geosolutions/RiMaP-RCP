@@ -57,7 +57,7 @@ public class Downloadable {
 	protected Job zipJob;
 	protected boolean cancelZipJob = false;
 
-	protected String b = System.getProperty("line.separator"); //linebreak
+	protected String b = System.getProperty("line.separator"); // linebreak
 
 	public Downloadable(Layer layer, WwjInstance wwj, IEventBroker evtBroker) {
 		super();
@@ -246,9 +246,9 @@ public class Downloadable {
 	}
 
 	public void exportPackage() {
-		// if (canExportPackage()) {
-		evtBroker.post(CacheManagerEventConstants.EXPORT_PACKAGE, this);
-		// }
+		if (canExportPackage()) {
+			evtBroker.post(CacheManagerEventConstants.EXPORT_PACKAGE, this);
+		}
 	}
 
 	public Path getCacheLocation(boolean fullpath) {
@@ -264,8 +264,9 @@ public class Downloadable {
 				.getFirstLevel()
 				.getPath())
 				.getParent();
-		//System.out.println("full cache location path:" + full.toString());
-		//System.out.println("relative cache location path: " + relative.toString());
+		// System.out.println("full cache location path:" + full.toString());
+		// System.out.println("relative cache location path: " +
+		// relative.toString());
 		return fullpath ? full : relative;
 	}
 
@@ -366,10 +367,9 @@ public class Downloadable {
 					URI zipFile = URI.create("jar:file:" + d.getPackageDestination());
 					try (FileSystem zipFileSys = FileSystems.newFileSystem(zipFile, attributes);) {
 						Path src = d.getCacheLocation(true);
-						evtBroker.send(CacheManagerEventConstants.EXPORT_PACKAGE_CONSOLE_MESSAGE,
-								"C=Copying files to Package, E=Exporting file, D=Creating Directory"+b);
 						Files.walkFileTree(src, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
 								new ExtractAndCopyTiles(d, zipFileSys));
+
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -384,11 +384,9 @@ public class Downloadable {
 	}
 
 	public String getConsoleHeader() {
-		String header = "Exporting files "+b 
-							+ "Source directory = " + this.getCacheLocation(true)+b
-							+ "Target directory = " + this.getCacheLocation(false)+b
-							+ " in package file " + this.getPackageDestination()+b
-							+ " Press Proceed to start the export"+b;
+		String header = "Exporting files " + b + "Source directory = " + this.getCacheLocation(true) + b
+				+ "Target directory = " + this.getCacheLocation(false) + b + " in package file "
+				+ this.getPackageDestination() + b + " Press Proceed to start the export" + b;
 		return header;
 	}
 
@@ -397,12 +395,21 @@ public class Downloadable {
 		private Path target;
 		private FileSystem zipFileSys;
 		private Downloadable downloadable;
+		private long totalNbFiles = 0, treatedNbFiles = 0;
+		private int progress = 0;
 
 		public ExtractAndCopyTiles(Downloadable d, FileSystem zipFileSys) {
 			this.source = d.getCacheLocation(true);
 			this.target = d.getCacheLocation(false);
 			this.zipFileSys = zipFileSys;
 			this.downloadable = d;
+			try {
+				Files.walk(source)
+						.forEach(path -> totalNbFiles++);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		@Override
@@ -426,50 +433,51 @@ public class Downloadable {
 		}
 
 		private FileVisitResult copyToZip(Path p) {
-			if (Files.isDirectory(p)) {
-				return FileVisitResult.CONTINUE;
+			treatedNbFiles++;
+			double currentProgress = Math.floor(100 * treatedNbFiles / totalNbFiles);
+			if (currentProgress > progress) {
+				setProgress((int) currentProgress);
 			}
-			if (!downloadable.putThisTileInThePacket(p)) {
-				evtBroker.send(CacheManagerEventConstants.EXPORT_PACKAGE_CONSOLE_MESSAGE,
-						"(E) " + source.relativize(p) + " (off limits)"+b);
-				/*
-				 * System.out.println("Excluding file " + p + " (off limits)");
-				 */
-				return FileVisitResult.CONTINUE;
-			}
-			Path targetInZip = zipFileSys.getPath(target.resolve(source.relativize(p))
-					.toString());
-			try {
-				if (Files.isDirectory(p)) {
-					// create non-already created intermediary directories
-					Files.createDirectories(targetInZip);
-					evtBroker.send(CacheManagerEventConstants.EXPORT_PACKAGE_CONSOLE_MESSAGE,
-							"(D) " + source.relativize(p)+b);
-					/*
-					 * System.out.println(
-					 * "creating directory " + targetInZip + " (in FS " +
-					 * targetInZip.getFileSystem() + ")");
-					 */
+
+			if (!Files.isDirectory(p)) {
+				if (downloadable.putThisTileInThePacket(p)) {
+					Path targetInZip = zipFileSys.getPath(target.resolve(source.relativize(p))
+							.toString());
+					try {
+						if (Files.isDirectory(p)) {
+							// create non-already created intermediary
+							// directories
+							Files.createDirectories(targetInZip);
+							evtBroker.send(CacheManagerEventConstants.EXPORT_PACKAGE_CONSOLE_MESSAGE,
+									"[Create Directory] " + source.relativize(p) + b);
+						} else {
+							// create non-already created intermediary
+							// directories :
+							// due to the filter in the beginning of the
+							// function,
+							// directories will be filtered out
+							Files.createDirectories(targetInZip.getParent());
+							evtBroker.send(CacheManagerEventConstants.EXPORT_PACKAGE_CONSOLE_MESSAGE,
+									"[Copy] " + source.relativize(p)
+											.toString() + b);
+							Files.copy(p, targetInZip, StandardCopyOption.REPLACE_EXISTING);
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				} else {
-					// create non-already created intermediary directories : due
-					// to the filter in the beginning of the function,
-					// directories will be filtered out
-					Files.createDirectories(targetInZip.getParent());
-					evtBroker.send(CacheManagerEventConstants.EXPORT_PACKAGE_CONSOLE_MESSAGE,
-							"(C) " + source.relativize(p)
-									.toString()+b);
-					/*
-					 * System.out.println("copying file " + p + " to " +
-					 * targetInZip.toString() + "(in FS "
-					 * + targetInZip.getFileSystem() + ")");
-					 */
-					Files.copy(p, targetInZip, StandardCopyOption.REPLACE_EXISTING);
+					// evtBroker.send(CacheManagerEventConstants.EXPORT_PACKAGE_CONSOLE_MESSAGE,
+					// "[Exclude] " + source.relativize(p) + " (off limits)" +
+					// b);
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			return FileVisitResult.CONTINUE;
+		}
+
+		private void setProgress(int val) {
+			this.progress = val;
+			evtBroker.send(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE, this.progress);
 		}
 	}
 

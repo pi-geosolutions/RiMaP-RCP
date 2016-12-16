@@ -33,6 +33,11 @@ public class ExportPackageWizard extends Wizard {
 	}
 
 	@Override
+	public boolean canFinish() {
+		return ((getContainer().getCurrentPage()==page2) && page2.canFinish());
+	}
+
+	@Override
 	public boolean performFinish() {
 		// TODO Auto-generated method stub
 		return true;
