@@ -71,6 +71,7 @@ public class ImportPackageWizardPage2 extends WizardPage {
 		progressBar.setMinimum(1);
 
 		ExpandBar expandBar = new ExpandBar(container, SWT.NONE);
+		expandBar.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
 		expandBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		consoleExpandItem = new ExpandItem(expandBar, SWT.NONE);
