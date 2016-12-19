@@ -241,7 +241,10 @@ public class ImportableCachePacks {
 			Path targetFile = resolveZipPath(file);
 			System.out.println("Copying " + targetFile.toAbsolutePath() +" from " +file.toAbsolutePath());
 			if (!(Files.exists(targetFile) && 
-					Files.getLastModifiedTime(file).compareTo(Files.getLastModifiedTime(targetFile))<=0)) {
+					(Files.isDirectory(targetFile) || 
+							Files.getLastModifiedTime(file).compareTo(Files.getLastModifiedTime(targetFile))<=0)
+					)
+				){
 				Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
 				eventBroker.send(CacheManagerEventConstants.IMPORT_PACKAGE_CONSOLE_MESSAGE,
 						"[Copy] " + targetFile
