@@ -35,7 +35,6 @@ public class ExportPackageWizardPage2 extends WizardPage {
 	protected ProgressBar progressBar;
 	protected Composite container;
 	protected ExpandItem consoleExpandItem;
-	protected String log = "";
 	protected boolean exportFinished = false;
 
 	@Inject
@@ -92,14 +91,12 @@ public class ExportPackageWizardPage2 extends WizardPage {
 
 	public void updateConsole() {
 		txtConsole.setText(d.getConsoleHeader());
-		log = d.getConsoleHeader();
 	}
 
 	@Inject
 	@Optional
 	protected void updateConsole(
 			@UIEventTopic(CacheManagerEventConstants.EXPORT_PACKAGE_CONSOLE_MESSAGE) String message) {
-		log += message;
 		if (txtConsole != null && !txtConsole.isDisposed()) {
 			txtConsole.append(message);
 		}
@@ -107,7 +104,7 @@ public class ExportPackageWizardPage2 extends WizardPage {
 
 	@Inject
 	@Optional
-	protected void updateConsole(@UIEventTopic(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE) int progress) {
+	protected void updateProgressBar(@UIEventTopic(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE) int progress) {
 		if (progressBar != null && !progressBar.isDisposed()) {
 			progressBar.setSelection(progress);
 			if (progress == 100) {

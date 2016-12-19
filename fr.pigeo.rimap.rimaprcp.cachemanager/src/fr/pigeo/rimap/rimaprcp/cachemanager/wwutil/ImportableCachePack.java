@@ -26,6 +26,7 @@ public class ImportableCachePack {
 	private Path path;
 	private boolean isWWJCachePack = false, informationsLoaded = false;
 	private String name = "";
+	private long totalNbFiles=0;
 
 	public ImportableCachePack(Path path) {
 		this.path = path.toAbsolutePath();
@@ -38,6 +39,28 @@ public class ImportableCachePack {
 	public String getName() {
 		this.loadInformations();
 		return this.name;
+	}
+	
+	public long getZipFileSize() {
+		try {
+			return Files.size(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public long countFilesInPack() {
+		totalNbFiles=0;
+		try {
+			Files.walk(this.path)
+					.forEach(path -> totalNbFiles++);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return totalNbFiles;
 	}
 
 	public boolean isWWJCachePack() {
@@ -75,7 +98,7 @@ public class ImportableCachePack {
 			this.informationsLoaded = true;
 		}
 	}
-
+	
 	private class GetAndReadXmlFile extends SimpleFileVisitor<Path> {
 		private ImportableCachePack boss;
 		private Path root;

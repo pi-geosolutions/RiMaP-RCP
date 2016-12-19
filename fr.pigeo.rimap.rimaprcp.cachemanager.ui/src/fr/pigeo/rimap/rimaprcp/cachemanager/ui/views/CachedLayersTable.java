@@ -63,6 +63,8 @@ import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.render.SurfacePolygon;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.layout.RowLayout;
 
 public class CachedLayersTable {
 	private TableViewer tableViewer;
@@ -132,11 +134,41 @@ public class CachedLayersTable {
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(cdsList.toArray());
 		this.listCachedLayers();
+		
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
+		rl_composite.fill = true;
+		composite.setLayout(rl_composite);
 
 		// Delete Layer button
-		Button buttonDelete = new Button(parent, SWT.PUSH);
-		buttonDelete.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false, 1, 1));
+		Button buttonDelete = new Button(composite, SWT.PUSH);
 		buttonDelete.setText("Delete selection");
+		
+				// ImportPackages button
+				Button btnImport = new Button(composite, SWT.PUSH);
+				btnImport.setText("Import Packages");
+				btnImport.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// create new context
+						IEclipseContext wizardCtx = context.createChild();
+
+						wizardCtx.set(ImportableCachePacks.class, new ImportableCachePacks(evtBroker));
+						// create WizardPages via CIF
+						ImportPackageWizardPage1 page1 = ContextInjectionFactory.make(ImportPackageWizardPage1.class, wizardCtx);
+					    wizardCtx.set(ImportPackageWizardPage1.class, page1);
+					    // no context needed for the creation
+					    ImportPackageWizardPage2 page2 = ContextInjectionFactory.make(ImportPackageWizardPage2.class, wizardCtx);
+					    wizardCtx.set(ImportPackageWizardPage2.class, page2);
+					    
+					    ImportPackageWizard wizard = ContextInjectionFactory.make(ImportPackageWizard.class, wizardCtx);
+						
+						WizardDialog dialog = new WizardDialog(display.getActiveShell(), wizard);
+						if (dialog.open() == WizardDialog.OK) {
+						}
+					}
+				});
 		buttonDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -162,32 +194,6 @@ public class CachedLayersTable {
 				}
 			}
 
-		});
-
-		// ImportPackages button
-		Button btnImport = new Button(parent, SWT.PUSH);
-		btnImport.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false, 1, 1));
-		btnImport.setText("Import Packages");
-		btnImport.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// create new context
-				IEclipseContext wizardCtx = context.createChild();
-
-				wizardCtx.set(ImportableCachePacks.class, new ImportableCachePacks());
-				// create WizardPages via CIF
-				ImportPackageWizardPage1 page1 = ContextInjectionFactory.make(ImportPackageWizardPage1.class, wizardCtx);
-			    wizardCtx.set(ImportPackageWizardPage1.class, page1);
-			    // no context needed for the creation
-			    ImportPackageWizardPage2 page2 = ContextInjectionFactory.make(ImportPackageWizardPage2.class, wizardCtx);
-			    wizardCtx.set(ImportPackageWizardPage2.class, page2);
-			    
-			    ImportPackageWizard wizard = ContextInjectionFactory.make(ImportPackageWizard.class, wizardCtx);
-				
-				WizardDialog dialog = new WizardDialog(display.getActiveShell(), wizard);
-				if (dialog.open() == WizardDialog.OK) {
-				}
-			}
 		});
 
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {

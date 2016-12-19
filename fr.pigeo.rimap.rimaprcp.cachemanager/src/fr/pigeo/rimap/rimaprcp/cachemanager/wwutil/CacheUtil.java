@@ -1,11 +1,15 @@
 package fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
 
 import java.io.File;
+import java.nio.file.FileSystem;
+import java.nio.file.Path;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 public class CacheUtil {
-
+	public static String linebreak = System.getProperty("line.separator"); // linebreak
+	
+	
 	/*
 	 * Looks for an .xml file to get the dataset definition. 
 	 * If no xml file found, it won't consider this as a dataset
@@ -72,7 +76,9 @@ public class CacheUtil {
 	
     public static String makeSizeDescription(long size)
     {
-        double sizeInMegaBytes = size / 1024 / 1024;
+        double sizeInMegaBytes = ((double)size) / 1024 / 1024;
+        if (sizeInMegaBytes < 1)
+            return String.format("%,.1f KB", sizeInMegaBytes*1024);
         if (sizeInMegaBytes < 1024)
             return String.format("%,.1f MB", sizeInMegaBytes);
         else if (sizeInMegaBytes < 1024 * 1024)

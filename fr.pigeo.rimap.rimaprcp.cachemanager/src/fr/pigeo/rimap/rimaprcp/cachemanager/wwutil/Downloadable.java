@@ -57,7 +57,6 @@ public class Downloadable {
 	protected Job zipJob;
 	protected boolean cancelZipJob = false;
 
-	protected String b = System.getProperty("line.separator"); // linebreak
 
 	public Downloadable(Layer layer, WwjInstance wwj, IEventBroker evtBroker) {
 		super();
@@ -384,6 +383,7 @@ public class Downloadable {
 	}
 
 	public String getConsoleHeader() {
+		String b = CacheUtil.linebreak;
 		String header = "Exporting files " + b + "Source directory = " + this.getCacheLocation(true) + b
 				+ "Target directory = " + this.getCacheLocation(false) + b + " in package file "
 				+ this.getPackageDestination() + b + " Press Proceed to start the export" + b;
@@ -439,6 +439,7 @@ public class Downloadable {
 				setProgress((int) currentProgress);
 			}
 
+			String b = CacheUtil.linebreak;
 			if (!Files.isDirectory(p)) {
 				if (downloadable.putThisTileInThePacket(p)) {
 					Path targetInZip = zipFileSys.getPath(target.resolve(source.relativize(p))
