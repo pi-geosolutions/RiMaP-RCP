@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.cachemanager.events.CacheManagerEventConstants;
+import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.CacheUtil;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.ImportableCachePacks;
 
 public class ImportPackageWizardPage2 extends WizardPage {
@@ -34,6 +35,7 @@ public class ImportPackageWizardPage2 extends WizardPage {
 	protected Text txtConsole;
 	protected ProgressBar progressBar;
 	protected Composite container;
+	protected Button btnProceed;
 	protected ExpandItem consoleExpandItem;
 	protected boolean exportFinished = false;
 	
@@ -49,12 +51,13 @@ public class ImportPackageWizardPage2 extends WizardPage {
 		setControl(container);
 		container.setLayout(new GridLayout(1, false));
 
-		Button btnProceed = new Button(container, SWT.NONE);
+		btnProceed = new Button(container, SWT.NONE);
 		btnProceed.setText("Proceed");
 		btnProceed.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				cachePacks.installPacks();
+				btnProceed.setEnabled(false);
 			}
 		});
 
@@ -80,15 +83,15 @@ public class ImportPackageWizardPage2 extends WizardPage {
 
 		txtConsole = new Text(composite, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
 		txtConsole.setText("");
-		txtConsole.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		txtConsole.setBackground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+		//txtConsole.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		//txtConsole.setBackground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+		//txtConsole.setForeground(SWTResourceManager.getColor(255, 255, 255));
+		//txtConsole.setBackground(SWTResourceManager.getColor(0, 0, 0));
 		consoleExpandItem.setHeight(200);
 		expandBar.computeSize(NONE, NONE, true);
 
 	}
 	
-	public void updateConsole() {
-	}
 
 	@Inject
 	@Optional
@@ -105,7 +108,7 @@ public class ImportPackageWizardPage2 extends WizardPage {
 		if (progressBar != null && !progressBar.isDisposed()) {
 			progressBar.setSelection(progress);
 			if (progress == 100) {
-				String message = "Complete";
+				String message = "Complete"+CacheUtil.linebreak;
 				progressBar.setToolTipText(message);
 				txtConsole.append(message);
 				this.exportFinished = true;
@@ -116,6 +119,7 @@ public class ImportPackageWizardPage2 extends WizardPage {
 	}
 
 	public boolean canFinish() {
+		btnProceed.setEnabled(true);
 		return exportFinished;
 	}
 

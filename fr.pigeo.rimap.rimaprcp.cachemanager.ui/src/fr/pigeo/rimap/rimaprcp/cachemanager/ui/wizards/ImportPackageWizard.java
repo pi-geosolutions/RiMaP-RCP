@@ -22,10 +22,16 @@ public class ImportPackageWizard extends Wizard {
 		addPage(page2);
 	}
 
+
+	@Override
+	public boolean canFinish() {
+		return ((getContainer().getCurrentPage()==page2) && page2.canFinish());
+	}
+	
 	@Override
 	public boolean performFinish() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }

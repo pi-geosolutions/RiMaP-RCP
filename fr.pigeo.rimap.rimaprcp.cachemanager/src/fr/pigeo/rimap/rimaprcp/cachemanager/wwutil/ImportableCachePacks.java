@@ -155,8 +155,7 @@ public class ImportableCachePacks {
 					eventBroker.send(CacheManagerEventConstants.IMPORT_PACKAGE_CONSOLE_MESSAGE,
 							"Importing pack " + pack.getName() + b);
 					try {
-						URI zipFile = URI.create("jar:file:" + pack.getPath()
-								.toString());
+						URI zipFile = CacheUtil.makeURI(pack.getPath());
 						try (FileSystem zipFileSys = FileSystems.newFileSystem(zipFile, new HashMap<>());) {
 							Path src = zipFileSys.getPath("/");
 							Files.walkFileTree(src, new InstallPackFileVisitor(pack, zipFileSys));
@@ -171,6 +170,7 @@ public class ImportableCachePacks {
 					eventBroker.send(CacheManagerEventConstants.IMPORT_PACKAGE_CONSOLE_MESSAGE,
 							"Successfully imported pack " + pack.getName() + b);
 				}
+				eventBroker.send(CacheManagerEventConstants.IMPORT_PACKAGE_PROGRESS_UPDATE, 100);
 				return Status.OK_STATUS;
 			}
 		};
@@ -205,6 +205,8 @@ public class ImportableCachePacks {
 
 	private void setProgress(int val) {
 		this.progress = val;
+
+		System.out.println("Progress " + val);
 		eventBroker.send(CacheManagerEventConstants.IMPORT_PACKAGE_PROGRESS_UPDATE, this.progress);
 	}
 
@@ -228,11 +230,11 @@ public class ImportableCachePacks {
 		@Override
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
 			Path targetFile = resolveZipPath(file);
-			System.out.println("Copying " + targetFile);
-			System.out.println("Modified (source) " + Files.getLastModifiedTime(file));
-			System.out.println("Modified (target) " + Files.getLastModifiedTime(targetFile));
-			if (Files.notExists(targetFile) || 
-					Files.getLastModifiedTime(file).compareTo(Files.getLastModifiedTime(targetFile))>0) {
+			//System.out.println("Copying " + targetFile);
+			//System.out.println("Modified (source) " + Files.getLastModifiedTime(file));
+			//System.out.println("Modified (target) " + Files.getLastModifiedTime(targetFile));
+			if (!(Files.exists(targetFile) && 
+					Files.getLastModifiedTime(file).compareTo(Files.getLastModifiedTime(targetFile))<=0)) {
 				Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
 				eventBroker.send(CacheManagerEventConstants.IMPORT_PACKAGE_CONSOLE_MESSAGE,
 						"[Copy] " + source.relativize(file)

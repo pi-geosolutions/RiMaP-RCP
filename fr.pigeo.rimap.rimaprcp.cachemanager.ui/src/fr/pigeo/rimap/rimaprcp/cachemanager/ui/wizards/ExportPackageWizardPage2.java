@@ -83,8 +83,8 @@ public class ExportPackageWizardPage2 extends WizardPage {
 
 		txtConsole = new Text(composite, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
 		txtConsole.setText(d.getConsoleHeader());
-		txtConsole.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		txtConsole.setBackground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+		//txtConsole.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		//txtConsole.setBackground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 		consoleExpandItem.setHeight(200);
 		expandBar.computeSize(NONE, NONE, true);
 	}

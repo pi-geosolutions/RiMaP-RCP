@@ -1,13 +1,21 @@
 package fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
 
 import java.io.File;
-import java.nio.file.FileSystem;
+import java.net.URI;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 public class CacheUtil {
 	public static String linebreak = System.getProperty("line.separator"); // linebreak
+	
+	public static URI makeURI(Path path) {
+		//hack to make Windows accept the path
+		URI uri = URI.create("jar:file:" + path.toUri().getPath());
+		return uri;
+		
+	}
 	
 	
 	/*

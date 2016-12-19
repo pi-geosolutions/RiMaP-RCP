@@ -53,11 +53,12 @@ public class ImportableCachePack {
 	
 	public long countFilesInPack() {
 		totalNbFiles=0;
-		try {
-			Files.walk(this.path)
-					.forEach(path -> totalNbFiles++);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		//hack to make Windows accept the path
+		URI zipFile = CacheUtil.makeURI(path);
+		try (FileSystem zipFileSys = FileSystems.newFileSystem(zipFile, new HashMap<>());){
+			Path src = zipFileSys.getPath("/");
+			Files.walkFileTree(src, new CountFilesFileVisitor(this));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return totalNbFiles;
@@ -80,7 +81,8 @@ public class ImportableCachePack {
 		if ((!informationsLoaded) || reload) {
 			URI zipFile;
 			try {
-				zipFile = URI.create("jar:file:" + path.toString());
+				//hack to make Windows accept the path
+				zipFile = CacheUtil.makeURI(path);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 				this.isWWJCachePack = false;
@@ -159,5 +161,26 @@ public class ImportableCachePack {
 			return FileVisitResult.CONTINUE;
 		}
 
+	}
+	
+	private class CountFilesFileVisitor extends SimpleFileVisitor<Path> {
+		private ImportableCachePack boss;
+		private Path root;
+
+		public CountFilesFileVisitor(ImportableCachePack boss) {
+			this.boss = boss;
+		}
+
+		@Override
+		public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
+			boss.totalNbFiles++;
+			return FileVisitResult.CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attributes) throws IOException {
+			boss.totalNbFiles++;
+			return FileVisitResult.CONTINUE;
+		}
 	}
 }

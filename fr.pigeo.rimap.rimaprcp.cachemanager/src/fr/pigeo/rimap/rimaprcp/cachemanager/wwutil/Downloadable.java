@@ -363,7 +363,10 @@ public class Downloadable {
 				attributes.put("create", "true");
 				try {
 					String pd = d.getPackageDestination();
-					URI zipFile = URI.create("jar:file:" + d.getPackageDestination());
+					
+					//URI zipFile = URI.create("jar:file:" + d.getPackageDestination());
+					//hack to make Windows accept the path
+					URI zipFile = CacheUtil.makeURI(Paths.get(d.getPackageDestination()));
 					try (FileSystem zipFileSys = FileSystems.newFileSystem(zipFile, attributes);) {
 						Path src = d.getCacheLocation(true);
 						Files.walkFileTree(src, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
