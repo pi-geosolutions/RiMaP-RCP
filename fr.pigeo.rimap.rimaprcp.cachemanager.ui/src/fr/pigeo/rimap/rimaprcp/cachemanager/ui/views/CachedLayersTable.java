@@ -147,7 +147,7 @@ public class CachedLayersTable {
 		
 				// ImportPackages button
 				Button btnImport = new Button(composite, SWT.PUSH);
-				btnImport.setText("Import Packages");
+				btnImport.setText("Import Packs");
 				btnImport.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
