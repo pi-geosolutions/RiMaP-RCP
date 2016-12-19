@@ -229,38 +229,32 @@ public class ImportableCachePacks {
 
 		@Override
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
+			return copy(file);
+		}
+
+		@Override
+		public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attrs) throws IOException {
+			return copy(directory);
+		}
+		
+		public FileVisitResult copy(Path file) throws IOException {
 			Path targetFile = resolveZipPath(file);
-			//System.out.println("Copying " + targetFile);
-			//System.out.println("Modified (source) " + Files.getLastModifiedTime(file));
-			//System.out.println("Modified (target) " + Files.getLastModifiedTime(targetFile));
+			System.out.println("Copying " + targetFile.toAbsolutePath() +" from " +file.toAbsolutePath());
 			if (!(Files.exists(targetFile) && 
 					Files.getLastModifiedTime(file).compareTo(Files.getLastModifiedTime(targetFile))<=0)) {
 				Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
 				eventBroker.send(CacheManagerEventConstants.IMPORT_PACKAGE_CONSOLE_MESSAGE,
-						"[Copy] " + source.relativize(file)
+						"[Copy] " + targetFile
 								.toString() + b);
 			}
 			reportProcessedFile(file);
 			return FileVisitResult.CONTINUE;
 		}
 
-		@Override
-		public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attrs) throws IOException {
-			Path targetDirectory = resolveZipPath(directory);
-			//System.out.println("Copying " + resolveZipPath(directory));
-			if (Files.notExists(targetDirectory)) {
-				Files.copy(directory, targetDirectory);
-				eventBroker.send(CacheManagerEventConstants.IMPORT_PACKAGE_CONSOLE_MESSAGE,
-						"[Copy] " + source.relativize(directory)
-								.toString() + b);
-			}
-			reportProcessedFile(directory);
-			return FileVisitResult.CONTINUE;
-		}
-
 		public Path resolveZipPath(Path p) {
 			Path localPath = pathTransform(this.target.getFileSystem(), p);
-			return Paths.get(this.target.toString(), this.target.resolve(localPath)
+			localPath = Paths.get("/").relativize(localPath);
+			return Paths.get(this.target.resolve(localPath)
 					.toString());
 		}
 
