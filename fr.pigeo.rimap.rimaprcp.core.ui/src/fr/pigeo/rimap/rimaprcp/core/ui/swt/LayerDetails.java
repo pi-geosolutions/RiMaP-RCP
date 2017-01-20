@@ -26,7 +26,6 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.OpacityToScaleConverter;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.ScaleToOpacityConverter;
 import gov.nasa.worldwind.layers.Layer;
-import org.eclipse.swt.events.SelectionAdapter;
 
 public class LayerDetails {
 	protected DataBindingContext m_bindingContext;

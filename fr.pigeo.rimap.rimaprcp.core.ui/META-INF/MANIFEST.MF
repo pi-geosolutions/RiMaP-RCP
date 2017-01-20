@@ -37,7 +37,8 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.104.1",
  fr.pigeo.rimap.rimaprcp.core,
  org.eclipse.core.jobs,
  fr.pigeo.rimap.rimaprcp.core.services.catalog,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.nebula.widgets.pshelf
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0",
