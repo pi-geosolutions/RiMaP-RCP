@@ -46,13 +46,20 @@ public class NodeUtils {
 		Date date = null;
 		if (node.has(tag)) {
 			// parsing lastchange date as Date
+			//Padre v1 date format
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 			String datestr = node.get(tag).asText();
 			try {
 				date = df.parse(datestr);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//Padre v2 date format
+				DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss");
+				try {
+					date = df2.parse(datestr);
+				} catch (ParseException ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
 			}
 		}
 		return date;
