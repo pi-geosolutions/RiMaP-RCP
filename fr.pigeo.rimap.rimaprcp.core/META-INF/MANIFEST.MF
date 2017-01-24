@@ -9,10 +9,13 @@ Export-Package: fr.pigeo.rimap.rimaprcp.core.catalog,
  fr.pigeo.rimap.rimaprcp.core.events,
  fr.pigeo.rimap.rimaprcp.core.resource,
  fr.pigeo.rimap.rimaprcp.core.security,
- fr.pigeo.rimap.rimaprcp.core.wms
+ fr.pigeo.rimap.rimaprcp.core.wms,
+ geocatalog
 Service-Component: OSGI-INF/session-component.xml
 Require-Bundle: fr.pigeo.externals.com.fasterxml.jackson.core,
  org.eclipse.jface,
  gov.nasa.worldwind,
  org.eclipse.osgi,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.e4.core.di.annotations,
+ fr.pigeo.externals.org.apache.commons

@@ -1,73 +1,113 @@
 package fr.pigeo.rimap.rimaprcp.core.ui.swt;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.custom.ScrolledComposite;
 
 public class GeocatSearchForm extends Composite {
-	private Text text;
+	protected Text txtFreeSearch;
+	protected Button btnSearch;
+	protected Button btnReset;
+	protected TabFolder tabFolder;
+	protected  Composite resultsListContainerComposite;
 
 	public GeocatSearchForm(Composite parent, int style) {
-		super(parent, style);
+		super(parent, SWT.NO_BACKGROUND);
 		
 		createControls();	
 	}
 	
 	public void createControls() {
-		setLayout(new GridLayout(2, false));
+		setLayout(new GridLayout(3, false));
 		
-		text = new Text(this, SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
-		Button btnSearch = new Button(this, SWT.NONE);
-		btnSearch.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/magnifier.png"));
-		
-		Composite composite = new Composite(this, SWT.NONE);
-		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
-		rl_composite.spacing = 10;
-		rl_composite.center = true;
-		composite.setLayout(rl_composite);
-		composite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-		
-		Button btnAdvancedSearch = new Button(composite, SWT.TOGGLE);
-		btnAdvancedSearch.setFont(SWTResourceManager.getFont("Sans", 10, SWT.BOLD));
-		btnAdvancedSearch.setText("Advanced Search");
-		btnAdvancedSearch.setSelection(true);
-		
-		Button btnResults = new Button(composite, SWT.TOGGLE);
-		btnResults.setFont(SWTResourceManager.getFont("Sans", 10, SWT.BOLD));
-		btnResults.setToolTipText("");
-		btnResults.setText("Results");
-		
-		Button btnReset = new Button(composite, SWT.NONE);
-		btnReset.setFont(SWTResourceManager.getFont("Sans", 8, SWT.NORMAL));
-		btnReset.setText("Reset");
-		btnReset.setToolTipText("");
-		btnReset.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/cross.png"));
+		Label lblSearch = new Label(this, SWT.NONE);
+		lblSearch.setFont(SWTResourceManager.getFont("Sans", 12, SWT.BOLD));
+		lblSearch.setText("Search:");
+		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
 		
-		Composite composite_1 = new Composite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		composite_1.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		composite_1.setLayout(new GridLayout(1, false));
-		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-		composite_1.setBackgroundMode(SWT.INHERIT_FORCE);
+		txtFreeSearch = new Text(this, SWT.BORDER);
+		txtFreeSearch.setToolTipText("");
+		txtFreeSearch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
-		Group grpGeographicFilter = new Group(composite_1, SWT.NONE);
+		btnSearch = new Button(this, SWT.NONE);
+		btnSearch.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/magnifier.png"));
+		
+		btnReset = new Button(this, SWT.NONE);
+		btnReset.setFont(SWTResourceManager.getFont("Sans", 8, SWT.NORMAL));
+		btnReset.setToolTipText("Reset");
+		btnReset.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/cross.png"));
+		
+
+		tabFolder = new TabFolder(this, SWT.NONE);
+		tabFolder.setSelection(1);
+		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+		
+		TabItem tbtmAdvSearch = new TabItem(tabFolder, SWT.NONE);
+		tbtmAdvSearch.setText("Advanced Search");
+		
+		TabItem tbtmResults = new TabItem(tabFolder, SWT.NONE);
+		tbtmResults.setText("Results");
+		
+		Composite resultsComposite = new Composite(tabFolder, SWT.NONE);
+		tbtmResults.setControl(resultsComposite);
+		resultsComposite.setLayout(new GridLayout(1, false));
+		
+		Composite resultsTopToolbar = new Composite(resultsComposite, SWT.NONE);
+		GridData gd_resultsTopToolbar = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_resultsTopToolbar.heightHint = 30;
+		resultsTopToolbar.setLayoutData(gd_resultsTopToolbar);
+		resultsTopToolbar.setLayout(new RowLayout(SWT.HORIZONTAL));
+		
+		CCombo combo_1 = new CCombo(resultsTopToolbar, SWT.BORDER);
+		combo_1.setLayoutData(new RowData(67, 17));
+		
+		Label label_1 = new Label(resultsTopToolbar, SWT.NONE);
+		label_1.setText("       ");
+		
+		Label lblSortBy = new Label(resultsTopToolbar, SWT.NONE);
+		lblSortBy.setLayoutData(new RowData(SWT.DEFAULT, 20));
+		lblSortBy.setText("Sort by: ");
+		
+		CCombo combo_2 = new CCombo(resultsTopToolbar, SWT.BORDER);
+		
+		Button button = new Button(resultsTopToolbar, SWT.NONE);
+		button.setText("<");
+		
+		Button button_1 = new Button(resultsTopToolbar, SWT.NONE);
+		button_1.setText(">");
+		
+		Label lblResults = new Label(resultsTopToolbar, SWT.NONE);
+		lblResults.setText("Results ");
+		
+		resultsListContainerComposite = new Composite(resultsComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+		resultsListContainerComposite.setLayout(new GridLayout(1, false));
+		resultsListContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		resultsListContainerComposite.setBounds(0, 0, 64, 64);
+		
+				
+		Composite advSearchComposite = new Composite(tabFolder, SWT.BORDER);
+		tbtmAdvSearch.setControl(advSearchComposite);
+		advSearchComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		advSearchComposite.setLayout(new GridLayout(1, false));
+		advSearchComposite.setBackgroundMode(SWT.INHERIT_FORCE);
+		
+		Group grpGeographicFilter = new Group(advSearchComposite, SWT.NONE);
 		grpGeographicFilter.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
 		RowLayout rl_grpGeographicFilter = new RowLayout(SWT.HORIZONTAL);
 		rl_grpGeographicFilter.marginLeft = 10;
@@ -90,7 +130,7 @@ public class GeocatSearchForm extends Composite {
 		CCombo combo = new CCombo(grpGeographicFilter, SWT.BORDER);
 		combo.setItems(new String[] {"Intersection with", "Completely inside of"});
 		
-		Group grpAssociatedResources = new Group(composite_1, SWT.NONE);
+		Group grpAssociatedResources = new Group(advSearchComposite, SWT.NONE);
 		grpAssociatedResources.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
 		FillLayout fl_grpAssociatedResources = new FillLayout(SWT.VERTICAL);
 		fl_grpAssociatedResources.spacing = 3;
@@ -106,7 +146,7 @@ public class GeocatSearchForm extends Composite {
 		Button btnCheckButton_1 = new Button(grpAssociatedResources, SWT.CHECK);
 		btnCheckButton_1.setText("Visualisable data");
 		
-		Group grpFacets = new Group(composite_1, SWT.NONE);
+		Group grpFacets = new Group(advSearchComposite, SWT.BORDER | SWT.SHADOW_IN);
 		grpFacets.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpFacets.setText("Refine Search");
 		grpFacets.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
