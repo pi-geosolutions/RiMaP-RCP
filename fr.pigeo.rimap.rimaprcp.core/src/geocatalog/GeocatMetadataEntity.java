@@ -1,6 +1,7 @@
 package geocatalog;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -11,6 +12,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GeocatMetadataEntity {
+	//Declare global vars
+	protected String IMAGE_THUMBNAIL_ID = "thumbnail";
+	protected String RESPONSIBLE_PARTY_TYPE_ID = "resource";
+	
+	//Variables used for de-serialization of the JSON metadata entry
+	protected String idxError;
 	protected ArrayList<String> responsibleParty;
 	protected ArrayList<String> type;
 	protected String isHarvested;
@@ -199,6 +206,22 @@ public class GeocatMetadataEntity {
 	public ArrayList<String> getResponsibleParty() {
 		return responsibleParty;
 	}
+	public String getFirstResponsibleParty() {
+		Iterator<String> it = responsibleParty.iterator();
+		while (it.hasNext()) {
+			String s = it.next();
+			String[] chunks = s.split("\\|");
+			if (chunks.length>1 && chunks[1].equalsIgnoreCase(this.RESPONSIBLE_PARTY_TYPE_ID)) {
+				if (chunks[2]!="") { //we have an organism name
+					return chunks[2]+"("+chunks[0]+")";
+				} else if (chunks[4]!="") { //we have a person name
+					return chunks[4]+"("+chunks[0]+")";
+				}
+			}
+		}
+		
+		return "";
+	}
 
 	public void setResponsibleParty(Object responsibleParty) {
 		this.responsibleParty = arrayifyString(responsibleParty);
@@ -246,6 +269,18 @@ public class GeocatMetadataEntity {
 
 	public ArrayList<String> getImage() {
 		return image;
+	}
+	
+	public String getImageAsThumbnail() {
+		Iterator<String> it = image.iterator();
+		while (it.hasNext()) {
+			String s = it.next();
+			String[] chunks = s.split("\\|");
+			if (chunks.length>1 && chunks[0].equalsIgnoreCase(this.IMAGE_THUMBNAIL_ID)) {
+				return chunks[1];
+			}
+		}
+		return null;
 	}
 
 	public void setImage(Object image) {
@@ -468,5 +503,13 @@ public class GeocatMetadataEntity {
 			return null;
 		}
 		return arr;
+	}
+
+	public String getIdxError() {
+		return idxError;
+	}
+
+	public void setIdxError(String idxError) {
+		this.idxError = idxError;
 	}
 }

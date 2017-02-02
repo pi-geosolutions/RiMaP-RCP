@@ -17,7 +17,7 @@ public class GeocatSearchResult extends Composite {
 	protected Label lblThumbnail;
 	protected Text txtSummary;
 	protected Label label;
-	protected Label lblOriginator;
+	protected Text lblOriginator;
 	protected Button btnResources;
 	
 	public GeocatSearchResult(Composite parent, int style) {
@@ -27,7 +27,7 @@ public class GeocatSearchResult extends Composite {
 		setLayout(new GridLayout(3, false));
 		
 		GridData gd_mtdPanel = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_mtdPanel.heightHint = 200;
+		gd_mtdPanel.heightHint = 250;
 		this.setLayoutData(gd_mtdPanel);
 		
 		headerComposite = new Composite(this, SWT.NONE);
@@ -48,7 +48,7 @@ public class GeocatSearchResult extends Composite {
 		txtTitle.setToolTipText("WorldClim : Données climatologiques interpolées a haute résolution: température annuelle moyenne - Bio1");
 		txtTitle.setText("WorldClim : Données climatologiques interpolées a haute résolution: température annuelle moyenne - Bio1");
 		
-		lblThumbnail = new Label(this, SWT.NONE);
+		lblThumbnail = new Label(this, SWT.CENTER);
 		GridData gd_lblThumbnail = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_lblThumbnail.widthHint = 100;
 		lblThumbnail.setLayoutData(gd_lblThumbnail);
@@ -57,7 +57,9 @@ public class GeocatSearchResult extends Composite {
 		txtSummary = new Text(this, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 		txtSummary.setFont(SWTResourceManager.getFont("Sans", 8, SWT.NORMAL));
 		txtSummary.setToolTipText("R É S U M É 1ÈRE PARTIE : PRINCIPES DIRECTEURS Introduction Objectifs et structure La rédaction de directives pour des technologies et ap-proches de gestion durable des terres en Afrique subsaha-rienne (ASS) fait partie du programme TerrAfrica de 2009- 2010. L’objectif de ces recommandations et études de cas est de contribuer à créer une cadre pour les investis-sements liés aux pratiques de gestion durable des terres (GDT). Le but est, en particulier, d’identifier, d’analyser, de discuter et de diffuser des pratiques de ");
-		txtSummary.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
+		GridData gd_txtSummary = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_txtSummary.heightHint = 100;
+		txtSummary.setLayoutData(gd_txtSummary);
 		txtSummary.setText("R É S U M É 1ÈRE PARTIE : PRINCIPES DIRECTEURS Introduction Objectifs et structure La rédaction de directives pour des technologies et ap-proches de gestion durable des terres en Afrique subsaha-rienne (ASS) fait partie du programme TerrAfrica de 2009- 2010. L’objectif de ces recommandations et études de cas est de contribuer à créer une cadre pour les investis-sements liés aux pratiques de gestion durable des terres (GDT). Le but est, en particulier, d’identifier, d’analyser, de discuter et de diffuser des pratiques de ");
 		
 		label = new Label(this, SWT.NONE);
@@ -67,9 +69,11 @@ public class GeocatSearchResult extends Composite {
 		label.setLayoutData(gd_label);
 		label.setForeground(SWTResourceManager.getColor(SWT.COLOR_YELLOW));
 		
-		lblOriginator = new Label(this, SWT.WRAP);
+		lblOriginator = new Text(this, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
+		lblOriginator.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
+		lblOriginator.setToolTipText("NEPAD Planning and Coordinating Agency,FAO,WOCAT Secretariat");
 		lblOriginator.setFont(SWTResourceManager.getFont("Sans", 8, SWT.ITALIC));
-		lblOriginator.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
+		lblOriginator.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1));
 		lblOriginator.setText("NEPAD Planning and Coordinating Agency,FAO,WOCAT Secretariat");
 		
 		Composite composite = new Composite(this, SWT.NONE);

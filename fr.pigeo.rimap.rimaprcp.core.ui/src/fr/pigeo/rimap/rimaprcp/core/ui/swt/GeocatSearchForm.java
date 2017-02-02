@@ -25,6 +25,8 @@ public class GeocatSearchForm extends Composite {
 	protected Button btnReset;
 	protected TabFolder tabFolder;
 	protected  Composite resultsListContainerComposite;
+	protected TabItem tbtmResults;
+	protected TabItem tbtmAdvSearch;
 
 	public GeocatSearchForm(Composite parent, int style) {
 		super(parent, SWT.NO_BACKGROUND);
@@ -55,13 +57,12 @@ public class GeocatSearchForm extends Composite {
 		
 
 		tabFolder = new TabFolder(this, SWT.NONE);
-		tabFolder.setSelection(1);
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		
-		TabItem tbtmAdvSearch = new TabItem(tabFolder, SWT.NONE);
+		tbtmAdvSearch = new TabItem(tabFolder, SWT.NONE);
 		tbtmAdvSearch.setText("Advanced Search");
 		
-		TabItem tbtmResults = new TabItem(tabFolder, SWT.NONE);
+		tbtmResults = new TabItem(tabFolder, SWT.NONE);
 		tbtmResults.setText("Results");
 		
 		Composite resultsComposite = new Composite(tabFolder, SWT.NONE);
@@ -95,10 +96,14 @@ public class GeocatSearchForm extends Composite {
 		Label lblResults = new Label(resultsTopToolbar, SWT.NONE);
 		lblResults.setText("Results ");
 		
-		resultsListContainerComposite = new Composite(resultsComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite scrolledComposite = new ScrolledComposite( resultsComposite, SWT.H_SCROLL | SWT.V_SCROLL );
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		resultsListContainerComposite = new Composite(scrolledComposite, SWT.NONE);
 		resultsListContainerComposite.setLayout(new GridLayout(1, false));
 		resultsListContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		resultsListContainerComposite.setBounds(0, 0, 64, 64);
+		scrolledComposite.setContent( resultsListContainerComposite );
 		
 				
 		Composite advSearchComposite = new Composite(tabFolder, SWT.BORDER);

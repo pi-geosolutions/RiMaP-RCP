@@ -28,9 +28,13 @@ public interface RimapConstants {
 	
 	public static String WMS_LEGEND_RELPATH_PREF_TAG  =	"catalog.wms.getlegend.relpath";
 	public static String WMS_LEGEND_RELPATH_PREF_DEFAULT  =	"REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=";
-	
+
+	//Geocatalog-related
 	public static String CATALOG_METADATA_BY_UUID_RELPATH_PREF_TAG  =	"catalog.metadata.relpath";
 	public static String CATALOG_METADATA_BY_UUID_PREF_DEFAULT  =	"/apps/geoportal/index.html?uuid=";
+	
+	public static String CATALOG_RESOURCES_SERVICE_PREF_TAG  =	"catalog.resources.relpath";
+	public static String CATALOG_RESOURCES_SERVICE_PREF_DEFAULT  =	"srv/fre/resources.get?";
 	
 	// WorldWind preferences Tags
 	public static String WW_DEFAULT_PREFERENCE_NODE="fr.pigeo.rimap.rimaprcp.worldwind";

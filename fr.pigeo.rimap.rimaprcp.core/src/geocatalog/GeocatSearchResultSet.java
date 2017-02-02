@@ -18,7 +18,6 @@ public class GeocatSearchResultSet {
 	@JsonProperty("@selected")
 	protected String _selected;
 
-	@JsonIgnore
 	protected Summary summary;
 	
 	protected List<GeocatMetadataEntity> metadata;
@@ -27,6 +26,7 @@ public class GeocatSearchResultSet {
 		metadata = new ArrayList<GeocatMetadataEntity>();
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public class Summary {
 		@JsonProperty("@count")
 		protected String _count;
@@ -76,12 +76,10 @@ public class GeocatSearchResultSet {
 		this._selected = _selected;
 	}
 
-	@JsonIgnore
 	public Summary getSummary() {
 		return summary;
 	}
 
-	@JsonIgnore
 	public void setSummary(Summary summary) {
 		this.summary = summary;
 	}
