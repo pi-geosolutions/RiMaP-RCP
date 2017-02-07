@@ -1,0 +1,10 @@
+#SearchResult Text {
+}
+#SearchResult.hover{
+	background-color: #c1d5ef;
+}
+
+#SearchResult.hover Text {
+	background-color: #c1d5ef;
+}
+
