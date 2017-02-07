@@ -32,9 +32,12 @@ public interface RimapConstants {
 	//Geocatalog-related
 	public static String CATALOG_METADATA_BY_UUID_RELPATH_PREF_TAG  =	"catalog.metadata.relpath";
 	public static String CATALOG_METADATA_BY_UUID_PREF_DEFAULT  =	"/apps/geoportal/index.html?uuid=";
-	
+
 	public static String CATALOG_RESOURCES_SERVICE_PREF_TAG  =	"catalog.resources.relpath";
-	public static String CATALOG_RESOURCES_SERVICE_PREF_DEFAULT  =	"srv/fre/resources.get?";
+	public static String CATALOG_RESOURCES_SERVICE_PREF_DEFAULT  =	"resources.get?";
+	
+	public static String CATALOG_VERSION_PREF_TAG  =	"catalog.version";
+	public static String CATALOG_VERSION_PREF_DEFAULT  =	"3.2";
 	
 	// WorldWind preferences Tags
 	public static String WW_DEFAULT_PREFERENCE_NODE="fr.pigeo.rimap.rimaprcp.worldwind";

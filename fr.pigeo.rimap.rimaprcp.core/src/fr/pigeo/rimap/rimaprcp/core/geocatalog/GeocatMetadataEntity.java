@@ -1,4 +1,4 @@
-package geocatalog;
+package fr.pigeo.rimap.rimaprcp.core.geocatalog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -212,10 +212,10 @@ public class GeocatMetadataEntity {
 			String s = it.next();
 			String[] chunks = s.split("\\|");
 			if (chunks.length>1 && chunks[1].equalsIgnoreCase(this.RESPONSIBLE_PARTY_TYPE_ID)) {
-				if (chunks[2]!="") { //we have an organism name
-					return chunks[2]+"("+chunks[0]+")";
-				} else if (chunks[4]!="") { //we have a person name
-					return chunks[4]+"("+chunks[0]+")";
+				if (!chunks[2].isEmpty()) { //we have an organism name
+					return chunks[2]+" ("+chunks[0]+")";
+				} else if (!chunks[5].isEmpty()) { //we have a person name
+					return chunks[5]+" ("+chunks[0]+")";
 				}
 			}
 		}
@@ -361,6 +361,77 @@ public class GeocatMetadataEntity {
 
 	public ArrayList<String> getGeoBox() {
 		return geoBox;
+	}
+	
+	public ArrayList<GeoBox> getGeoBoxes() {
+		if (geoBox!=null && !geoBox.isEmpty()) {
+			ArrayList<GeoBox> boxes = new ArrayList();
+			Iterator<String> it = geoBox.iterator();
+			while (it.hasNext()) {
+				String s = it.next();
+				//Parse GeoBox String (format W|S|E|N)
+				String[] chunks = s.split("\\|");
+				GeoBox box  = new GeoBox(Double.parseDouble(chunks[3]),
+											Double.parseDouble(chunks[2]),
+											Double.parseDouble(chunks[1]),
+											Double.parseDouble(chunks[0]));
+				boxes.add(box);
+			}
+			return boxes;
+		}
+		return null;
+	}
+	
+	public GeoBox getFirstGeoBox() {
+		ArrayList<GeoBox> boxes = getGeoBoxes();
+		if (boxes==null) {
+			return null;
+		}
+		return boxes.get(0);
+	}
+	
+	public class GeoBox {
+		private double North, East, West, South;
+		
+		public GeoBox(double n, double e, double s, double w) {
+			this.North = n;
+			this.East = e;
+			this.South = s;
+			this.West = w;
+		}
+
+		public double getNorth() {
+			return North;
+		}
+
+		public void setNorth(double north) {
+			North = north;
+		}
+
+		public double getEast() {
+			return East;
+		}
+
+		public void setEast(double east) {
+			East = east;
+		}
+
+		public double getWest() {
+			return West;
+		}
+
+		public void setWest(double west) {
+			West = west;
+		}
+
+		public double getSouth() {
+			return South;
+		}
+
+		public void setSouth(double south) {
+			South = south;
+		}
+		
 	}
 
 	public void setGeoBox(Object geoBox) {

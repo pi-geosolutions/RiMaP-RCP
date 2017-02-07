@@ -44,6 +44,7 @@ public class GeocatSearchForm extends Composite {
 		new Label(this, SWT.NONE);
 		
 		txtFreeSearch = new Text(this, SWT.BORDER);
+		txtFreeSearch.setText("population");
 		txtFreeSearch.setToolTipText("");
 		txtFreeSearch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		

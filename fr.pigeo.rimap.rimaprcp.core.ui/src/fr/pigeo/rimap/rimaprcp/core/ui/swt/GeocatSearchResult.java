@@ -16,15 +16,19 @@ public class GeocatSearchResult extends Composite {
 	protected Text txtTitle;
 	protected Label lblThumbnail;
 	protected Text txtSummary;
-	protected Label label;
+	protected Label lblColorHint;
 	protected Text lblOriginator;
 	protected Button btnResources;
+	protected Button btnOpenMTD;
 	
 	public GeocatSearchResult(Composite parent, int style) {
 		super(parent, SWT.NONE);
 		setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		setBackgroundMode(SWT.INHERIT_FORCE);
 		setLayout(new GridLayout(3, false));
+		
+		this.setData("org.eclipse.e4.ui.css.id", "SearchResult");
+
 		
 		GridData gd_mtdPanel = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_mtdPanel.heightHint = 250;
@@ -33,7 +37,7 @@ public class GeocatSearchResult extends Composite {
 		headerComposite = new Composite(this, SWT.NONE);
 		headerComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 		headerComposite.setBackgroundMode(SWT.INHERIT_FORCE);
-		headerComposite.setLayout(new GridLayout(2, false));
+		headerComposite.setLayout(new GridLayout(3, false));
 		headerComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
 		btnCheck = new Button(headerComposite, SWT.CHECK);
@@ -47,6 +51,11 @@ public class GeocatSearchResult extends Composite {
 		txtTitle.setEditable(false);
 		txtTitle.setToolTipText("WorldClim : Données climatologiques interpolées a haute résolution: température annuelle moyenne - Bio1");
 		txtTitle.setText("WorldClim : Données climatologiques interpolées a haute résolution: température annuelle moyenne - Bio1");
+		
+		btnOpenMTD = new Button(headerComposite, SWT.NONE);
+		btnOpenMTD.setToolTipText("Open Full Metadata Window");
+		btnOpenMTD.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		btnOpenMTD.setText("->");
 		
 		lblThumbnail = new Label(this, SWT.CENTER);
 		GridData gd_lblThumbnail = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -62,12 +71,12 @@ public class GeocatSearchResult extends Composite {
 		txtSummary.setLayoutData(gd_txtSummary);
 		txtSummary.setText("R É S U M É 1ÈRE PARTIE : PRINCIPES DIRECTEURS Introduction Objectifs et structure La rédaction de directives pour des technologies et ap-proches de gestion durable des terres en Afrique subsaha-rienne (ASS) fait partie du programme TerrAfrica de 2009- 2010. L’objectif de ces recommandations et études de cas est de contribuer à créer une cadre pour les investis-sements liés aux pratiques de gestion durable des terres (GDT). Le but est, en particulier, d’identifier, d’analyser, de discuter et de diffuser des pratiques de ");
 		
-		label = new Label(this, SWT.NONE);
-		label.setBackground(SWTResourceManager.getColor(SWT.COLOR_RED));
-		GridData gd_label = new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1);
-		gd_label.widthHint = 5;
-		label.setLayoutData(gd_label);
-		label.setForeground(SWTResourceManager.getColor(SWT.COLOR_YELLOW));
+		lblColorHint = new Label(this, SWT.NONE);
+		lblColorHint.setBackground(SWTResourceManager.getColor(SWT.COLOR_RED));
+		GridData gd_lblColorHint = new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1);
+		gd_lblColorHint.widthHint = 5;
+		lblColorHint.setLayoutData(gd_lblColorHint);
+		lblColorHint.setForeground(SWTResourceManager.getColor(SWT.COLOR_YELLOW));
 		
 		lblOriginator = new Text(this, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 		lblOriginator.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));

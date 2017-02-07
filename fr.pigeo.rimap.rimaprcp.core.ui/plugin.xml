@@ -21,6 +21,10 @@
                name="lifeCycleURI"
                value="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.lifecycle.LifeCycleManager">
          </property>
+         <property
+               name="applicationCSS"
+               value="platform:/plugin/fr.pigeo.rimap.rimaprcp.core.ui/css/default.css">
+         </property>
       </product>
    </extension>
    <extension

@@ -10,7 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.GeocatSearchFormImpl;
-import geocatalog.GeocatSearchTools;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchTools;
 
 public class geocatalogue {
 	@Inject

@@ -2,21 +2,33 @@ package fr.pigeo.rimap.rimaprcp.core.ui.swt;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import geocatalog.GeocatMetadataEntity;
-import geocatalog.GeocatSearchTools;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity.GeoBox;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchTools;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.render.BasicShapeAttributes;
+import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.ShapeAttributes;
+import gov.nasa.worldwind.render.SurfacePolygon;
 
 public class GeocatSearchResultImpl extends GeocatSearchResult {
 	private GeocatSearchTools searchTools;
 	private Image thumbnail;
+	private GeocatMetadataEntity entity;
+	private SurfacePolygon polygon=null;
 
 	public GeocatSearchResultImpl(Composite parent, int style) {
 		super(parent, style);
@@ -26,15 +38,37 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 	public GeocatSearchResultImpl(GeocatMetadataEntity entity, GeocatSearchTools searchTools, Composite parent,
 			int style) {
 		super(parent, style);
-		this.searchTools = searchTools;
-		load(entity);
+		load(entity, searchTools);
 	}
 
 	/*
 	 * Loads values from the GeocatMetadataEntity into the form fields
 	 */
-	public void load(GeocatMetadataEntity entity) {
+	public void load(GeocatMetadataEntity entity, GeocatSearchTools searchTools) {
+		this.searchTools = searchTools;
+		this.entity = entity;
 		this.setTitle(entity.getDefaultTitle());
+		/*
+		 * this.txtTitle.addMouseListener(new MouseAdapter() {
+		 * 
+		 * @Override
+		 * public void mouseUp(MouseEvent e) {
+		 * String mtdLink =
+		 * "http://ne-risk.pigeo.fr/geonetwork/srv/fre/md.viewer#/pigeo_simple_view/183";
+		 * Program.launch(mtdLink);
+		 * }
+		 * 
+		 * });
+		 */
+		this.btnOpenMTD.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String mtdLink = "http://ne-risk.pigeo.fr/geonetwork/srv/fre/md.viewer#/pigeo_simple_view/"
+						+ entity.get_geonet_info()
+								.getId();
+				Program.launch(mtdLink);
+			}
+		});
 		this.setSummary(entity.get_abstract());
 		this.setOriginator(entity.getFirstResponsibleParty());
 		// set thumbnail
@@ -42,7 +76,7 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 		String mtdid = entity.get_geonet_info()
 				.getId();
 		if (tn != null && mtdid != null && searchTools != null) {
-			String url = searchTools.getResourcesServicePath() + "fname=" + tn + "&access=public&id=" + mtdid;
+			String url = searchTools.getFullResourcesServicePath() + "fname=" + tn + "&access=public&id=" + mtdid;
 			this.setThumbnail(url);
 		}
 	}
@@ -101,6 +135,47 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 			image.dispose();
 		}
 		return scaled;
+	}
+
+	public SurfacePolygon getPolygon(java.awt.Color color) {
+		if (this.polygon!=null) {
+			return polygon;
+		}
+		if (this.entity.getGeoBox() != null && !this.entity.getGeoBox()
+				.isEmpty()) {
+			//update color hint int the panel
+			this.lblColorHint.setBackground(
+					SWTResourceManager.getColor(color.getRed(), color.getGreen(), color.getBlue()));
+			
+			GeoBox box = this.entity.getFirstGeoBox();
+			
+			ArrayList<LatLon> surfaceLinePositions = new ArrayList<LatLon>();
+			surfaceLinePositions.add(LatLon.fromDegrees(box.getNorth(), box.getEast()));
+			surfaceLinePositions.add(LatLon.fromDegrees(box.getNorth(), box.getWest()));
+			surfaceLinePositions.add(LatLon.fromDegrees(box.getSouth(), box.getWest()));
+			surfaceLinePositions.add(LatLon.fromDegrees(box.getSouth(), box.getEast()));
+			surfaceLinePositions.add(LatLon.fromDegrees(box.getNorth(), box.getEast()));
+
+			// define apparence
+			ShapeAttributes attr = new BasicShapeAttributes();
+			attr.setOutlineWidth(2.0);
+			attr.setOutlineOpacity(1);
+			attr.setOutlineMaterial(new Material(color));
+			attr.setEnableAntialiasing(true);
+			attr.setDrawInterior(false);
+			
+			ShapeAttributes highlightAttributes = new BasicShapeAttributes(attr);
+			highlightAttributes.setInteriorOpacity(0.3);
+			highlightAttributes.setInteriorMaterial(attr.getOutlineMaterial());
+			highlightAttributes.setDrawInterior(true);
+
+			// create poly & add to WWJ
+			this.polygon = new SurfacePolygon(attr, surfaceLinePositions);
+			polygon.setHighlightAttributes(highlightAttributes);
+			
+			return polygon;
+		}
+		return null;
 	}
 
 	@Override
