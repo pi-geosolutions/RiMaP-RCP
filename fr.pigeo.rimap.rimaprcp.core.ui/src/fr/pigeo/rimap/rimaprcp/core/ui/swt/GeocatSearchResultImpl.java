@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.program.Program;
@@ -28,7 +29,10 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity.GeoBox;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchTools;
+import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
+import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.ShapeAttributes;
@@ -36,11 +40,12 @@ import gov.nasa.worldwind.render.SurfacePolygon;
 
 public class GeocatSearchResultImpl extends GeocatSearchResult {
 	private GeocatSearchTools searchTools;
+	private WwjInstance wwjInst;
+	private IEclipseContext context;
 	private Image thumbnail;
 	private GeocatMetadataEntity entity;
 	private SurfacePolygon polygon = null;
 	private Color highlightColor = SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-	
 
 	private enum LinkMode {
 		HTTP, WMS, GOOGLE_EARTH
@@ -51,9 +56,12 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 		// TODO Auto-generated constructor stub
 	}
 
-	public GeocatSearchResultImpl(GeocatMetadataEntity entity, GeocatSearchTools searchTools, Composite parent,
-			int style) {
+	public GeocatSearchResultImpl(GeocatMetadataEntity entity, 
+			GeocatSearchTools searchTools, WwjInstance wwjInst, 
+			IEclipseContext context, Composite parent, int style) {
 		super(parent, style);
+		this.wwjInst = wwjInst;
+		this.context=context;
 		load(entity, searchTools);
 	}
 
@@ -99,18 +107,25 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 		// configure buttons
 		// Links button
 		// Java 8 way of copying with filter
-		List<String> links = entity.getLink()
-				.stream()
-				.filter(s -> s.contains("WWW:LINK"))
-				.collect(Collectors.toList());
-		configureButton(this.btnLinks, links, LinkMode.HTTP, "icons/link-dropdown.png");
+		List<String> onlineResources = entity.getLink();
+		if (onlineResources != null) {
+			List<String> links = onlineResources.stream()
+					.filter(s -> s.contains("WWW:LINK"))
+					.collect(Collectors.toList());
+			configureButton(this.btnLinks, links, LinkMode.HTTP, "icons/link-dropdown.png");
 
-		// download button
-		List<String> downloads = entity.getLink()
-				.stream()
-				.filter(s -> s.contains("WWW:DOWNLOAD"))
-				.collect(Collectors.toList());
-		configureButton(this.btnDownloads, downloads, LinkMode.HTTP, "icons/download-dropdown.png");
+			// download button
+			List<String> downloads = onlineResources.stream()
+					.filter(s -> s.contains("WWW:DOWNLOAD"))
+					.collect(Collectors.toList());
+			configureButton(this.btnDownloads, downloads, LinkMode.HTTP, "icons/download-dropdown.png");
+			
+			// interactive map button
+			List<String> maps = onlineResources.stream()
+					.filter(s -> s.contains("OGC:WMS"))
+					.collect(Collectors.toList());
+			configureButton(this.btnMap, maps, LinkMode.WMS, "icons/globe-dropdown.png");
+		}
 
 	}
 
@@ -125,7 +140,7 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 			String[] chunks = elt.split("\\|");
 			String desc = chunks[1].length() != 0 ? chunks[1] : chunks[0];
 			btn.setToolTipText(desc);
-			btn.addSelectionListener(new ResourceButtonSelectionListener(chunks, mode));
+			btn.addSelectionListener(new ResourceButtonSelectionListener(chunks, mode, entity, context));
 		} else {
 			btn.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", multipleValuesIconPath));
 			btn.addSelectionListener(new SelectionAdapter() {
@@ -139,7 +154,7 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 						String desc = chunks[1].length() != 0 ? chunks[1] : chunks[0];
 						MenuItem item = new MenuItem(menu, SWT.PUSH);
 						item.setText(desc);
-						item.addSelectionListener(new ResourceButtonSelectionListener(chunks, mode));
+						item.addSelectionListener(new ResourceButtonSelectionListener(chunks, mode, entity, context));
 					});
 					Point loc = btn.getLocation();
 					Rectangle rect = btn.getBounds();
@@ -159,9 +174,14 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 	private class ResourceButtonSelectionListener extends SelectionAdapter {
 		private LinkMode mode;
 		private String[] chunks;
-		public ResourceButtonSelectionListener(String[] chunks, LinkMode mode) {
+		private IEclipseContext context;
+		private GeocatMetadataEntity mtdEntity;
+
+		public ResourceButtonSelectionListener(String[] chunks, LinkMode mode, GeocatMetadataEntity mtdEntity, IEclipseContext context) {
 			this.mode = mode;
 			this.chunks = chunks;
+			this.context=context;
+			this.mtdEntity = mtdEntity;
 		}
 
 		@Override
@@ -171,12 +191,39 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 				// TODO : implement ?
 				break;
 			case WMS:
-				// TODO : implement
+				String description = chunks[1].length() != 0 ? chunks[1] : chunks[0];
+				String layername = chunks[1].length() != 0 ? chunks[0] : extractNameFromURL(chunks);
+				String url = chunks[2].split("\\?")[0];
+				
+				if (context!=null) {
+					WmsNode layer = ContextInjectionFactory.make(WmsNode.class, context);
+					layer.setName(description);
+					layer.setLayers(layername);
+					layer.setUrl(url);
+					layer.setMetadata_uuid(mtdEntity.get_geonet_info().getUuid());
+					layer.setChecked(true);
+					Layer wwjLayer = layer.getLayer();
+					wwjInst.addLayer(wwjLayer);
+				}
 				break;
 			case HTTP:
 			default:
 				Program.launch(chunks[2]);
 			}
+		}
+
+		private String extractNameFromURL(String[] chunkss) {
+			String name=chunkss[0];
+			String[] url_split = chunkss[2].split("\\?");
+			if (url_split.length>1 && url_split[1].length()>0) {
+				for (String s:  url_split[1].split("\\&")) {
+					if (s.startsWith("layers=")) {
+						name= s.split("=")[1];
+						break;
+					}
+				}
+			}
+			return name;
 		}
 	}
 

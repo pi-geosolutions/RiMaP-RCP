@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
@@ -53,6 +55,9 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 
 	@Inject
 	WwjInstance wwjInst;
+	
+	@Inject
+	IEclipseContext context;
 
 	public GeocatSearchFormImpl(Composite parent, int style) {
 		super(parent, style);
@@ -143,7 +148,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			while (it.hasNext()) {
 				GeocatMetadataEntity mtd = it.next();
 				if (mtd.getIdxError() == null) {
-					GeocatSearchResultImpl mtdPanel = new GeocatSearchResultImpl(mtd, searchTools,
+					GeocatSearchResultImpl mtdPanel = new GeocatSearchResultImpl(mtd, searchTools, wwjInst, context, 
 							resultsListContainerComposite, SWT.NONE);
 					currentResultsPanels.add(mtdPanel);
 					SurfacePolygon poly = mtdPanel.getPolygon(this.colorPalette[idx]);
@@ -153,6 +158,15 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 						public void handleEvent(Event event) {
 							setHighlighted(mtdPanel);
 							setHighlightedPolygon(poly);
+							wwjInst.getWwd()
+									.redraw();
+						}
+					});
+					mtdPanel.addListener(SWT.MouseExit, new Listener() {
+						@Override
+						public void handleEvent(Event event) {
+							setHighlighted(null);
+							setHighlightedPolygon(null);
 							wwjInst.getWwd()
 									.redraw();
 						}

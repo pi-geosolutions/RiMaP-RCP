@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.swt.graphics.Image;
@@ -30,7 +31,6 @@ import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 
@@ -78,6 +78,7 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 
 	// Custom injected resource
 	@Inject
+	@Optional
 	PadreCatalogState catalogState;
 
 	@Inject
@@ -135,9 +136,7 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 			if (this.checked) {
 				catalogState.addCheckedNode(this);
 			}
-		} else {
-			logger.error("catalogState context var is null");
-		}
+		} 
 
 		if (prefsService != null) {
 			this.detailhint = prefsService.getDouble(RimapConstants.WW_DEFAULT_PREFERENCE_NODE,
