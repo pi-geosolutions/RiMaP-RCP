@@ -3,6 +3,8 @@ package fr.pigeo.rimap.rimaprcp.core.ui.swt;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -10,9 +12,17 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
@@ -28,7 +38,13 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 	private GeocatSearchTools searchTools;
 	private Image thumbnail;
 	private GeocatMetadataEntity entity;
-	private SurfacePolygon polygon=null;
+	private SurfacePolygon polygon = null;
+	private Color highlightColor = SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+	
+
+	private enum LinkMode {
+		HTTP, WMS, GOOGLE_EARTH
+	};
 
 	public GeocatSearchResultImpl(Composite parent, int style) {
 		super(parent, style);
@@ -79,11 +95,94 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 			String url = searchTools.getFullResourcesServicePath() + "fname=" + tn + "&access=public&id=" + mtdid;
 			this.setThumbnail(url);
 		}
+
+		// configure buttons
+		// Links button
+		// Java 8 way of copying with filter
+		List<String> links = entity.getLink()
+				.stream()
+				.filter(s -> s.contains("WWW:LINK"))
+				.collect(Collectors.toList());
+		configureButton(this.btnLinks, links, LinkMode.HTTP, "icons/link-dropdown.png");
+
+		// download button
+		List<String> downloads = entity.getLink()
+				.stream()
+				.filter(s -> s.contains("WWW:DOWNLOAD"))
+				.collect(Collectors.toList());
+		configureButton(this.btnDownloads, downloads, LinkMode.HTTP, "icons/download-dropdown.png");
+
+	}
+
+	private void configureButton(Button btn, List<String> list, LinkMode mode, String multipleValuesIconPath) {
+		if (list == null || list.isEmpty()) {
+			// btn.setVisible(false); //hide but keep occupied space
+			btn.dispose();
+			return;
+		}
+		if (list.size() == 1) {
+			String elt = list.get(0);
+			String[] chunks = elt.split("\\|");
+			String desc = chunks[1].length() != 0 ? chunks[1] : chunks[0];
+			btn.setToolTipText(desc);
+			btn.addSelectionListener(new ResourceButtonSelectionListener(chunks, mode));
+		} else {
+			btn.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", multipleValuesIconPath));
+			btn.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					super.widgetSelected(e);
+					Shell shell = btn.getShell();
+					Menu menu = new Menu(shell, SWT.POP_UP);
+					list.forEach(s -> {
+						String[] chunks = s.split("\\|");
+						String desc = chunks[1].length() != 0 ? chunks[1] : chunks[0];
+						MenuItem item = new MenuItem(menu, SWT.PUSH);
+						item.setText(desc);
+						item.addSelectionListener(new ResourceButtonSelectionListener(chunks, mode));
+					});
+					Point loc = btn.getLocation();
+					Rectangle rect = btn.getBounds();
+
+					Point mLoc = new Point(loc.x - 1, loc.y + rect.height);
+
+					menu.setLocation(shell.getDisplay()
+							.map(btn.getParent(), null, mLoc));
+
+					menu.setVisible(true);
+				}
+			});
+		}
+
+	}
+
+	private class ResourceButtonSelectionListener extends SelectionAdapter {
+		private LinkMode mode;
+		private String[] chunks;
+		public ResourceButtonSelectionListener(String[] chunks, LinkMode mode) {
+			this.mode = mode;
+			this.chunks = chunks;
+		}
+
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			switch (mode) {
+			case GOOGLE_EARTH:
+				// TODO : implement ?
+				break;
+			case WMS:
+				// TODO : implement
+				break;
+			case HTTP:
+			default:
+				Program.launch(chunks[2]);
+			}
+		}
 	}
 
 	public void setTitle(String title) {
 		this.txtTitle.setText(title);
-		this.txtTitle.setToolTipText(title);
+		// this.txtTitle.setToolTipText(title);
 	}
 
 	public void setSummary(String sum) {
@@ -137,18 +236,22 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 		return scaled;
 	}
 
+	public SurfacePolygon getPolygon() {
+		return this.getPolygon(java.awt.Color.YELLOW);
+	}
+
 	public SurfacePolygon getPolygon(java.awt.Color color) {
-		if (this.polygon!=null) {
+		if (this.polygon != null) {
 			return polygon;
 		}
 		if (this.entity.getGeoBox() != null && !this.entity.getGeoBox()
 				.isEmpty()) {
-			//update color hint int the panel
-			this.lblColorHint.setBackground(
-					SWTResourceManager.getColor(color.getRed(), color.getGreen(), color.getBlue()));
-			
+			// update color hint int the panel
+			this.lblColorHint
+					.setBackground(SWTResourceManager.getColor(color.getRed(), color.getGreen(), color.getBlue()));
+
 			GeoBox box = this.entity.getFirstGeoBox();
-			
+
 			ArrayList<LatLon> surfaceLinePositions = new ArrayList<LatLon>();
 			surfaceLinePositions.add(LatLon.fromDegrees(box.getNorth(), box.getEast()));
 			surfaceLinePositions.add(LatLon.fromDegrees(box.getNorth(), box.getWest()));
@@ -163,7 +266,7 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 			attr.setOutlineMaterial(new Material(color));
 			attr.setEnableAntialiasing(true);
 			attr.setDrawInterior(false);
-			
+
 			ShapeAttributes highlightAttributes = new BasicShapeAttributes(attr);
 			highlightAttributes.setInteriorOpacity(0.3);
 			highlightAttributes.setInteriorMaterial(attr.getOutlineMaterial());
@@ -172,16 +275,29 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 			// create poly & add to WWJ
 			this.polygon = new SurfacePolygon(attr, surfaceLinePositions);
 			polygon.setHighlightAttributes(highlightAttributes);
-			
+
 			return polygon;
 		}
 		return null;
+	}
+
+	public void setHighlighted(boolean highlight) {
+		Color color;
+		if (highlight) {
+			color = this.highlightColor;
+		} else {
+			color = SWTResourceManager.getColor(SWT.COLOR_WHITE);
+		}
+		this.setBackground(color);
+		this.txtSummary.setBackground(color);
+		this.lblOriginator.setBackground(color);
 	}
 
 	@Override
 	public void dispose() {
 		if (this.thumbnail != null)
 			this.thumbnail.dispose();
+		highlightColor.dispose();
 		super.dispose();
 	}
 

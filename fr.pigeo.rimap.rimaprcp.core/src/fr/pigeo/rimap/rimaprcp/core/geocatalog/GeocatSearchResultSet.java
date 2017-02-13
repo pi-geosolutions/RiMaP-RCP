@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GeocatSearchResultSet {
+	protected Exception exception;
+	
 	@JsonProperty("@from")
 	protected String _from;
 
@@ -23,6 +25,10 @@ public class GeocatSearchResultSet {
 	
 	public GeocatSearchResultSet() {
 		metadata = new ArrayList<GeocatMetadataEntity>();
+	}
+	
+	public GeocatSearchResultSet(Exception exception) {
+		this.exception = exception;
 	}
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -90,5 +96,18 @@ public class GeocatSearchResultSet {
 	public void setMetadata(List<GeocatMetadataEntity> metadata) {
 		this.metadata = metadata;
 	}
+
+	public Exception getException() {
+		return exception;
+	}
+	
+	public boolean hadException() {
+		return (exception!=null);
+	}
+
+	public void setException(Exception exception) {
+		this.exception = exception;
+	}
+
 
 }

@@ -1,6 +1,7 @@
 package fr.pigeo.rimap.rimaprcp.core.ui.swt;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,13 +20,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchResultSet;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchTools;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.SurfacePolygon;
 
 public class GeocatSearchFormImpl extends GeocatSearchForm {
@@ -39,15 +40,14 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	private SimpleContentProposalProvider scp = new SimpleContentProposalProvider(defaultProposals);
 
 	private RenderableLayer searchResultsRenderableLayer;
-	private java.awt.Color[] colorPalette = {
-			Color.white, Color.magenta, Color.green, Color.blue, Color.gray, 
-			Color.orange, Color.cyan, Color.red, Color.yellow, Color.lightGray, Color.pink,
-			Color.white, Color.magenta, Color.green, Color.blue, Color.gray, 
-			Color.orange, Color.cyan, Color.red, Color.yellow, Color.lightGray, Color.pink,
-			Color.white, Color.magenta, Color.green, Color.blue, Color.gray, 
-			Color.orange, Color.cyan, Color.red, Color.yellow, Color.lightGray, Color.pink
-	};
+	private java.awt.Color[] colorPalette = { Color.white, Color.magenta, Color.green, Color.blue, Color.gray,
+			Color.orange, Color.cyan, Color.red, Color.yellow, Color.lightGray, Color.pink, Color.white, Color.magenta,
+			Color.green, Color.blue, Color.gray, Color.orange, Color.cyan, Color.red, Color.yellow, Color.lightGray,
+			Color.pink, Color.white, Color.magenta, Color.green, Color.blue, Color.gray, Color.orange, Color.cyan,
+			Color.red, Color.yellow, Color.lightGray, Color.pink };
 
+	private List<GeocatSearchResultImpl> currentResultsPanels = new ArrayList<GeocatSearchResultImpl>();
+	
 	@Inject
 	GeocatSearchTools searchTools;
 
@@ -108,6 +108,26 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 
 		GeocatSearchResultSet resultSet = searchTools.search(text);
 		if (resultSet != null) {
+			if (resultSet.hadException()) {
+				if (searchResultsRenderableLayer != null) {
+					searchResultsRenderableLayer.removeAllRenderables();
+				}
+				Text txtError = new Text(resultsListContainerComposite, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
+				txtError.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
+				txtError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+				txtError.setFont(SWTResourceManager.getFont("Sans", 12, SWT.ITALIC|SWT.BOLD));
+				txtError.setText(resultSet.getException().getClass().getName() +" : \n"+resultSet.getException().getLocalizedMessage());
+				Text txtErrorFull = new Text(resultsListContainerComposite, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
+				txtErrorFull.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
+				txtErrorFull.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+				txtErrorFull.setFont(SWTResourceManager.getFont("Sans", 7, SWT.ITALIC));
+				txtErrorFull.setText(GeocatSearchTools.stackTraceToString(resultSet.getException()));
+				resultsListContainerComposite.pack();
+
+				tabFolder.setSelection(this.tbtmResults);
+				return;
+			}
+
 			if (this.searchResultsRenderableLayer == null) {
 				searchResultsRenderableLayer = new RenderableLayer();
 				searchResultsRenderableLayer.setName("Search Results");
@@ -115,20 +135,23 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			} else {
 				searchResultsRenderableLayer.removeAllRenderables();
 			}
+			this.currentResultsPanels.clear();
 
 			List<GeocatMetadataEntity> metadata = resultSet.getMetadata();
 			Iterator<GeocatMetadataEntity> it = metadata.iterator();
-			int idx=0;
+			int idx = 0;
 			while (it.hasNext()) {
 				GeocatMetadataEntity mtd = it.next();
 				if (mtd.getIdxError() == null) {
 					GeocatSearchResultImpl mtdPanel = new GeocatSearchResultImpl(mtd, searchTools,
 							resultsListContainerComposite, SWT.NONE);
+					currentResultsPanels.add(mtdPanel);
 					SurfacePolygon poly = mtdPanel.getPolygon(this.colorPalette[idx]);
 					searchResultsRenderableLayer.addRenderable(poly);
 					mtdPanel.addListener(SWT.MouseEnter, new Listener() {
 						@Override
 						public void handleEvent(Event event) {
+							setHighlighted(mtdPanel);
 							setHighlightedPolygon(poly);
 							wwjInst.getWwd()
 									.redraw();
@@ -173,6 +196,13 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				.redrawNow();
 		resultsListContainerComposite.setSize(resultsListContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		resultsListContainerComposite.layout();
+	}
+
+	protected void setHighlighted(GeocatSearchResultImpl searchres) {
+		this.currentResultsPanels.forEach(panel -> {
+			panel.setHighlighted(panel == searchres);
+		});
+
 	}
 
 	protected void setHighlightedPolygon(SurfacePolygon poly) {
