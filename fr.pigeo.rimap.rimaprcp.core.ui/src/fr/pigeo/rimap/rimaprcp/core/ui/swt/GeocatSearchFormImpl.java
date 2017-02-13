@@ -100,7 +100,19 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			public void widgetSelected(SelectionEvent e) {
 				txtFreeSearch.setText("");
 			}
+		});
 
+		resultsListContainerComposite.addListener(SWT.MouseExit, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (resultsListContainerComposite.getBounds()
+						.contains(new Point(event.x, event.y))) {
+				}
+				setHighlighted(null);
+				setHighlightedPolygon(null);
+				wwjInst.getWwd()
+						.redraw();
+			}
 		});
 	}
 
@@ -160,15 +172,15 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 					mtdPanel.addListener(SWT.MouseEnter, new Listener() {
 						@Override
 						public void handleEvent(Event event) {
-							//setHighlighted(mtdPanel);
-							//setHighlightedPolygon(poly);
-							mtdPanel.setHighlighted(true);
-							poly.setHighlighted(true);
+							setHighlighted(mtdPanel);
+							setHighlightedPolygon(poly);
+							// mtdPanel.setHighlighted(true);
+							// poly.setHighlighted(true);
 							wwjInst.getWwd()
 									.redraw();
 						}
 					});
-					mtdPanel.addListener(SWT.MouseExit, new Listener() {
+					/*mtdPanel.addListener(SWT.MouseExit, new Listener() {
 						@Override
 						public void handleEvent(Event event) {
 							for (Control child : mtdPanel.getChildren()) {
@@ -182,15 +194,14 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 									return;
 								}
 							}
-							//setHighlighted(null);
-							//setHighlightedPolygon(null);
-
-							mtdPanel.setHighlighted(false);
-							poly.setHighlighted(false);
+							setHighlighted(null);
+							setHighlightedPolygon(null);
+							// mtdPanel.setHighlighted(false);
+							// poly.setHighlighted(false);
 							wwjInst.getWwd()
 									.redraw();
 						}
-					});/*
+					});*//*
 						 * mtdPanel.addListener(SWT.MouseEnter, new Listener() {
 						 * 
 						 * @Override
