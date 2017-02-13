@@ -8,7 +8,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
@@ -17,6 +16,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -49,13 +49,13 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			Color.red, Color.yellow, Color.lightGray, Color.pink };
 
 	private List<GeocatSearchResultImpl> currentResultsPanels = new ArrayList<GeocatSearchResultImpl>();
-	
+
 	@Inject
 	GeocatSearchTools searchTools;
 
 	@Inject
 	WwjInstance wwjInst;
-	
+
 	@Inject
 	IEclipseContext context;
 
@@ -120,8 +120,12 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				Text txtError = new Text(resultsListContainerComposite, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 				txtError.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
 				txtError.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
-				txtError.setFont(SWTResourceManager.getFont("Sans", 12, SWT.ITALIC|SWT.BOLD));
-				txtError.setText(resultSet.getException().getClass().getName() +" : \n"+resultSet.getException().getLocalizedMessage());
+				txtError.setFont(SWTResourceManager.getFont("Sans", 12, SWT.ITALIC | SWT.BOLD));
+				txtError.setText(resultSet.getException()
+						.getClass()
+						.getName() + " : \n"
+						+ resultSet.getException()
+								.getLocalizedMessage());
 				Text txtErrorFull = new Text(resultsListContainerComposite, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 				txtErrorFull.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
 				txtErrorFull.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
@@ -148,7 +152,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			while (it.hasNext()) {
 				GeocatMetadataEntity mtd = it.next();
 				if (mtd.getIdxError() == null) {
-					GeocatSearchResultImpl mtdPanel = new GeocatSearchResultImpl(mtd, searchTools, wwjInst, context, 
+					GeocatSearchResultImpl mtdPanel = new GeocatSearchResultImpl(mtd, searchTools, wwjInst, context,
 							resultsListContainerComposite, SWT.NONE);
 					currentResultsPanels.add(mtdPanel);
 					SurfacePolygon poly = mtdPanel.getPolygon(this.colorPalette[idx]);
@@ -156,8 +160,10 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 					mtdPanel.addListener(SWT.MouseEnter, new Listener() {
 						@Override
 						public void handleEvent(Event event) {
-							setHighlighted(mtdPanel);
-							setHighlightedPolygon(poly);
+							//setHighlighted(mtdPanel);
+							//setHighlightedPolygon(poly);
+							mtdPanel.setHighlighted(true);
+							poly.setHighlighted(true);
 							wwjInst.getWwd()
 									.redraw();
 						}
@@ -165,8 +171,22 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 					mtdPanel.addListener(SWT.MouseExit, new Listener() {
 						@Override
 						public void handleEvent(Event event) {
-							setHighlighted(null);
-							setHighlightedPolygon(null);
+							for (Control child : mtdPanel.getChildren()) {
+								if (child.getBounds()
+										.contains(new Point(event.x, event.y))) {
+									System.out.println(child.getClass());
+									System.out.println(
+											"Bounds : x=" + child.getBounds().x + "  y=" + child.getBounds().y + "  w="
+													+ child.getBounds().width + "  h=" + child.getBounds().height);
+									System.out.println("Mouse location : x=" + event.x + "  y=" + event.y);
+									return;
+								}
+							}
+							//setHighlighted(null);
+							//setHighlightedPolygon(null);
+
+							mtdPanel.setHighlighted(false);
+							poly.setHighlighted(false);
 							wwjInst.getWwd()
 									.redraw();
 						}
