@@ -5,7 +5,16 @@
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      Administration tools to modify/fix things
+=========================================
+
+For now, only one action is available : fix layertree
+
+Fix layertree
+-------------
+Philippe often mixes-up the URL/layer naming pattern. This action processes all URL/layername couples, checks and corrects them so in the final :
+ - URL are namespace-specific
+ - layernames are not prefixed by the namespace
    </description>
 
    <copyright url="http://www.example.com/copyright">
