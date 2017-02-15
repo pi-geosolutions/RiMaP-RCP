@@ -8,9 +8,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -27,6 +30,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchResultSet;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchTools;
+import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.SurfacePolygon;
@@ -50,6 +54,8 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 
 	private List<GeocatSearchResultImpl> currentResultsPanels = new ArrayList<GeocatSearchResultImpl>();
 
+	SortByValue[] values;
+	
 	@Inject
 	GeocatSearchTools searchTools;
 
@@ -59,12 +65,16 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	@Inject
 	IEclipseContext context;
 
+	@Inject
+	@Translation
+	private Messages messages;
+
 	public GeocatSearchFormImpl(Composite parent, int style) {
 		super(parent, style);
-		enhanceControls();
+		//enhanceControls();
 	}
 
-	private void enhanceControls() {
+	public void enhanceControls() {
 		// autocomplete in anysearch Text component
 		// TODO : finish this
 		/*
@@ -79,6 +89,29 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		 * });
 		 */
 
+		// sortBy combo entries
+		comboViewerSortBy.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof SortByValue) {
+					SortByValue val = (SortByValue) element;
+					return val.getText();
+				}
+				return super.getText(element);
+			}
+		});
+		values = new SortByValue[] {
+				new SortByValue("relevance", messages.sortby_relevance),
+				new SortByValue("changeDate", messages.sortby_changeDate),
+				new SortByValue("title", messages.sortby_title),
+//				new SortByValue("rating", messages.sortby_rating),
+				new SortByValue("popularity", messages.sortby_popularity),
+				new SortByValue("denominatorDesc", messages.sortby_denominatorDesc),
+				new SortByValue("denominatorAsc", messages.sortby_denominatorAsc)
+		};
+		comboViewerSortBy.setInput(values);
+		comboViewerSortBy.setSelection(new StructuredSelection(values[0]));
+		
 		// perform search on search button click
 		this.btnSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -105,13 +138,13 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		resultsListContainerComposite.addListener(SWT.MouseExit, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				if (resultsListContainerComposite.getBounds()
+				if (!resultsListContainerComposite.getBounds()
 						.contains(new Point(event.x, event.y))) {
+					setHighlighted(null);
+					setHighlightedPolygon(null);
+					wwjInst.getWwd()
+							.redraw();
 				}
-				setHighlighted(null);
-				setHighlightedPolygon(null);
-				wwjInst.getWwd()
-						.redraw();
 			}
 		});
 	}
@@ -123,7 +156,10 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			c.dispose();
 		}
 
-		GeocatSearchResultSet resultSet = searchTools.search(text);
+		//retrieve the selected value from sortBy combo
+		String sortby = (values==null)? "relevance": values[comboSortBy.getSelectionIndex()].getCode();
+		
+		GeocatSearchResultSet resultSet = searchTools.search(text, sortby);
 		if (resultSet != null) {
 			if (resultSet.hadException()) {
 				if (searchResultsRenderableLayer != null) {
@@ -157,6 +193,8 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				searchResultsRenderableLayer.removeAllRenderables();
 			}
 			this.currentResultsPanels.clear();
+			
+			this.updateResultsBar(resultSet);
 
 			List<GeocatMetadataEntity> metadata = resultSet.getMetadata();
 			Iterator<GeocatMetadataEntity> it = metadata.iterator();
@@ -180,28 +218,34 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 									.redraw();
 						}
 					});
-					/*mtdPanel.addListener(SWT.MouseExit, new Listener() {
-						@Override
-						public void handleEvent(Event event) {
-							for (Control child : mtdPanel.getChildren()) {
-								if (child.getBounds()
-										.contains(new Point(event.x, event.y))) {
-									System.out.println(child.getClass());
-									System.out.println(
-											"Bounds : x=" + child.getBounds().x + "  y=" + child.getBounds().y + "  w="
-													+ child.getBounds().width + "  h=" + child.getBounds().height);
-									System.out.println("Mouse location : x=" + event.x + "  y=" + event.y);
-									return;
-								}
-							}
-							setHighlighted(null);
-							setHighlightedPolygon(null);
-							// mtdPanel.setHighlighted(false);
-							// poly.setHighlighted(false);
-							wwjInst.getWwd()
-									.redraw();
-						}
-					});*//*
+					/*
+					 * mtdPanel.addListener(SWT.MouseExit, new Listener() {
+					 * 
+					 * @Override
+					 * public void handleEvent(Event event) {
+					 * for (Control child : mtdPanel.getChildren()) {
+					 * if (child.getBounds()
+					 * .contains(new Point(event.x, event.y))) {
+					 * System.out.println(child.getClass());
+					 * System.out.println(
+					 * "Bounds : x=" + child.getBounds().x + "  y=" +
+					 * child.getBounds().y + "  w="
+					 * + child.getBounds().width + "  h=" +
+					 * child.getBounds().height);
+					 * System.out.println("Mouse location : x=" + event.x +
+					 * "  y=" + event.y);
+					 * return;
+					 * }
+					 * }
+					 * setHighlighted(null);
+					 * setHighlightedPolygon(null);
+					 * // mtdPanel.setHighlighted(false);
+					 * // poly.setHighlighted(false);
+					 * wwjInst.getWwd()
+					 * .redraw();
+					 * }
+					 * });
+					 *//*
 						 * mtdPanel.addListener(SWT.MouseEnter, new Listener() {
 						 * 
 						 * @Override
@@ -243,6 +287,11 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		resultsListContainerComposite.layout();
 	}
 
+	private void updateResultsBar(GeocatSearchResultSet resultSet) {
+		lblResultsNb.setText(resultSet.get_from()+"-"+resultSet.get_to()+"/"+resultSet.getSummary().get_count());
+		lblResultsNb.getParent().pack();
+	}
+
 	protected void setHighlighted(GeocatSearchResultImpl searchres) {
 		this.currentResultsPanels.forEach(panel -> {
 			panel.setHighlighted(panel == searchres);
@@ -251,10 +300,12 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	}
 
 	protected void setHighlightedPolygon(SurfacePolygon poly) {
-		this.searchResultsRenderableLayer.getRenderables()
-				.forEach(renderable -> {
-					((SurfacePolygon) renderable).setHighlighted(renderable == poly);
-				});
+		if (this.searchResultsRenderableLayer != null) {
+			this.searchResultsRenderableLayer.getRenderables()
+					.forEach(renderable -> {
+						((SurfacePolygon) renderable).setHighlighted(renderable == poly);
+					});
+		}
 	}
 
 	private void setAutoCompletion(Text text, String value) {
@@ -271,6 +322,34 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 
 	private String[] getAllProposals(String text) {
 		return GeocatSearchTools.getAnysearchAutocompleteProposals(text);
+	}
+
+	private class SortByValue {
+		private String code, text;
+
+		public SortByValue(String code, String text) {
+			this.code = code;
+			this.text = text;
+		}
+
+		public String getCode() {
+			return code;
+		}
+
+		public void setCode(String code) {
+			this.code = code;
+		}
+
+		public String getText() {
+			return text;
+		}
+
+		public void setText(String text) {
+			this.text = text;
+		}
+		public String toString() {
+			return this.text;
+		}
 	}
 
 }

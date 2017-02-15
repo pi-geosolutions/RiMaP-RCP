@@ -64,13 +64,13 @@ public class GeocatSearchTools {
 		return proposals;
 	}
 
-	public GeocatSearchResultSet search(String text) {
+	public GeocatSearchResultSet search(String text, String sortBy) {
 		// TODO : aggregate the URL using prefs & form text comtent
 		// TODO : support gn2.10 also (provides only XML search service =>
 		// convert to json then parse.
 		// Service URL is different also
 
-		String searchUrl = buildSearchURL(text, 1, 20, "relevance", "");
+		String searchUrl = buildSearchURL(text, 1, 20, sortBy, "");
 		// String searchUrl =
 		// this.baseUrl+"srv/"+tsn.iso3_code+"/q?_content_type=json&facet.q=&fast=index&from=1&resultType=details&sortBy=relevance&sortOrder=&to=20&any="+text;
 		System.out.println(searchUrl);

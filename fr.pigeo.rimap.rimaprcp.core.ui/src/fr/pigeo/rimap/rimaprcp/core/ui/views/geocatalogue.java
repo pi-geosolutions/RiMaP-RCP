@@ -23,6 +23,7 @@ public class geocatalogue {
 		GeocatSearchFormImpl gsf = new GeocatSearchFormImpl(parent, SWT.NONE);
 		context.set(GeocatSearchTools.class, searchTools);
 		ContextInjectionFactory.inject(gsf, context);
+		gsf.enhanceControls();
 	}
 	
 	

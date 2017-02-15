@@ -1,12 +1,18 @@
 package fr.pigeo.rimap.rimaprcp.core.ui.swt;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -15,9 +21,6 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.custom.ScrolledComposite;
 
 public class GeocatSearchForm extends Composite {
 	protected Text txtFreeSearch;
@@ -27,6 +30,9 @@ public class GeocatSearchForm extends Composite {
 	protected  Composite resultsListContainerComposite;
 	protected TabItem tbtmResults;
 	protected TabItem tbtmAdvSearch;
+	protected CCombo comboSortBy;
+	protected ComboViewer comboViewerSortBy;
+	protected Label lblResultsNb;
 
 	public GeocatSearchForm(Composite parent, int style) {
 		super(parent, SWT.NO_BACKGROUND);
@@ -72,30 +78,48 @@ public class GeocatSearchForm extends Composite {
 		
 		Composite resultsTopToolbar = new Composite(resultsComposite, SWT.NONE);
 		GridData gd_resultsTopToolbar = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_resultsTopToolbar.heightHint = 30;
+		gd_resultsTopToolbar.heightHint = 24;
 		resultsTopToolbar.setLayoutData(gd_resultsTopToolbar);
 		resultsTopToolbar.setLayout(new RowLayout(SWT.HORIZONTAL));
 		
-		CCombo combo_1 = new CCombo(resultsTopToolbar, SWT.BORDER);
-		combo_1.setLayoutData(new RowData(67, 17));
+		/*CCombo combo_1 = new CCombo(resultsTopToolbar, SWT.NONE);
+		combo_1.setLayoutData(new RowData(67, 16));
 		
 		Label label_1 = new Label(resultsTopToolbar, SWT.NONE);
-		label_1.setText("       ");
+		label_1.setText("       ");*/
 		
 		Label lblSortBy = new Label(resultsTopToolbar, SWT.NONE);
-		lblSortBy.setLayoutData(new RowData(SWT.DEFAULT, 20));
+		lblSortBy.setLayoutData(new RowData(SWT.DEFAULT, 16));
 		lblSortBy.setText("Sort by: ");
 		
-		CCombo combo_2 = new CCombo(resultsTopToolbar, SWT.BORDER);
+		comboSortBy = new CCombo(resultsTopToolbar, SWT.NONE);
+		comboSortBy.setEditable(false);
+		comboSortBy.setFont(SWTResourceManager.getFont("Sans", 8, SWT.NORMAL));
+		comboSortBy.setLayoutData(new RowData(100, 16));
+		//comboSortBy.setItems(new String[] {"relevance", "changeDate", "title", "rating", "popularity", "denominatorDesc", "denominatorAsc"});
+		comboSortBy.select(0);
+		
+		comboViewerSortBy = new ComboViewer(comboSortBy);
+		comboViewerSortBy.setContentProvider(ArrayContentProvider.getInstance());
+		/*comboSortBy = comboViewerSortBy.getCombo();
+		comboSortBy.setFont(SWTResourceManager.getFont("Sans", 8, SWT.NORMAL));
+		comboSortBy.setLayoutData(new RowData(SWT.DEFAULT, 16));*/
 		
 		Button button = new Button(resultsTopToolbar, SWT.NONE);
+		button.setLayoutData(new RowData(SWT.DEFAULT, 16));
+		button.setEnabled(false);
 		button.setText("<");
 		
 		Button button_1 = new Button(resultsTopToolbar, SWT.NONE);
+		button_1.setLayoutData(new RowData(SWT.DEFAULT, 16));
+		button_1.setEnabled(false);
 		button_1.setText(">");
 		
 		Label lblResults = new Label(resultsTopToolbar, SWT.NONE);
+		lblResults.setLayoutData(new RowData(SWT.DEFAULT, 16));
 		lblResults.setText("Results ");
+		
+		lblResultsNb = new Label(resultsTopToolbar, SWT.NONE);
 		
 		ScrolledComposite scrolledComposite = new ScrolledComposite( resultsComposite, SWT.H_SCROLL | SWT.V_SCROLL );
 		scrolledComposite.setExpandHorizontal(true);

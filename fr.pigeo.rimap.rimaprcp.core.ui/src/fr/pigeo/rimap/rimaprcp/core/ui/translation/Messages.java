@@ -34,6 +34,16 @@ public class Messages {
 	//Error messages
 	public String catalog_load_error_title;
 	public String catalog_load_error_msg;
+	
+	//Sort By combo box values
+	public String sortby_relevance;
+	public String sortby_changeDate;
+	public String sortby_title;
+	public String sortby_rating;
+	public String sortby_popularity;
+	public String sortby_denominatorDesc;
+	public String sortby_denominatorAsc;
+	
 
 	public Messages() {
 	}
