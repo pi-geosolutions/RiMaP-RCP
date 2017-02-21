@@ -22,6 +22,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -306,7 +307,7 @@ public class DefaultSessionServiceImpl implements ISessionService {
 				}
 			}
 			response.close();
-			httppost.releaseConnection();
+			//httppost.releaseConnection();
 		} catch (ClientProtocolException | UnknownHostException e) {
 			logger.error(e.getClass() + ": Could not reach the server for authentification. "
 					+ "It is probable that your internet connection or the server is down. ");
@@ -331,6 +332,11 @@ public class DefaultSessionServiceImpl implements ISessionService {
 					RimapConstants.WEB_CONNECTION_TIMEOUT_PREF_TAG, RimapConstants.WEB_CONNECTION_TIMEOUT_PREF_DEFAULT,
 					null);
 
+			//Customized in order to allow multiple concurrent running connections when recovering the WMS capabilities at startup
+			PoolingHttpClientConnectionManager oConnectionMgr = new PoolingHttpClientConnectionManager();
+			oConnectionMgr.setMaxTotal(50);
+			oConnectionMgr.setDefaultMaxPerRoute(20);
+			
 			RequestConfig config = RequestConfig.custom()
 					.setCookieSpec(CookieSpecs.DEFAULT)
 					.setConnectTimeout(timeout * 1000)
@@ -341,6 +347,7 @@ public class DefaultSessionServiceImpl implements ISessionService {
 			CookieStore httpCookieStore = new BasicCookieStore();
 
 			client = HttpClientBuilder.create()
+			        .setConnectionManager(oConnectionMgr)
 					.setDefaultRequestConfig(config)
 					.setDefaultCookieStore(httpCookieStore)
 					.build();
