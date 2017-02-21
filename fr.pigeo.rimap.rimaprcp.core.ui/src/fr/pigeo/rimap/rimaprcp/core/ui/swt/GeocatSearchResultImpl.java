@@ -28,7 +28,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity.GeoBox;
-import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchTools;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.geom.LatLon;
@@ -39,7 +39,7 @@ import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.render.SurfacePolygon;
 
 public class GeocatSearchResultImpl extends GeocatSearchResult {
-	private GeocatSearchTools searchTools;
+	private GeocatMetadataToolBox searchTools;
 	private WwjInstance wwjInst;
 	private IEclipseContext context;
 	private Image thumbnail;
@@ -57,7 +57,7 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 	}
 
 	public GeocatSearchResultImpl(GeocatMetadataEntity entity, 
-			GeocatSearchTools searchTools, WwjInstance wwjInst, 
+			GeocatMetadataToolBox searchTools, WwjInstance wwjInst, 
 			IEclipseContext context, Composite parent, int style) {
 		super(parent, style);
 		this.wwjInst = wwjInst;
@@ -68,7 +68,7 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 	/*
 	 * Loads values from the GeocatMetadataEntity into the form fields
 	 */
-	public void load(GeocatMetadataEntity entity, GeocatSearchTools searchTools) {
+	public void load(GeocatMetadataEntity entity, GeocatMetadataToolBox searchTools) {
 		this.searchTools = searchTools;
 		this.entity = entity;
 		this.setTitle(entity.getDefaultTitle());
@@ -87,9 +87,7 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 		this.btnOpenMTD.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String mtdLink = "http://ne-risk.pigeo.fr/geonetwork/srv/fre/md.viewer#/pigeo_simple_view/"
-						+ entity.get_geonet_info()
-								.getId();
+				String mtdLink = searchTools.getFullMetadataViewPath(entity.get_geonet_info().getUuid());
 				Program.launch(mtdLink);
 			}
 		});
@@ -100,7 +98,7 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 		String mtdid = entity.get_geonet_info()
 				.getId();
 		if (tn != null && mtdid != null && searchTools != null) {
-			String url = searchTools.getFullResourcesServicePath() + "fname=" + tn + "&access=public&id=" + mtdid;
+			String url = searchTools.getFullResourcesServicePath(tn, mtdid);
 			this.setThumbnail(url);
 		}
 

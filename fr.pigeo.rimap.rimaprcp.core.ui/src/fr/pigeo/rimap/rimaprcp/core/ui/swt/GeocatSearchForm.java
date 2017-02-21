@@ -33,6 +33,7 @@ public class GeocatSearchForm extends Composite {
 	protected CCombo comboSortBy;
 	protected ComboViewer comboViewerSortBy;
 	protected Label lblResultsNb;
+	protected Composite resultsTopToolbar;
 
 	public GeocatSearchForm(Composite parent, int style) {
 		super(parent, SWT.NO_BACKGROUND);
@@ -74,13 +75,17 @@ public class GeocatSearchForm extends Composite {
 		
 		Composite resultsComposite = new Composite(tabFolder, SWT.NONE);
 		tbtmResults.setControl(resultsComposite);
-		resultsComposite.setLayout(new GridLayout(1, false));
+		GridLayout gl_resultsComposite = new GridLayout(1, false);
+		gl_resultsComposite.verticalSpacing = 0;
+		gl_resultsComposite.marginHeight = 0;
+		resultsComposite.setLayout(gl_resultsComposite);
 		
-		Composite resultsTopToolbar = new Composite(resultsComposite, SWT.NONE);
+		resultsTopToolbar = new Composite(resultsComposite, SWT.NONE);
+		GridLayout gl_resultsTopToolbar = new GridLayout(7, false);
+		resultsTopToolbar.setLayout(gl_resultsTopToolbar);
 		GridData gd_resultsTopToolbar = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_resultsTopToolbar.heightHint = 24;
+		gd_resultsTopToolbar.heightHint = 28;
 		resultsTopToolbar.setLayoutData(gd_resultsTopToolbar);
-		resultsTopToolbar.setLayout(new RowLayout(SWT.HORIZONTAL));
 		
 		/*CCombo combo_1 = new CCombo(resultsTopToolbar, SWT.NONE);
 		combo_1.setLayoutData(new RowData(67, 16));
@@ -89,13 +94,17 @@ public class GeocatSearchForm extends Composite {
 		label_1.setText("       ");*/
 		
 		Label lblSortBy = new Label(resultsTopToolbar, SWT.NONE);
-		lblSortBy.setLayoutData(new RowData(SWT.DEFAULT, 16));
+		GridData gd_lblSortBy = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblSortBy.heightHint = 16;
+		lblSortBy.setLayoutData(gd_lblSortBy);
 		lblSortBy.setText("Sort by: ");
 		
 		comboSortBy = new CCombo(resultsTopToolbar, SWT.NONE);
+		GridData gd_comboSortBy = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_comboSortBy.heightHint = 16;
+		comboSortBy.setLayoutData(gd_comboSortBy);
 		comboSortBy.setEditable(false);
 		comboSortBy.setFont(SWTResourceManager.getFont("Sans", 8, SWT.NORMAL));
-		comboSortBy.setLayoutData(new RowData(100, 16));
 		//comboSortBy.setItems(new String[] {"relevance", "changeDate", "title", "rating", "popularity", "denominatorDesc", "denominatorAsc"});
 		comboSortBy.select(0);
 		
@@ -105,21 +114,35 @@ public class GeocatSearchForm extends Composite {
 		comboSortBy.setFont(SWTResourceManager.getFont("Sans", 8, SWT.NORMAL));
 		comboSortBy.setLayoutData(new RowData(SWT.DEFAULT, 16));*/
 		
-		Button button = new Button(resultsTopToolbar, SWT.NONE);
-		button.setLayoutData(new RowData(SWT.DEFAULT, 16));
-		button.setEnabled(false);
-		button.setText("<");
-		
-		Button button_1 = new Button(resultsTopToolbar, SWT.NONE);
-		button_1.setLayoutData(new RowData(SWT.DEFAULT, 16));
-		button_1.setEnabled(false);
-		button_1.setText(">");
+		Label lblFiller = new Label(resultsTopToolbar, SWT.NONE);
+		GridData gd_lblFiller = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_lblFiller.minimumWidth = 5;
+		lblFiller.setLayoutData(gd_lblFiller);
 		
 		Label lblResults = new Label(resultsTopToolbar, SWT.NONE);
-		lblResults.setLayoutData(new RowData(SWT.DEFAULT, 16));
+		GridData gd_lblResults = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblResults.heightHint = 16;
+		lblResults.setLayoutData(gd_lblResults);
 		lblResults.setText("Results ");
 		
 		lblResultsNb = new Label(resultsTopToolbar, SWT.NONE);
+		GridData gd_lblResultsNb = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblResultsNb.heightHint = 16;
+		lblResultsNb.setLayoutData(gd_lblResultsNb);
+		
+		Button buttonPrev = new Button(resultsTopToolbar, SWT.NONE);
+		GridData gd_buttonPrev = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_buttonPrev.heightHint = 16;
+		buttonPrev.setLayoutData(gd_buttonPrev);
+		buttonPrev.setEnabled(false);
+		buttonPrev.setText("<");
+		
+		Button buttonNext = new Button(resultsTopToolbar, SWT.NONE);
+		GridData gd_buttonNext = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_buttonNext.heightHint = 16;
+		buttonNext.setLayoutData(gd_buttonNext);
+		buttonNext.setEnabled(false);
+		buttonNext.setText(">");
 		
 		ScrolledComposite scrolledComposite = new ScrolledComposite( resultsComposite, SWT.H_SCROLL | SWT.V_SCROLL );
 		scrolledComposite.setExpandHorizontal(true);

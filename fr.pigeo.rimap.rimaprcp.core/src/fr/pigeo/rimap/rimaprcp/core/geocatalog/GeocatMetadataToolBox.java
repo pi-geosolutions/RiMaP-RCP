@@ -27,7 +27,7 @@ import fr.pigeo.rimap.rimaprcp.core.translation.Translate;
 
 @Creatable
 @Singleton
-public class GeocatSearchTools {
+public class GeocatMetadataToolBox {
 
 	@Inject
 	@Optional
@@ -40,14 +40,19 @@ public class GeocatSearchTools {
 	String baseUrl;
 	String resourcesServicePath;
 	String catalogVersion;
+	String mtdService;
 
 	@Inject
-	public GeocatSearchTools(IPreferencesService prefService) {
+	public GeocatMetadataToolBox(IPreferencesService prefService) {
 		baseUrl = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
 				RimapConstants.PROJECT_BASEURL_PREF_TAG, RimapConstants.PROJECT_BASEURL_PREF_DEFAULT, null);
 		resourcesServicePath = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
 				RimapConstants.CATALOG_RESOURCES_SERVICE_PREF_TAG,
 				RimapConstants.CATALOG_RESOURCES_SERVICE_PREF_DEFAULT, null);
+		
+		mtdService = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
+				RimapConstants.CATALOG_METADATA_BY_UUID_RELPATH_PREF_TAG,
+				RimapConstants.CATALOG_METADATA_BY_UUID_PREF_DEFAULT, null);
 
 		catalogVersion = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
 				RimapConstants.CATALOG_VERSION_PREF_TAG, RimapConstants.CATALOG_VERSION_PREF_DEFAULT, null);
@@ -149,8 +154,12 @@ public class GeocatSearchTools {
 		return resourcesServicePath;
 	}
 
-	public String getFullResourcesServicePath() {
-		return baseUrl + getLocalizedSRVPathFragment() + resourcesServicePath;
+	public String getFullMetadataViewPath(String uuid) {
+		return baseUrl + getLocalizedSRVPathFragment() + mtdService+ uuid;
+	}
+	
+	public String getFullResourcesServicePath(String filename, String mtdId) {
+		return baseUrl + getLocalizedSRVPathFragment() + resourcesServicePath + "fname=" + filename + "&access=public&id=" + mtdId;
 	}
 
 	public String getLocalizedSRVPathFragment() {

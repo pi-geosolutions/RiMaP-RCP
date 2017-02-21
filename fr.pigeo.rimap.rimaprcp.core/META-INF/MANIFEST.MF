@@ -19,5 +19,4 @@ Require-Bundle: fr.pigeo.externals.com.fasterxml.jackson.core,
  org.eclipse.e4.core.di.annotations,
  fr.pigeo.externals.org.apache.commons,
  org.eclipse.e4.core.services,
- fr.pigeo.externals.org.json,
  gov.nasa.worldwind

@@ -31,7 +31,8 @@ public interface RimapConstants {
 
 	//Geocatalog-related
 	public static String CATALOG_METADATA_BY_UUID_RELPATH_PREF_TAG  =	"catalog.metadata.relpath";
-	public static String CATALOG_METADATA_BY_UUID_PREF_DEFAULT  =	"/apps/geoportal/index.html?uuid=";
+	//public static String CATALOG_METADATA_BY_UUID_PREF_DEFAULT  =	"/apps/geoportal/index.html?uuid=";
+	public static String CATALOG_METADATA_BY_UUID_PREF_DEFAULT  =	"md.viewer#/pigeo_simple_view/";
 
 	public static String CATALOG_RESOURCES_SERVICE_PREF_TAG  =	"catalog.resources.relpath";
 	public static String CATALOG_RESOURCES_SERVICE_PREF_DEFAULT  =	"resources.get?";

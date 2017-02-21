@@ -23,6 +23,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
 import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.LayerOpacityChangeListener;
@@ -56,6 +57,9 @@ public class LayerDetailsImpl extends LayerDetails {
 
 	@Inject
 	IEclipseContext context;
+
+	@Inject
+	GeocatMetadataToolBox metadataToolBox;
 
 	public LayerDetailsImpl() {
 
@@ -169,14 +173,15 @@ public class LayerDetailsImpl extends LayerDetails {
 				this.btnMetadataSelectionAdapter = new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						String baseurl = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
+						/*String baseurl = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
 								RimapConstants.PROJECT_BASEURL_PREF_TAG, RimapConstants.PROJECT_BASEURL_PREF_DEFAULT,
 								null);
 						// TODO : use constants
 						String mtdService = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
 								RimapConstants.CATALOG_METADATA_BY_UUID_RELPATH_PREF_TAG,
 								RimapConstants.CATALOG_METADATA_BY_UUID_PREF_DEFAULT, null);
-						String link = baseurl + mtdService + wmsNode.getMetadata_uuid();
+						String link = baseurl + mtdService + wmsNode.getMetadata_uuid();*/
+						String link = metadataToolBox.getFullMetadataViewPath(wmsNode.getMetadata_uuid());
 						Program.launch(link);
 					}
 				};

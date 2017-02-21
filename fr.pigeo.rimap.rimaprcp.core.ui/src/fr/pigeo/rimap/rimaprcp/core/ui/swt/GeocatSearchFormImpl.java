@@ -29,7 +29,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchResultSet;
-import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchTools;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
 import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -57,7 +57,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	SortByValue[] values;
 	
 	@Inject
-	GeocatSearchTools searchTools;
+	GeocatMetadataToolBox searchTools;
 
 	@Inject
 	WwjInstance wwjInst;
@@ -178,7 +178,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				txtErrorFull.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
 				txtErrorFull.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 				txtErrorFull.setFont(SWTResourceManager.getFont("Sans", 7, SWT.ITALIC));
-				txtErrorFull.setText(GeocatSearchTools.stackTraceToString(resultSet.getException()));
+				txtErrorFull.setText(GeocatMetadataToolBox.stackTraceToString(resultSet.getException()));
 				resultsListContainerComposite.pack();
 
 				tabFolder.setSelection(this.tbtmResults);
@@ -289,7 +289,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 
 	private void updateResultsBar(GeocatSearchResultSet resultSet) {
 		lblResultsNb.setText(resultSet.get_from()+"-"+resultSet.get_to()+"/"+resultSet.getSummary().get_count());
-		lblResultsNb.getParent().pack();
+		resultsTopToolbar.layout(true);
 	}
 
 	protected void setHighlighted(GeocatSearchResultImpl searchres) {
@@ -321,7 +321,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	}
 
 	private String[] getAllProposals(String text) {
-		return GeocatSearchTools.getAnysearchAutocompleteProposals(text);
+		return GeocatMetadataToolBox.getAnysearchAutocompleteProposals(text);
 	}
 
 	private class SortByValue {

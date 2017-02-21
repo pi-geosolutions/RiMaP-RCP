@@ -8,7 +8,8 @@ public interface SessionConstants {
 	String P_LOGIN_SERVICE = "services.login.relpath";
 	
 	//default values
-	String LOGIN_SERVICE = "j_spring_security_check" ;
+	//String LOGIN_SERVICE = "j_spring_security_check" ;
+	String LOGIN_SERVICE = "signin" ;
 	String AUTH_SESSIONID="JSESSIONID";
 	String AUTH_URL_FAILURE_ENDSWITH = "?failure=true";
 
@@ -17,7 +18,8 @@ public interface SessionConstants {
 	
 
 	String PROFILE_SERVICE_PREF_TAG = "services.profile.relpath";
-	String PROFILE_SERVICE_PREF_DEFAULT = "srv/fre/xml.info?type=me" ;
+	//String PROFILE_SERVICE_PREF_DEFAULT = "srv/fre/xml.info?type=me" ;
+	String PROFILE_SERVICE_PREF_DEFAULT = "srv/api/me" ;
 	
 	//Return codes
 	String RETURNCODE_AUTH_FAILURE = "authFailure";

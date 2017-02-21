@@ -10,7 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.GeocatSearchFormImpl;
-import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchTools;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
 
 public class geocatalogue {
 	@Inject
@@ -19,9 +19,9 @@ public class geocatalogue {
 	}
 	
 	@PostConstruct
-	public void postConstruct(Composite parent, IEclipseContext context, GeocatSearchTools searchTools) {	    
+	public void postConstruct(Composite parent, IEclipseContext context, GeocatMetadataToolBox searchTools) {	    
 		GeocatSearchFormImpl gsf = new GeocatSearchFormImpl(parent, SWT.NONE);
-		context.set(GeocatSearchTools.class, searchTools);
+		context.set(GeocatMetadataToolBox.class, searchTools);
 		ContextInjectionFactory.inject(gsf, context);
 		gsf.enhanceControls();
 	}

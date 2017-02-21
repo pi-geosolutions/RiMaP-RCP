@@ -49,8 +49,9 @@ public class GeocatSearchResult extends Composite {
 		headerComposite.setLayout(new GridLayout(3, false));
 		headerComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
-		btnCheck = new Button(headerComposite, SWT.CHECK);
+		/*btnCheck = new Button(headerComposite, SWT.CHECK);
 		btnCheck.setToolTipText("Check to select this entry");
+		*/
 		
 		txtTitle = new Text(headerComposite, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 		txtTitle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
