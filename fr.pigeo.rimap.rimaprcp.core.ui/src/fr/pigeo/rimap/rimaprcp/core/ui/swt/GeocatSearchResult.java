@@ -67,6 +67,7 @@ public class GeocatSearchResult extends Composite {
 		btnOpenMTD.setToolTipText("Open Full Metadata Window in Browser");
 		btnOpenMTD.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		btnOpenMTD.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
+		new Label(headerComposite, SWT.NONE);
 		
 		lblThumbnail = new Label(this, SWT.CENTER);
 		GridData gd_lblThumbnail = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -78,7 +79,7 @@ public class GeocatSearchResult extends Composite {
 		txtSummary.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
 		txtSummary.setFont(SWTResourceManager.getFont("Sans", 8, SWT.NORMAL));
 		txtSummary.setToolTipText("R É S U M É 1ÈRE PARTIE : PRINCIPES DIRECTEURS Introduction Objectifs et structure La rédaction de directives pour des technologies et ap-proches de gestion durable des terres en Afrique subsaha-rienne (ASS) fait partie du programme TerrAfrica de 2009- 2010. L’objectif de ces recommandations et études de cas est de contribuer à créer une cadre pour les investis-sements liés aux pratiques de gestion durable des terres (GDT). Le but est, en particulier, d’identifier, d’analyser, de discuter et de diffuser des pratiques de ");
-		GridData gd_txtSummary = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
+		GridData gd_txtSummary = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_txtSummary.heightHint = 100;
 		txtSummary.setLayoutData(gd_txtSummary);
 		txtSummary.setText("R É S U M É 1ÈRE PARTIE : PRINCIPES DIRECTEURS Introduction Objectifs et structure La rédaction de directives pour des technologies et ap-proches de gestion durable des terres en Afrique subsaha-rienne (ASS) fait partie du programme TerrAfrica de 2009- 2010. L’objectif de ces recommandations et études de cas est de contribuer à créer une cadre pour les investis-sements liés aux pratiques de gestion durable des terres (GDT). Le but est, en particulier, d’identifier, d’analyser, de discuter et de diffuser des pratiques de ");
@@ -91,10 +92,10 @@ public class GeocatSearchResult extends Composite {
 		lblColorHint.setForeground(SWTResourceManager.getColor(SWT.COLOR_YELLOW));
 		
 		lblOriginator = new Text(this, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
-		lblOriginator.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
+		lblOriginator.setBackground(null);
 		lblOriginator.setToolTipText("NEPAD Planning and Coordinating Agency,FAO,WOCAT Secretariat");
 		lblOriginator.setFont(SWTResourceManager.getFont("Sans", 8, SWT.ITALIC));
-		lblOriginator.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1));
+		lblOriginator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		lblOriginator.setText("NEPAD Planning and Coordinating Agency,FAO,WOCAT Secretariat");
 		
 		buttonsBarComposite = new Composite(this, SWT.NONE);

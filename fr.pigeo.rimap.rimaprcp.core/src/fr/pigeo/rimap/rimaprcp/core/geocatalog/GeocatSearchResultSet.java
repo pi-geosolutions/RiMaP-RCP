@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GeocatSearchResultSet {
@@ -28,6 +30,7 @@ public class GeocatSearchResultSet {
 	}
 	
 	public GeocatSearchResultSet(Exception exception) {
+		exception.printStackTrace();
 		this.exception = exception;
 	}
 
@@ -93,8 +96,26 @@ public class GeocatSearchResultSet {
 		return metadata;
 	}
 
-	public void setMetadata(List<GeocatMetadataEntity> metadata) {
+/*	public void setMetadata(List<GeocatMetadataEntity> metadata) {
 		this.metadata = metadata;
+	}*/
+	@SuppressWarnings("unchecked")
+	public void setMetadata(Object mtd) {/*
+		if (metadata instanceof GeocatMetadataEntity) {
+			this.metadata.add((GeocatMetadataEntity) metadata);
+		} else if (metadata instanceof java.util.ArrayList) {
+			this.metadata = (ArrayList<GeocatMetadataEntity>) metadata;
+		} */
+		System.out.println(mtd.getClass());
+		ObjectMapper mapper = new ObjectMapper();
+		if (mtd instanceof java.util.ArrayList) {
+			List<GeocatMetadataEntity> m = mapper.convertValue(mtd, new TypeReference<List<GeocatMetadataEntity>>() { });
+			this.metadata = m;
+		} else {
+			//not a list if only one result
+			GeocatMetadataEntity m = mapper.convertValue(mtd, GeocatMetadataEntity.class);
+			this.metadata.add(m);
+		}
 	}
 
 	public Exception getException() {

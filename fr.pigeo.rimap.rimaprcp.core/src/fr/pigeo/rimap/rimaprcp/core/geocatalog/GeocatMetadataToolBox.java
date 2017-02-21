@@ -49,7 +49,7 @@ public class GeocatMetadataToolBox {
 		resourcesServicePath = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
 				RimapConstants.CATALOG_RESOURCES_SERVICE_PREF_TAG,
 				RimapConstants.CATALOG_RESOURCES_SERVICE_PREF_DEFAULT, null);
-		
+
 		mtdService = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
 				RimapConstants.CATALOG_METADATA_BY_UUID_RELPATH_PREF_TAG,
 				RimapConstants.CATALOG_METADATA_BY_UUID_PREF_DEFAULT, null);
@@ -70,12 +70,16 @@ public class GeocatMetadataToolBox {
 	}
 
 	public GeocatSearchResultSet search(String text, String sortBy) {
-		// TODO : aggregate the URL using prefs & form text comtent
+		return search(text, sortBy, 1, 20, false, false);
+	}
+
+	public GeocatSearchResultSet search(String text, String sortBy, int from, int to, boolean downloadable,
+			boolean dynamic) {
 		// TODO : support gn2.10 also (provides only XML search service =>
 		// convert to json then parse.
 		// Service URL is different also
 
-		String searchUrl = buildSearchURL(text, 1, 20, sortBy, "");
+		String searchUrl = buildSearchURL(text, from, to, sortBy, "", downloadable, dynamic);
 		// String searchUrl =
 		// this.baseUrl+"srv/"+tsn.iso3_code+"/q?_content_type=json&facet.q=&fast=index&from=1&resultType=details&sortBy=relevance&sortOrder=&to=20&any="+text;
 		System.out.println(searchUrl);
@@ -134,20 +138,26 @@ public class GeocatMetadataToolBox {
 			System.out.println("oops, error");
 			// e.printStackTrace();
 			return new GeocatSearchResultSet(e);
-		} 
+		}
 		return null;
 	}
 
-	private String buildSearchURL(String text, int fromIndex, int toIndex, String sortBy, String sortOrder) {
+	private String buildSearchURL(String text, int fromIndex, int toIndex, String sortBy, String sortOrder,
+			boolean downloadable, boolean dynamic) {
+		String extras = (dynamic ? "&dynamic=true":"") + (downloadable ? "&download=true":"");
+		
+		String request = this.baseUrl + getLocalizedSRVPathFragment()+"q?";
 		if (catalogIsPadre1()) {
-			return this.baseUrl + getLocalizedSRVPathFragment() + "q?facet.q=&fast=index&sortBy=" + sortBy
-					+ "&sortOrder=" + sortOrder + "&from=" + fromIndex + "&to=" + toIndex + "&any=" + text;
+			request += "facet.q=";
+		} else {
+			// if (catalogVersion.equals("3") ||
+			// catalogVersion.startsWith("3.")) {
+			request += "_content_type=json&facet.q=&resultType=details";
 		}
-
-		// if (catalogVersion.equals("3") || catalogVersion.startsWith("3.")) {
-		return this.baseUrl + getLocalizedSRVPathFragment()
-				+ "q?_content_type=json&facet.q=&fast=index&resultType=details&sortBy=" + sortBy + "&sortOrder="
-				+ sortOrder + "&from=" + fromIndex + "&to=" + toIndex + "&any=" + text;
+		request += "&fast=index&sortBy=" + sortBy + "&sortOrder="
+					+ sortOrder + "&from=" + fromIndex + "&to=" + toIndex + "&any=" + text;
+		request +=extras;
+		return request;
 	}
 
 	public String getResourcesServicePath() {
@@ -155,11 +165,12 @@ public class GeocatMetadataToolBox {
 	}
 
 	public String getFullMetadataViewPath(String uuid) {
-		return baseUrl + getLocalizedSRVPathFragment() + mtdService+ uuid;
+		return baseUrl + getLocalizedSRVPathFragment() + mtdService + uuid;
 	}
-	
+
 	public String getFullResourcesServicePath(String filename, String mtdId) {
-		return baseUrl + getLocalizedSRVPathFragment() + resourcesServicePath + "fname=" + filename + "&access=public&id=" + mtdId;
+		return baseUrl + getLocalizedSRVPathFragment() + resourcesServicePath + "fname=" + filename
+				+ "&access=public&id=" + mtdId;
 	}
 
 	public String getLocalizedSRVPathFragment() {

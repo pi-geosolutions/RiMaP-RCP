@@ -34,6 +34,10 @@ public class GeocatSearchForm extends Composite {
 	protected ComboViewer comboViewerSortBy;
 	protected Label lblResultsNb;
 	protected Composite resultsTopToolbar;
+	protected Button btnNext;
+	protected Button btnPrev;
+	protected Button btnCheckDynamicMap;
+	protected Button btnCheckDownloadable;
 
 	public GeocatSearchForm(Composite parent, int style) {
 		super(parent, SWT.NO_BACKGROUND);
@@ -130,19 +134,19 @@ public class GeocatSearchForm extends Composite {
 		gd_lblResultsNb.heightHint = 16;
 		lblResultsNb.setLayoutData(gd_lblResultsNb);
 		
-		Button buttonPrev = new Button(resultsTopToolbar, SWT.NONE);
-		GridData gd_buttonPrev = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_buttonPrev.heightHint = 16;
-		buttonPrev.setLayoutData(gd_buttonPrev);
-		buttonPrev.setEnabled(false);
-		buttonPrev.setText("<");
+		btnPrev = new Button(resultsTopToolbar, SWT.NONE);
+		GridData gd_btnPrev = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnPrev.heightHint = 16;
+		btnPrev.setLayoutData(gd_btnPrev);
+		btnPrev.setEnabled(false);
+		btnPrev.setText("<");
 		
-		Button buttonNext = new Button(resultsTopToolbar, SWT.NONE);
-		GridData gd_buttonNext = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_buttonNext.heightHint = 16;
-		buttonNext.setLayoutData(gd_buttonNext);
-		buttonNext.setEnabled(false);
-		buttonNext.setText(">");
+		btnNext = new Button(resultsTopToolbar, SWT.NONE);
+		GridData gd_btnNext = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnNext.heightHint = 16;
+		btnNext.setLayoutData(gd_btnNext);
+		btnNext.setEnabled(false);
+		btnNext.setText(">");
 		
 		ScrolledComposite scrolledComposite = new ScrolledComposite( resultsComposite, SWT.H_SCROLL | SWT.V_SCROLL );
 		scrolledComposite.setExpandHorizontal(true);
@@ -182,6 +186,7 @@ public class GeocatSearchForm extends Composite {
 		
 		CCombo combo = new CCombo(grpGeographicFilter, SWT.BORDER);
 		combo.setItems(new String[] {"Intersection with", "Completely inside of"});
+		combo.select(0);
 		
 		Group grpAssociatedResources = new Group(advSearchComposite, SWT.NONE);
 		grpAssociatedResources.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
@@ -193,11 +198,11 @@ public class GeocatSearchForm extends Composite {
 		grpAssociatedResources.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpAssociatedResources.setText("Associated resources");
 		
-		Button btnCheckButton = new Button(grpAssociatedResources, SWT.CHECK);
-		btnCheckButton.setText("Downloadable data");
+		btnCheckDownloadable = new Button(grpAssociatedResources, SWT.CHECK);
+		btnCheckDownloadable.setText("Downloadable data");
 		
-		Button btnCheckButton_1 = new Button(grpAssociatedResources, SWT.CHECK);
-		btnCheckButton_1.setText("Visualisable data");
+		btnCheckDynamicMap = new Button(grpAssociatedResources, SWT.CHECK);
+		btnCheckDynamicMap.setText("Visualisable data");
 		
 		Group grpFacets = new Group(advSearchComposite, SWT.BORDER | SWT.SHADOW_IN);
 		grpFacets.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));

@@ -327,6 +327,9 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 	}
 
 	public void setHighlighted(boolean highlight) {
+		if (this.isDisposed()) {
+			return;
+		}
 		Color color;
 		if (highlight) {
 			color = this.highlightColor;

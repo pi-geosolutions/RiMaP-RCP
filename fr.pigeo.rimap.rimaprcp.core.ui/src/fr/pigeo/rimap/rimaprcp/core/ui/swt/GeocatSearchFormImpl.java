@@ -52,10 +52,13 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			Color.pink, Color.white, Color.magenta, Color.green, Color.blue, Color.gray, Color.orange, Color.cyan,
 			Color.red, Color.yellow, Color.lightGray, Color.pink };
 
+	private int nbResultsPerPage = 20;
+	private int page = 1;
+
 	private List<GeocatSearchResultImpl> currentResultsPanels = new ArrayList<GeocatSearchResultImpl>();
 
 	SortByValue[] values;
-	
+
 	@Inject
 	GeocatMetadataToolBox searchTools;
 
@@ -71,7 +74,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 
 	public GeocatSearchFormImpl(Composite parent, int style) {
 		super(parent, style);
-		//enhanceControls();
+		// enhanceControls();
 	}
 
 	public void enhanceControls() {
@@ -100,18 +103,25 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				return super.getText(element);
 			}
 		});
-		values = new SortByValue[] {
-				new SortByValue("relevance", messages.sortby_relevance),
+		values = new SortByValue[] { new SortByValue("relevance", messages.sortby_relevance),
 				new SortByValue("changeDate", messages.sortby_changeDate),
 				new SortByValue("title", messages.sortby_title),
-//				new SortByValue("rating", messages.sortby_rating),
+				// new SortByValue("rating", messages.sortby_rating),
 				new SortByValue("popularity", messages.sortby_popularity),
 				new SortByValue("denominatorDesc", messages.sortby_denominatorDesc),
-				new SortByValue("denominatorAsc", messages.sortby_denominatorAsc)
-		};
+				new SortByValue("denominatorAsc", messages.sortby_denominatorAsc) };
 		comboViewerSortBy.setInput(values);
 		comboViewerSortBy.setSelection(new StructuredSelection(values[0]));
-		
+		comboSortBy.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				//trigger a new search to take into account the change
+				//using pagination started from the beginning (page 1)
+				page=1;
+				search(txtFreeSearch.getText());
+			}
+		});
+
 		// perform search on search button click
 		this.btnSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -132,6 +142,8 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				txtFreeSearch.setText("");
+				btnCheckDownloadable.setSelection(false);
+				btnCheckDynamicMap.setSelection(false);
 			}
 		});
 
@@ -147,6 +159,28 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				}
 			}
 		});
+
+		this.btnNext.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// increment page number (results pagination)
+				page++;
+				search(txtFreeSearch.getText());
+			}
+		});
+		this.btnPrev.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// increment page number (results pagination)
+				if (page == 1) {
+					return;
+				}
+				page--;
+				search(txtFreeSearch.getText());
+			}
+
+		});
+		
 	}
 
 	protected void search(String text) {
@@ -156,10 +190,14 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			c.dispose();
 		}
 
-		//retrieve the selected value from sortBy combo
-		String sortby = (values==null)? "relevance": values[comboSortBy.getSelectionIndex()].getCode();
-		
-		GeocatSearchResultSet resultSet = searchTools.search(text, sortby);
+		// retrieve the selected value from sortBy combo
+		String sortby = (values == null) ? "relevance" : values[comboSortBy.getSelectionIndex()].getCode();
+
+		int startIndex = 1+(page-1) * nbResultsPerPage;
+		int endIndex = page*nbResultsPerPage;
+		boolean advSearchDownloadable = btnCheckDownloadable.getSelection();
+		boolean advSearchDynamic = btnCheckDynamicMap.getSelection();
+		GeocatSearchResultSet resultSet = searchTools.search(text, sortby, startIndex, endIndex, advSearchDownloadable, advSearchDynamic);
 		if (resultSet != null) {
 			if (resultSet.hadException()) {
 				if (searchResultsRenderableLayer != null) {
@@ -193,7 +231,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				searchResultsRenderableLayer.removeAllRenderables();
 			}
 			this.currentResultsPanels.clear();
-			
+
 			this.updateResultsBar(resultSet);
 
 			List<GeocatMetadataEntity> metadata = resultSet.getMetadata();
@@ -206,7 +244,9 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 							resultsListContainerComposite, SWT.NONE);
 					currentResultsPanels.add(mtdPanel);
 					SurfacePolygon poly = mtdPanel.getPolygon(this.colorPalette[idx]);
-					searchResultsRenderableLayer.addRenderable(poly);
+					if (poly != null) {
+						searchResultsRenderableLayer.addRenderable(poly);
+					}
 					mtdPanel.addListener(SWT.MouseEnter, new Listener() {
 						@Override
 						public void handleEvent(Event event) {
@@ -288,8 +328,18 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	}
 
 	private void updateResultsBar(GeocatSearchResultSet resultSet) {
-		lblResultsNb.setText(resultSet.get_from()+"-"+resultSet.get_to()+"/"+resultSet.getSummary().get_count());
+		int from = Integer.parseInt(resultSet.get_from());
+		int to = Integer.parseInt(resultSet.get_to());
+		int count = Integer.parseInt(resultSet.getSummary()
+				.get_count());
+
+		lblResultsNb.setText(from + "-" + to + "/" + count);
+
+		btnNext.setEnabled(to < count);
+		btnPrev.setEnabled(from > 1);
+
 		resultsTopToolbar.layout(true);
+
 	}
 
 	protected void setHighlighted(GeocatSearchResultImpl searchres) {
@@ -347,6 +397,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		public void setText(String text) {
 			this.text = text;
 		}
+
 		public String toString() {
 			return this.text;
 		}

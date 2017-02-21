@@ -57,6 +57,7 @@ public class GeocatMetadataEntity {
 	@JsonProperty("geonet:info")
 	protected GeonetInfo _geonet_info;
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public class GeonetInfo {
 		@JsonProperty("@xmlns:geonet")
 		protected String _xmlns_geonet;
@@ -66,6 +67,7 @@ public class GeocatMetadataEntity {
 		protected String createDate;
 		protected String changeDate;
 		protected String source;
+		protected String ownerId;
 		protected String isPublishedToAll;
 		protected String view;
 		protected String notify;
@@ -272,6 +274,9 @@ public class GeocatMetadataEntity {
 	}
 	
 	public String getImageAsThumbnail() {
+		if (image==null) {
+			return null;
+		}
 		Iterator<String> it = image.iterator();
 		while (it.hasNext()) {
 			String s = it.next();
