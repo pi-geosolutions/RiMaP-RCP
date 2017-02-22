@@ -1,4 +1,4 @@
-package fr.pigeo.rimap.rimaprcp.cachemanager.wwutil;
+package fr.pigeo.rimap.rimaprcp.worldwind.util;
 /*
  * Copyright (C) 2012 United States Government as represented by the Administrator of the
  * National Aeronautics and Space Administration.
@@ -664,6 +664,8 @@ public class SectorSelector extends WWObjectImpl
 			borderAttrs.setDrawInterior(false);
 			borderAttrs.setOutlineMaterial(new Material(Color.RED));
 			borderAttrs.setOutlineOpacity(0.7);
+			borderAttrs.setOutlineStipplePattern((short) 0xAAAA);
+			borderAttrs.setOutlineStippleFactor(8);
 			borderAttrs.setOutlineWidth(3);
 			this.getBorder()
 					.setAttributes(borderAttrs);

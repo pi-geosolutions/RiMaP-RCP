@@ -12,4 +12,5 @@ Require-Bundle: org.eclipse.e4.core.di.annotations,
  org.eclipse.e4.ui.di,
  fr.pigeo.rimap.rimaprcp.core;bundle-version="1.0.0"
 Export-Package: fr.pigeo.rimap.rimaprcp.worldwind,
- fr.pigeo.rimap.rimaprcp.worldwind.layers
+ fr.pigeo.rimap.rimaprcp.worldwind.layers,
+ fr.pigeo.rimap.rimaprcp.worldwind.util

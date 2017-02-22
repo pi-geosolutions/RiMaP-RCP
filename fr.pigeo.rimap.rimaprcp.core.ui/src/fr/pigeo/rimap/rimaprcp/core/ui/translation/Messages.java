@@ -44,6 +44,10 @@ public class Messages {
 	public String sortby_denominatorDesc;
 	public String sortby_denominatorAsc;
 	
+	//Extent combo box values
+	public String extent_intersection;
+	public String extent_within;
+	
 
 	public Messages() {
 	}

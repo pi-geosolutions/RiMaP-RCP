@@ -24,6 +24,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.translation.Translate;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Sector;
 
 @Creatable
 @Singleton
@@ -70,16 +72,16 @@ public class GeocatMetadataToolBox {
 	}
 
 	public GeocatSearchResultSet search(String text, String sortBy) {
-		return search(text, sortBy, 1, 20, false, false);
+		return search(text, sortBy, 1, 20, false, false, null, null);
 	}
 
 	public GeocatSearchResultSet search(String text, String sortBy, int from, int to, boolean downloadable,
-			boolean dynamic) {
+			boolean dynamic, Sector sector, String extentRelation) {
 		// TODO : support gn2.10 also (provides only XML search service =>
 		// convert to json then parse.
 		// Service URL is different also
 
-		String searchUrl = buildSearchURL(text, from, to, sortBy, "", downloadable, dynamic);
+		String searchUrl = buildSearchURL(text, from, to, sortBy, "", downloadable, dynamic, sector, extentRelation);
 		// String searchUrl =
 		// this.baseUrl+"srv/"+tsn.iso3_code+"/q?_content_type=json&facet.q=&fast=index&from=1&resultType=details&sortBy=relevance&sortOrder=&to=20&any="+text;
 		System.out.println(searchUrl);
@@ -143,10 +145,11 @@ public class GeocatMetadataToolBox {
 	}
 
 	private String buildSearchURL(String text, int fromIndex, int toIndex, String sortBy, String sortOrder,
-			boolean downloadable, boolean dynamic) {
-		String extras = (dynamic ? "&dynamic=true":"") + (downloadable ? "&download=true":"");
-		
-		String request = this.baseUrl + getLocalizedSRVPathFragment()+"q?";
+			boolean downloadable, boolean dynamic, Sector sector, String extentRelation) {
+		String extras = (dynamic ? "&dynamic=true" : "") + (downloadable ? "&download=true" : "")
+				+ getExtentAsString(sector, extentRelation);
+
+		String request = this.baseUrl + getLocalizedSRVPathFragment() + "q?";
 		if (catalogIsPadre1()) {
 			request += "facet.q=";
 		} else {
@@ -154,10 +157,28 @@ public class GeocatMetadataToolBox {
 			// catalogVersion.startsWith("3.")) {
 			request += "_content_type=json&facet.q=&resultType=details";
 		}
-		request += "&fast=index&sortBy=" + sortBy + "&sortOrder="
-					+ sortOrder + "&from=" + fromIndex + "&to=" + toIndex + "&any=" + text;
-		request +=extras;
+		request += "&fast=index&sortBy=" + sortBy + "&sortOrder=" + sortOrder + "&from=" + fromIndex + "&to=" + toIndex
+				+ "&any=" + text;
+		request += extras;
 		return request;
+	}
+
+	protected String getExtentAsString(Sector sector, String extentRelation) {
+		String extent = "";
+		if (sector != null) {
+			extent = "&geometry=POLYGON((";
+			for (LatLon ll : sector.getCorners()) {
+				extent += ll.getLongitude().degrees + "+" + ll.getLatitude().degrees + ",";
+			}
+			// close the loop
+			LatLon ll = sector.getCorners()[0];
+			extent += ll.getLongitude().degrees + "+" + ll.getLatitude().degrees;
+			extent += "))";
+			if (extentRelation != null) {
+				extent += "&relation=" + extentRelation;
+			}
+		}
+		return extent;
 	}
 
 	public String getResourcesServicePath() {

@@ -28,12 +28,15 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
-import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchResultSet;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchResultSet;
 import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import fr.pigeo.rimap.rimaprcp.worldwind.util.SectorSelector;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.SurfacePolygon;
+import gov.nasa.worldwind.render.SurfaceSector;
 
 public class GeocatSearchFormImpl extends GeocatSearchForm {
 	/**
@@ -45,7 +48,6 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	private ContentProposalAdapter adapter = null;
 	private SimpleContentProposalProvider scp = new SimpleContentProposalProvider(defaultProposals);
 
-	private RenderableLayer searchResultsRenderableLayer;
 	private java.awt.Color[] colorPalette = { Color.white, Color.magenta, Color.green, Color.blue, Color.gray,
 			Color.orange, Color.cyan, Color.red, Color.yellow, Color.lightGray, Color.pink, Color.white, Color.magenta,
 			Color.green, Color.blue, Color.gray, Color.orange, Color.cyan, Color.red, Color.yellow, Color.lightGray,
@@ -57,7 +59,9 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 
 	private List<GeocatSearchResultImpl> currentResultsPanels = new ArrayList<GeocatSearchResultImpl>();
 
-	SortByValue[] values;
+	private RenderableLayer geocatRenderableLayer;
+	private SectorSelector sectorSelector;
+	private boolean drawingSector = false;
 
 	@Inject
 	GeocatMetadataToolBox searchTools;
@@ -77,6 +81,11 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		// enhanceControls();
 	}
 
+	/*
+	 * Need Dependency Injection to have been run first (can't be called from
+	 * inside the constructor)
+	 * !!!! Beware: run it only once !
+	 */
 	public void enhanceControls() {
 		// autocomplete in anysearch Text component
 		// TODO : finish this
@@ -96,28 +105,28 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		comboViewerSortBy.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof SortByValue) {
-					SortByValue val = (SortByValue) element;
+				if (element instanceof ComboKeyValue) {
+					ComboKeyValue val = (ComboKeyValue) element;
 					return val.getText();
 				}
 				return super.getText(element);
 			}
 		});
-		values = new SortByValue[] { new SortByValue("relevance", messages.sortby_relevance),
-				new SortByValue("changeDate", messages.sortby_changeDate),
-				new SortByValue("title", messages.sortby_title),
+		ComboKeyValue[] sortBy = new ComboKeyValue[] { new ComboKeyValue("relevance", messages.sortby_relevance),
+				new ComboKeyValue("changeDate", messages.sortby_changeDate),
+				new ComboKeyValue("title", messages.sortby_title),
 				// new SortByValue("rating", messages.sortby_rating),
-				new SortByValue("popularity", messages.sortby_popularity),
-				new SortByValue("denominatorDesc", messages.sortby_denominatorDesc),
-				new SortByValue("denominatorAsc", messages.sortby_denominatorAsc) };
-		comboViewerSortBy.setInput(values);
-		comboViewerSortBy.setSelection(new StructuredSelection(values[0]));
+				new ComboKeyValue("popularity", messages.sortby_popularity),
+				new ComboKeyValue("denominatorDesc", messages.sortby_denominatorDesc),
+				new ComboKeyValue("denominatorAsc", messages.sortby_denominatorAsc) };
+		comboViewerSortBy.setInput(sortBy);
+		comboViewerSortBy.setSelection(new StructuredSelection(sortBy[0]));
 		comboSortBy.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				//trigger a new search to take into account the change
-				//using pagination started from the beginning (page 1)
-				page=1;
+				// trigger a new search to take into account the change
+				// using pagination started from the beginning (page 1)
+				page = 1;
 				search(txtFreeSearch.getText());
 			}
 		});
@@ -178,9 +187,73 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				page--;
 				search(txtFreeSearch.getText());
 			}
-
 		});
-		
+
+		// Advanced Search
+
+		// Init sector selector
+		RenderableLayer rl = new RenderableLayer();
+		rl.setName("Search extent");
+		this.sectorSelector = new SectorSelector(wwjInst.getWwd(), rl);
+		this.sectorSelector.setInteriorColor(new Color(1f, 1f, 1f, 0.1f));
+		this.sectorSelector.setBorderColor(new Color(1f, 0f, 0f, 0.5f));
+		this.sectorSelector.setBorderWidth(3);
+		/*
+		 * this.sectorSelector.addPropertyChangeListener(SectorSelector.
+		 * SECTOR_PROPERTY, new PropertyChangeListener() {
+		 * public void propertyChange(PropertyChangeEvent evt) {
+		 * 
+		 * }
+		 * });
+		 */
+
+		btnDrawExtent.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				drawingSector = !drawingSector;
+				if (drawingSector) {
+					btnDrawExtent.setText("Clear extent");
+					sectorSelector.enable();
+				} else {
+					sectorSelector.disable();
+					btnDrawExtent.setText("Draw extent");
+				}
+			}
+		});
+		// sortBy combo entries
+		comboViewerSortBy.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ComboKeyValue) {
+					ComboKeyValue val = (ComboKeyValue) element;
+					return val.getText();
+				}
+				return super.getText(element);
+			}
+		});
+		ComboKeyValue[] relation = new ComboKeyValue[] {
+				new ComboKeyValue("intersection", messages.extent_intersection),
+				new ComboKeyValue("within", messages.extent_within) };
+		comboViewerExtent.setInput(relation);
+		comboViewerExtent.setSelection(new StructuredSelection(relation[0]));
+
+	}
+
+	protected RenderableLayer getRenderableLayer() {
+		return this.getRenderableLayer(false);
+	}
+
+	protected RenderableLayer getRenderableLayer(boolean clear) {
+		if (this.geocatRenderableLayer == null) {
+			geocatRenderableLayer = new RenderableLayer();
+			geocatRenderableLayer.setName("Search Results");
+			wwjInst.addLayer(geocatRenderableLayer);
+		} else {
+			if (clear) {
+				geocatRenderableLayer.removeAllRenderables();
+			}
+		}
+		return this.geocatRenderableLayer;
 	}
 
 	protected void search(String text) {
@@ -191,17 +264,27 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		}
 
 		// retrieve the selected value from sortBy combo
-		String sortby = (values == null) ? "relevance" : values[comboSortBy.getSelectionIndex()].getCode();
+		// String sortby = (values == null) ? "relevance" :
+		// values[comboSortBy.getSelectionIndex()].getCode();
+		String sortby = ((ComboKeyValue) comboViewerSortBy.getStructuredSelection()
+				.getFirstElement()).getCode();
 
-		int startIndex = 1+(page-1) * nbResultsPerPage;
-		int endIndex = page*nbResultsPerPage;
+		int startIndex = 1 + (page - 1) * nbResultsPerPage;
+		int endIndex = page * nbResultsPerPage;
 		boolean advSearchDownloadable = btnCheckDownloadable.getSelection();
 		boolean advSearchDynamic = btnCheckDynamicMap.getSelection();
-		GeocatSearchResultSet resultSet = searchTools.search(text, sortby, startIndex, endIndex, advSearchDownloadable, advSearchDynamic);
+		Sector sector = (drawingSector ? sectorSelector.getSector() : null);
+		// retrieve the selected value from extent combo
+		String extentRelation = ((ComboKeyValue) comboViewerExtent.getStructuredSelection()
+				.getFirstElement()).getCode();
+
+		GeocatSearchResultSet resultSet = searchTools.search(text, sortby, startIndex, endIndex, advSearchDownloadable,
+				advSearchDynamic, sector, extentRelation);
 		if (resultSet != null) {
 			if (resultSet.hadException()) {
-				if (searchResultsRenderableLayer != null) {
-					searchResultsRenderableLayer.removeAllRenderables();
+				// clear RenderableLayer
+				if (geocatRenderableLayer != null) {
+					geocatRenderableLayer.removeAllRenderables();
 				}
 				Text txtError = new Text(resultsListContainerComposite, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 				txtError.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
@@ -223,13 +306,8 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				return;
 			}
 
-			if (this.searchResultsRenderableLayer == null) {
-				searchResultsRenderableLayer = new RenderableLayer();
-				searchResultsRenderableLayer.setName("Search Results");
-				wwjInst.addLayer(searchResultsRenderableLayer);
-			} else {
-				searchResultsRenderableLayer.removeAllRenderables();
-			}
+			// clear renderable layer
+			RenderableLayer rlayer = getRenderableLayer(true);
 			this.currentResultsPanels.clear();
 
 			this.updateResultsBar(resultSet);
@@ -245,7 +323,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 					currentResultsPanels.add(mtdPanel);
 					SurfacePolygon poly = mtdPanel.getPolygon(this.colorPalette[idx]);
 					if (poly != null) {
-						searchResultsRenderableLayer.addRenderable(poly);
+						rlayer.addRenderable(poly);
 					}
 					mtdPanel.addListener(SWT.MouseEnter, new Listener() {
 						@Override
@@ -350,10 +428,12 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	}
 
 	protected void setHighlightedPolygon(SurfacePolygon poly) {
-		if (this.searchResultsRenderableLayer != null) {
-			this.searchResultsRenderableLayer.getRenderables()
+		if (this.geocatRenderableLayer != null) {
+			this.geocatRenderableLayer.getRenderables()
 					.forEach(renderable -> {
-						((SurfacePolygon) renderable).setHighlighted(renderable == poly);
+						if (renderable instanceof SurfacePolygon) {
+							((SurfacePolygon) renderable).setHighlighted(renderable == poly);
+						}
 					});
 		}
 	}
@@ -374,10 +454,10 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		return GeocatMetadataToolBox.getAnysearchAutocompleteProposals(text);
 	}
 
-	private class SortByValue {
+	private class ComboKeyValue {
 		private String code, text;
 
-		public SortByValue(String code, String text) {
+		public ComboKeyValue(String code, String text) {
 			this.code = code;
 			this.text = text;
 		}

@@ -27,7 +27,7 @@ public class GeocatSearchForm extends Composite {
 	protected Button btnSearch;
 	protected Button btnReset;
 	protected TabFolder tabFolder;
-	protected  Composite resultsListContainerComposite;
+	protected Composite resultsListContainerComposite;
 	protected TabItem tbtmResults;
 	protected TabItem tbtmAdvSearch;
 	protected CCombo comboSortBy;
@@ -38,6 +38,9 @@ public class GeocatSearchForm extends Composite {
 	protected Button btnPrev;
 	protected Button btnCheckDynamicMap;
 	protected Button btnCheckDownloadable;
+	protected Button btnDrawExtent;
+	protected CCombo comboExtent;
+	protected ComboViewer comboViewerExtent;
 
 	public GeocatSearchForm(Composite parent, int style) {
 		super(parent, SWT.NO_BACKGROUND);
@@ -173,7 +176,7 @@ public class GeocatSearchForm extends Composite {
 		grpGeographicFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpGeographicFilter.setText("Geographic filter");
 		
-		Button btnDrawExtent = new Button(grpGeographicFilter, SWT.NONE);
+		btnDrawExtent = new Button(grpGeographicFilter, SWT.NONE);
 		btnDrawExtent.setText("Draw Extent");
 		btnDrawExtent.setToolTipText("Draw Extent");
 		btnDrawExtent.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/draw_rectangle_off.png"));
@@ -184,9 +187,12 @@ public class GeocatSearchForm extends Composite {
 		Label lblRelation = new Label(grpGeographicFilter, SWT.NONE);
 		lblRelation.setText("relation: ");
 		
-		CCombo combo = new CCombo(grpGeographicFilter, SWT.BORDER);
-		combo.setItems(new String[] {"Intersection with", "Completely inside of"});
-		combo.select(0);
+		comboExtent = new CCombo(grpGeographicFilter, SWT.BORDER);
+		//comboExtent.setItems(new String[] {"Intersection with", "Completely inside of"});
+		comboExtent.select(0);
+		
+		comboViewerExtent = new ComboViewer(comboExtent);
+		comboViewerExtent.setContentProvider(ArrayContentProvider.getInstance());
 		
 		Group grpAssociatedResources = new Group(advSearchComposite, SWT.NONE);
 		grpAssociatedResources.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));

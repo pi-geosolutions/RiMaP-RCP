@@ -32,9 +32,9 @@ import fr.pigeo.rimap.rimaprcp.cachemanager.ui.wizards.ExportPackageWizardPage2;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.Downloadable;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.Downloadables;
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.RenderableManager;
-import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.SectorSelector;
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import fr.pigeo.rimap.rimaprcp.worldwind.util.SectorSelector;
 import gov.nasa.worldwind.retrieve.BulkRetrievalThread;
 
 /**
