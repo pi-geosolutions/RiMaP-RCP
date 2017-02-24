@@ -8,10 +8,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.jsonparsingobjects.Summary;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GeocatSearchResultSet {
 	protected Exception exception;
-	
+
 	@JsonProperty("@from")
 	protected String _from;
 
@@ -22,42 +24,16 @@ public class GeocatSearchResultSet {
 	protected String _selected;
 
 	protected Summary summary;
-	
+
 	protected List<GeocatMetadataEntity> metadata;
-	
+
 	public GeocatSearchResultSet() {
 		metadata = new ArrayList<GeocatMetadataEntity>();
 	}
-	
+
 	public GeocatSearchResultSet(Exception exception) {
 		exception.printStackTrace();
 		this.exception = exception;
-	}
-
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class Summary {
-		@JsonProperty("@count")
-		protected String _count;
-
-		@JsonProperty("@type")
-		protected String _type;
-
-		public String get_count() {
-			return _count;
-		}
-
-		public void set_count(String _count) {
-			this._count = _count;
-		}
-
-		public String get_type() {
-			return _type;
-		}
-
-		public void set_type(String _type) {
-			this._type = _type;
-		}
-
 	}
 
 	public String get_from() {
@@ -96,24 +72,24 @@ public class GeocatSearchResultSet {
 		return metadata;
 	}
 
-/*	public void setMetadata(List<GeocatMetadataEntity> metadata) {
-		this.metadata = metadata;
-	}*/
+	/*
+	 * public void setMetadata(List<GeocatMetadataEntity> metadata) {
+	 * this.metadata = metadata;
+	 * }
+	 */
 	@SuppressWarnings("unchecked")
-	public void setMetadata(Object mtd) {/*
-		if (metadata instanceof GeocatMetadataEntity) {
-			this.metadata.add((GeocatMetadataEntity) metadata);
-		} else if (metadata instanceof java.util.ArrayList) {
-			this.metadata = (ArrayList<GeocatMetadataEntity>) metadata;
-		} */
-		System.out.println(mtd.getClass());
+	public void setMetadata(Object o) {
+		if (o == null) {
+			return;
+		}
 		ObjectMapper mapper = new ObjectMapper();
-		if (mtd instanceof java.util.ArrayList) {
-			List<GeocatMetadataEntity> m = mapper.convertValue(mtd, new TypeReference<List<GeocatMetadataEntity>>() { });
+		if (o instanceof java.util.ArrayList) {
+			List<GeocatMetadataEntity> m = mapper.convertValue(o, new TypeReference<List<GeocatMetadataEntity>>() {
+			});
 			this.metadata = m;
 		} else {
-			//not a list if only one result
-			GeocatMetadataEntity m = mapper.convertValue(mtd, GeocatMetadataEntity.class);
+			// not a list if only one result
+			GeocatMetadataEntity m = mapper.convertValue(o, GeocatMetadataEntity.class);
 			this.metadata.add(m);
 		}
 	}
@@ -121,14 +97,13 @@ public class GeocatSearchResultSet {
 	public Exception getException() {
 		return exception;
 	}
-	
+
 	public boolean hadException() {
-		return (exception!=null);
+		return (exception != null);
 	}
 
 	public void setException(Exception exception) {
 		this.exception = exception;
 	}
-
 
 }

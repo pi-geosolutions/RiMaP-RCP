@@ -41,6 +41,7 @@ public class GeocatSearchForm extends Composite {
 	protected Button btnDrawExtent;
 	protected CCombo comboExtent;
 	protected ComboViewer comboViewerExtent;
+	protected Group grpFacets;
 
 	public GeocatSearchForm(Composite parent, int style) {
 		super(parent, SWT.NO_BACKGROUND);
@@ -210,8 +211,8 @@ public class GeocatSearchForm extends Composite {
 		btnCheckDynamicMap = new Button(grpAssociatedResources, SWT.CHECK);
 		btnCheckDynamicMap.setText("Visualisable data");
 		
-		Group grpFacets = new Group(advSearchComposite, SWT.BORDER | SWT.SHADOW_IN);
-		grpFacets.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		grpFacets = new Group(advSearchComposite, SWT.BORDER | SWT.SHADOW_IN);
+		grpFacets.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
 		grpFacets.setText("Refine Search");
 		grpFacets.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
 		FillLayout fl_grpFacets = new FillLayout(SWT.VERTICAL);

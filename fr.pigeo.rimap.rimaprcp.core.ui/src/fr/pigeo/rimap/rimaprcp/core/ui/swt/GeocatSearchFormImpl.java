@@ -14,6 +14,7 @@ import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -30,13 +31,15 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchResultSet;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.jsonparsingobjects.Dimension;
+import fr.pigeo.rimap.rimaprcp.core.ui.jface.FacetsContentProvider;
+import fr.pigeo.rimap.rimaprcp.core.ui.jface.FacetsLabelProvider;
 import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import fr.pigeo.rimap.rimaprcp.worldwind.util.SectorSelector;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.SurfacePolygon;
-import gov.nasa.worldwind.render.SurfaceSector;
 
 public class GeocatSearchFormImpl extends GeocatSearchForm {
 	/**
@@ -311,6 +314,8 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			this.currentResultsPanels.clear();
 
 			this.updateResultsBar(resultSet);
+			
+			this.updateFacets(resultSet);
 
 			List<GeocatMetadataEntity> metadata = resultSet.getMetadata();
 			Iterator<GeocatMetadataEntity> it = metadata.iterator();
@@ -403,6 +408,19 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				.redrawNow();
 		resultsListContainerComposite.setSize(resultsListContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		resultsListContainerComposite.layout();
+	}
+	
+	public void updateFacets(GeocatSearchResultSet resultSet) {
+		for (Control c : grpFacets.getChildren()) {
+			c.dispose();
+		}
+		List<Dimension> facets = resultSet.getSummary().getDimension();
+		TreeViewer viewer = new TreeViewer(grpFacets, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+	    viewer.setContentProvider(new FacetsContentProvider());
+	    viewer.setLabelProvider(new FacetsLabelProvider());
+	    viewer.setInput(resultSet.getSummary());
+	    grpFacets.layout(true);
+	    grpFacets.pack();
 	}
 
 	private void updateResultsBar(GeocatSearchResultSet resultSet) {
