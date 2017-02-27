@@ -1,36 +1,48 @@
 package fr.pigeo.rimap.rimaprcp.core.ui.swt;
 
 import java.awt.Color;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatSearchResultSet;
+import fr.pigeo.rimap.rimaprcp.core.geocatalog.jsonparsingobjects.Category;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.jsonparsingobjects.Dimension;
 import fr.pigeo.rimap.rimaprcp.core.ui.jface.FacetsContentProvider;
 import fr.pigeo.rimap.rimaprcp.core.ui.jface.FacetsLabelProvider;
@@ -65,6 +77,13 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	private RenderableLayer geocatRenderableLayer;
 	private SectorSelector sectorSelector;
 	private boolean drawingSector = false;
+	
+
+	private static String IMAGE_CHECKED = "icons/checked.png";
+	private static String IMAGE_UNCHECKED = "icons/unchecked.png";
+
+	public static Image checkedImage;
+	public static Image uncheckedImage;
 
 	@Inject
 	GeocatMetadataToolBox searchTools;
@@ -419,8 +438,59 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	    viewer.setContentProvider(new FacetsContentProvider());
 	    viewer.setLabelProvider(new FacetsLabelProvider());
 	    viewer.setInput(resultSet.getSummary());
+	    viewer.expandAll();
+	    Tree tree = viewer.getTree();
+		tree.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				// normally, we can click only 1 item at a time. So we get the
+				// first one of the array
+				if (tree.getSelection().length > 0) {
+					TreeItem item = tree.getSelection()[0];
+					if (item.getData() instanceof Category) {
+						Category node = (Category) item.getData();
+							if (item.getImage() != null) {
+								if ((e.x > item.getImageBounds(0).x) && (e.x < (item.getImageBounds(0).x + item.getImage()
+										.getBounds().width))) {
+									if ((e.y > item.getImageBounds(0).y) && (e.y < (item.getImageBounds(0).y + item.getImage()
+											.getBounds().height))) {
+											node.toggleChecked();
+											item.setImage(getCheckboxImage(node.isChecked()));
+									}
+								}
+						}
+					}
+					
+				}
+
+			}
+		});
+
 	    grpFacets.layout(true);
 	    grpFacets.pack();
+	    advSearchComposite.pack();
+	}
+
+	public static Image getCheckboxImage(boolean checkedStatus) {
+		if (checkedStatus) {
+			if (checkedImage==null) {
+				checkedImage = createImage(IMAGE_CHECKED);
+			}
+			return checkedImage;
+		} else {
+			if (uncheckedImage==null) {
+				uncheckedImage = createImage(IMAGE_UNCHECKED);
+			}
+			return uncheckedImage;
+		}
+	}
+	
+	protected static Image createImage(String path) {
+		Bundle bundle = FrameworkUtil.getBundle(GeocatSearchFormImpl.class);
+		URL url = FileLocator.find(bundle, new Path(path), null);
+
+		ImageDescriptor imageDescr = ImageDescriptor.createFromURL(url);
+		return imageDescr.createImage();
 	}
 
 	private void updateResultsBar(GeocatSearchResultSet resultSet) {

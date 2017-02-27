@@ -6,6 +6,7 @@ import org.eclipse.jface.viewers.ViewerCell;
 
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.jsonparsingobjects.Category;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.jsonparsingobjects.Dimension;
+import fr.pigeo.rimap.rimaprcp.core.ui.swt.GeocatSearchFormImpl;
 
 public class FacetsLabelProvider extends StyledCellLabelProvider {
 
@@ -25,8 +26,8 @@ public class FacetsLabelProvider extends StyledCellLabelProvider {
 		if (element instanceof Category) {
 			Category c = (Category) element;
 			text.append(c.get_label());
-
 			text.append(" (" + c.get_count() + ") ", StyledString.COUNTER_STYLER);
+			cell.setImage(GeocatSearchFormImpl.getCheckboxImage(c.isChecked()));
 		}
 		cell.setText(text.toString());
 		cell.setStyleRanges(text.getStyleRanges());

@@ -3,12 +3,11 @@ package fr.pigeo.rimap.rimaprcp.core.geocatalog.jsonparsingobjects;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataEntity;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Dimension {
@@ -68,9 +67,9 @@ public class Dimension {
 		this.category.add(c);
 		return;
 	}
-
+	
+	@JsonIgnore
 	public boolean hasChildren() {
 		return !this.category.isEmpty();
 	}
-
 }

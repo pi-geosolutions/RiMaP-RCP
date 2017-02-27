@@ -1,5 +1,6 @@
 package fr.pigeo.rimap.rimaprcp.core.geocatalog.jsonparsingobjects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,10 +14,11 @@ public class Category {
 	
 	@JsonProperty("@count")
 	protected String _count;
+
+	@JsonIgnore
+	protected boolean checked=false;
 	
-	public Category() {
-		
-	}
+	public Category() {}
 
 	public String get_value() {
 		return _value;
@@ -40,6 +42,17 @@ public class Category {
 
 	public void set_count(String _count) {
 		this._count = _count;
+	}
+	
+
+	@JsonIgnore
+	public void toggleChecked() {
+		this.checked = !this.checked;
+	}
+	
+	@JsonIgnore
+	public boolean isChecked() {
+		return this.checked ;
 	}
 
 }
