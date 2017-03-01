@@ -16,12 +16,7 @@ public class FacetsLabelProvider extends StyledCellLabelProvider {
 		StyledString text = new StyledString();
 		if (element instanceof Dimension) {
 			Dimension d = (Dimension) element;
-			text.append(d.get_label());
-			/*if (d.getCategory() != null && !d.getCategory()
-					.isEmpty()) {
-				text.append(" (" + d.getCategory()
-						.size() + ") ", StyledString.COUNTER_STYLER);
-			}*/
+			text.append(d.getTranslatedLabel());
 		}
 		if (element instanceof Category) {
 			Category c = (Category) element;

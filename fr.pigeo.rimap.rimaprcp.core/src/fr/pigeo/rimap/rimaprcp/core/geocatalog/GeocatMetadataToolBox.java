@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
-import fr.pigeo.rimap.rimaprcp.core.translation.Translate;
+import fr.pigeo.rimap.rimaprcp.core.translation.Messages;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Sector;
 
@@ -37,7 +37,7 @@ public class GeocatMetadataToolBox {
 
 	@Inject
 	@Translation
-	Translate tsn;
+	Messages tsn;
 
 	String baseUrl;
 	String resourcesServicePath;
@@ -70,18 +70,14 @@ public class GeocatMetadataToolBox {
 		}
 		return proposals;
 	}
-
-	public GeocatSearchResultSet search(String text, String sortBy) {
-		return search(text, sortBy, 1, 20, false, false, null, null);
-	}
-
+	
 	public GeocatSearchResultSet search(String text, String sortBy, int from, int to, boolean downloadable,
-			boolean dynamic, Sector sector, String extentRelation) {
+			boolean dynamic, Sector sector, String extentRelation, String facetsAsSubstring) {
 		// TODO : support gn2.10 also (provides only XML search service =>
 		// convert to json then parse.
 		// Service URL is different also
 
-		String searchUrl = buildSearchURL(text, from, to, sortBy, "", downloadable, dynamic, sector, extentRelation);
+		String searchUrl = buildSearchURL(text, from, to, sortBy, "", downloadable, dynamic, sector, extentRelation,facetsAsSubstring);
 		// String searchUrl =
 		// this.baseUrl+"srv/"+tsn.iso3_code+"/q?_content_type=json&facet.q=&fast=index&from=1&resultType=details&sortBy=relevance&sortOrder=&to=20&any="+text;
 		System.out.println(searchUrl);
@@ -145,9 +141,9 @@ public class GeocatMetadataToolBox {
 	}
 
 	private String buildSearchURL(String text, int fromIndex, int toIndex, String sortBy, String sortOrder,
-			boolean downloadable, boolean dynamic, Sector sector, String extentRelation) {
+			boolean downloadable, boolean dynamic, Sector sector, String extentRelation, String facetsAsSubstring) {
 		String extras = (dynamic ? "&dynamic=true" : "") + (downloadable ? "&download=true" : "")
-				+ getExtentAsString(sector, extentRelation);
+				+ getExtentAsString(sector, extentRelation) + (facetsAsSubstring.length() >0 ? "&facet.q="+facetsAsSubstring:"");
 
 		String request = this.baseUrl + getLocalizedSRVPathFragment() + "q?";
 		if (catalogIsPadre1()) {

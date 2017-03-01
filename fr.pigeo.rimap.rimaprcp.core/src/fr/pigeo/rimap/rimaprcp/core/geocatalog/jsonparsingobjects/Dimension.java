@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.pigeo.rimap.rimaprcp.core.Plugin;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Dimension {
 	@JsonProperty("@name")
@@ -33,6 +35,11 @@ public class Dimension {
 
 	public String get_label() {
 		return _label;
+	}
+
+	@JsonIgnore
+	public String getTranslatedLabel() {
+		return Plugin.translate("facet_dimension_"+_label);
 	}
 
 	public void set_label(String _label) {

@@ -223,6 +223,6 @@ public class GeocatSearchForm extends Composite {
 		grpFacets.setLayout(fl_grpFacets);
 		
 		Label lblToDo = new Label(grpFacets, SWT.NONE);
-		lblToDo.setText("To do");
+		lblToDo.setText("To load refine search options, please first perform a search");
 	}
 }

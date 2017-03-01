@@ -84,6 +84,8 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 
 	public static Image checkedImage;
 	public static Image uncheckedImage;
+	
+	private List<Dimension> facets;
 
 	@Inject
 	GeocatMetadataToolBox searchTools;
@@ -122,7 +124,6 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		 * }
 		 * });
 		 */
-
 		// sortBy combo entries
 		comboViewerSortBy.setLabelProvider(new LabelProvider() {
 			@Override
@@ -301,7 +302,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 				.getFirstElement()).getCode();
 
 		GeocatSearchResultSet resultSet = searchTools.search(text, sortby, startIndex, endIndex, advSearchDownloadable,
-				advSearchDynamic, sector, extentRelation);
+				advSearchDynamic, sector, extentRelation, getActiveFacetsAsSearchSubstring());
 		if (resultSet != null) {
 			if (resultSet.hadException()) {
 				// clear RenderableLayer
@@ -331,6 +332,8 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			// clear renderable layer
 			RenderableLayer rlayer = getRenderableLayer(true);
 			this.currentResultsPanels.clear();
+			
+			this.tbtmResults.setText("Results("+resultSet.getSummary().get_count()+")");
 
 			this.updateResultsBar(resultSet);
 			
@@ -360,63 +363,6 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 									.redraw();
 						}
 					});
-					/*
-					 * mtdPanel.addListener(SWT.MouseExit, new Listener() {
-					 * 
-					 * @Override
-					 * public void handleEvent(Event event) {
-					 * for (Control child : mtdPanel.getChildren()) {
-					 * if (child.getBounds()
-					 * .contains(new Point(event.x, event.y))) {
-					 * System.out.println(child.getClass());
-					 * System.out.println(
-					 * "Bounds : x=" + child.getBounds().x + "  y=" +
-					 * child.getBounds().y + "  w="
-					 * + child.getBounds().width + "  h=" +
-					 * child.getBounds().height);
-					 * System.out.println("Mouse location : x=" + event.x +
-					 * "  y=" + event.y);
-					 * return;
-					 * }
-					 * }
-					 * setHighlighted(null);
-					 * setHighlightedPolygon(null);
-					 * // mtdPanel.setHighlighted(false);
-					 * // poly.setHighlighted(false);
-					 * wwjInst.getWwd()
-					 * .redraw();
-					 * }
-					 * });
-					 *//*
-						 * mtdPanel.addListener(SWT.MouseEnter, new Listener() {
-						 * 
-						 * @Override
-						 * public void handleEvent(Event event) {
-						 * System.out.println("entering "
-						 * +mtdPanel.txtTitle.getText());
-						 * mtdPanel.setData(
-						 * "org.eclipse.e4.ui.css.CssClassName", "hover");
-						 * }
-						 * });
-						 * mtdPanel.addListener(SWT.MouseExit, new Listener() {
-						 * 
-						 * @Override
-						 * public void handleEvent(Event event) {
-						 * //do not change background color if we are entering a
-						 * child widget
-						 * for (Control child : mtdPanel.getChildren()) {
-						 * if (child.getBounds()
-						 * .contains(new Point(event.x, event.y)))
-						 * return;
-						 * }
-						 * 
-						 * mtdPanel.setData(
-						 * "org.eclipse.e4.ui.css.CssClassName", "");
-						 * System.out.println("exiting "
-						 * +mtdPanel.txtTitle.getText());
-						 * }
-						 * });
-						 */
 				}
 
 				idx++;
@@ -433,7 +379,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		for (Control c : grpFacets.getChildren()) {
 			c.dispose();
 		}
-		List<Dimension> facets = resultSet.getSummary().getDimension();
+		this.facets = resultSet.getSummary().getDimension();
 		TreeViewer viewer = new TreeViewer(grpFacets, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	    viewer.setContentProvider(new FacetsContentProvider());
 	    viewer.setLabelProvider(new FacetsLabelProvider());
@@ -469,6 +415,21 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	    grpFacets.layout(true);
 	    grpFacets.pack();
 	    advSearchComposite.pack();
+	}
+	
+	private String getActiveFacetsAsSearchSubstring() {
+		if (facets==null) {
+			return "";
+		}
+		List<String> facetsStringsList = new ArrayList<String>();
+		facets.forEach(d-> {
+			d.getCategory().forEach(c-> {
+				if (c.isChecked()) {
+					facetsStringsList.add(d.get_name()+"%2F"+c.get_value());
+				}
+			});
+		});
+		return String.join("%26", facetsStringsList);
 	}
 
 	public static Image getCheckboxImage(boolean checkedStatus) {
@@ -570,5 +531,31 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			return this.text;
 		}
 	}
+//	
+//	private class Facet {
+//		private Category category;
+//		private Dimension dimension;
+//		
+//		public Facet(Category category, Dimension dimension) {
+//			super();
+//			this.category = category;
+//			this.dimension = dimension;
+//		}
+//		public Category getCategory() {
+//			return category;
+//		}
+//		public void setCategory(Category category) {
+//			this.category = category;
+//		}
+//		public Dimension getDimension() {
+//			return dimension;
+//		}
+//		public void setDimension(Dimension dimension) {
+//			this.dimension = dimension;
+//		}
+//		public String getFacetAsSearchSubstring() {
+//			return dimension.get_name()+"/"+category.get_value();
+//		}
+//	}
 
 }
