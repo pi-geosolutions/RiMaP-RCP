@@ -133,6 +133,10 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 					.filter(s -> s.contains("OGC:WMS"))
 					.collect(Collectors.toList());
 			configureCButton(this.btnMap, maps, LinkMode.WMS, "icons/globe-dropdown.png");
+		} else {
+			this.btnLinks.dispose();
+			this.btnMap.dispose();
+			this.btnDownloads.dispose();
 		}
 
 	}
@@ -181,7 +185,6 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 
 	private void configureCButton(CButton btn, List<String> list, LinkMode mode, String multipleValuesIconPath) {
 		btn.setBackgrounds(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY), SWTResourceManager.getColor(SWT.COLOR_GRAY));
-		
 		if (list == null || list.isEmpty()) {
 			// btn.setVisible(false); //hide but keep occupied space
 			btn.dispose();

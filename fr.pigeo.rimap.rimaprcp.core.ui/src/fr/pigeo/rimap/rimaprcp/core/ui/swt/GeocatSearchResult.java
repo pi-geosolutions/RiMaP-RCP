@@ -13,6 +13,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import fr.pigeo.rimap.rimaprcp.core.ui.core.Plugin;
+
 public class GeocatSearchResult extends Composite {
 	protected Composite headerComposite;
 	protected Button btnCheck;
@@ -64,7 +66,7 @@ public class GeocatSearchResult extends Composite {
 		
 		btnOpenMTD= new CButton(headerComposite, SWT.PUSH);
 		btnOpenMTD.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/plus-square.png"));
-		btnOpenMTD.setToolTipText("Open Full Metadata Window in Browser");
+		btnOpenMTD.setToolTipText(Plugin.translate("geocat.result.openinbrowser"));
 		btnOpenMTD.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 //		
 //		btnOpenMTD = new Button(headerComposite, SWT.NONE);

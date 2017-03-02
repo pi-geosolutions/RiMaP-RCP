@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import fr.pigeo.rimap.rimaprcp.core.ui.core.Plugin;
+
 public class GeocatSearchForm extends Composite {
 	protected Text txtFreeSearch;
 	protected Button btnSearch;
@@ -46,6 +48,7 @@ public class GeocatSearchForm extends Composite {
 	protected Group grpFacets;
 	protected Composite advSearchComposite;
 	protected Label lblPleaseFirstPerform;
+	protected Label lblSearch;
 
 	public GeocatSearchForm(Composite parent, int style) {
 		super(parent, SWT.COLOR_WIDGET_BACKGROUND);
@@ -57,9 +60,10 @@ public class GeocatSearchForm extends Composite {
 	public void createControls() {
 		setLayout(new GridLayout(3, false));
 		
-		Label lblSearch = new Label(this, SWT.NONE);
+		lblSearch = new Label(this, SWT.NONE);
 		lblSearch.setFont(SWTResourceManager.getFont("Sans", 12, SWT.BOLD));
-		lblSearch.setText("Search:");
+		//lblSearch.setText("Search:");
+		lblSearch.setText(Plugin.translate("geocat.search.title"));
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
 		
@@ -72,7 +76,7 @@ public class GeocatSearchForm extends Composite {
 		
 		btnReset = new Button(this, SWT.NONE);
 		btnReset.setFont(SWTResourceManager.getFont("Sans", 8, SWT.NORMAL));
-		btnReset.setToolTipText("Reset");
+		btnReset.setToolTipText(Plugin.translate("geocat.search.btn.reset"));
 		btnReset.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/cross.png"));
 		
 
@@ -80,10 +84,10 @@ public class GeocatSearchForm extends Composite {
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		
 		tbtmAdvSearch = new TabItem(tabFolder, SWT.NONE);
-		tbtmAdvSearch.setText("Advanced Search");
+		tbtmAdvSearch.setText(Plugin.translate("geocat.search.advancedsearch"));
 		
 		tbtmResults = new TabItem(tabFolder, SWT.NONE);
-		tbtmResults.setText("Results");
+		tbtmResults.setText(Plugin.translate("geocat.search.results"));
 		
 		Composite resultsComposite = new Composite(tabFolder, SWT.NONE);
 		tbtmResults.setControl(resultsComposite);
@@ -109,7 +113,7 @@ public class GeocatSearchForm extends Composite {
 		GridData gd_lblSortBy = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_lblSortBy.heightHint = 16;
 		lblSortBy.setLayoutData(gd_lblSortBy);
-		lblSortBy.setText("Sort by: ");
+		lblSortBy.setText(Plugin.translate("geocat.search.sortby"));
 		
 		comboSortBy = new CCombo(resultsTopToolbar, SWT.NONE);
 		GridData gd_comboSortBy = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -136,7 +140,7 @@ public class GeocatSearchForm extends Composite {
 		GridData gd_lblResults = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_lblResults.heightHint = 16;
 		lblResults.setLayoutData(gd_lblResults);
-		lblResults.setText("Results ");
+		lblResults.setText(Plugin.translate("geocat.search.results")+" ");
 		
 		lblResultsNb = new Label(resultsTopToolbar, SWT.NONE);
 		GridData gd_lblResultsNb = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -169,7 +173,7 @@ public class GeocatSearchForm extends Composite {
 		
 		lblPleaseFirstPerform = new Label(resultsListContainerComposite, SWT.NONE);
 		lblPleaseFirstPerform.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
-		lblPleaseFirstPerform.setText("Please first perform a search");
+		lblPleaseFirstPerform.setText(Plugin.translate("geocat.search.pleasePerformASearch"));
 		scrolledComposite.setContent( resultsListContainerComposite );
 		
 				
@@ -186,19 +190,19 @@ public class GeocatSearchForm extends Composite {
 		rl_grpGeographicFilter.center = true;
 		grpGeographicFilter.setLayout(rl_grpGeographicFilter);
 		grpGeographicFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		grpGeographicFilter.setText("Geographic filter");
+		grpGeographicFilter.setText(Plugin.translate("geocat.search.geogfilter"));
 		
 		btnDrawExtent = new Button(grpGeographicFilter, SWT.NONE);
 		btnDrawExtent.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
-		btnDrawExtent.setText("Draw Extent");
-		btnDrawExtent.setToolTipText("Draw Extent");
+		btnDrawExtent.setText(Plugin.translate("geocat.search.drawextent"));
+		btnDrawExtent.setToolTipText(Plugin.translate("geocat.search.drawextent"));
 		btnDrawExtent.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/draw_rectangle_off.png"));
 		
 		Label label = new Label(grpGeographicFilter, SWT.NONE);
 		label.setText("     ");
 		
 		Label lblRelation = new Label(grpGeographicFilter, SWT.NONE);
-		lblRelation.setText("relation: ");
+		lblRelation.setText(Plugin.translate("geocat.search.relation"));
 		
 		comboExtent = new CCombo(grpGeographicFilter, SWT.BORDER);
 		//comboExtent.setItems(new String[] {"Intersection with", "Completely inside of"});
@@ -215,17 +219,17 @@ public class GeocatSearchForm extends Composite {
 		fl_grpAssociatedResources.marginWidth = 10;
 		grpAssociatedResources.setLayout(fl_grpAssociatedResources);
 		grpAssociatedResources.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		grpAssociatedResources.setText("Associated resources");
+		grpAssociatedResources.setText(Plugin.translate("geocat.search.resources"));
 		
 		btnCheckDownloadable = new Button(grpAssociatedResources, SWT.CHECK);
-		btnCheckDownloadable.setText("Downloadable data");
+		btnCheckDownloadable.setText(Plugin.translate("geocat.search.downloadable"));
 		
 		btnCheckDynamicMap = new Button(grpAssociatedResources, SWT.CHECK);
-		btnCheckDynamicMap.setText("Visualisable data");
+		btnCheckDynamicMap.setText(Plugin.translate("geocat.search.visualisable"));
 		
 		grpFacets = new Group(advSearchComposite, SWT.SHADOW_IN);
 		grpFacets.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		grpFacets.setText("Refine Search");
+		grpFacets.setText(Plugin.translate("geocat.search.refine"));
 		grpFacets.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
 		FillLayout fl_grpFacets = new FillLayout(SWT.VERTICAL);
 		fl_grpFacets.spacing = 3;
@@ -234,6 +238,6 @@ public class GeocatSearchForm extends Composite {
 		grpFacets.setLayout(fl_grpFacets);
 		
 		Label lblToDo = new Label(grpFacets, SWT.NONE);
-		lblToDo.setText("To load refine search options, please first perform a search");
+		lblToDo.setText(Plugin.translate("geocat.search.refinemsg"));
 	}
 }

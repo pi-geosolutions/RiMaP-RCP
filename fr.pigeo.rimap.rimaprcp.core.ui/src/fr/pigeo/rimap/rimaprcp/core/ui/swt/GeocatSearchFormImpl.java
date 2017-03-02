@@ -86,6 +86,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	public static Image uncheckedImage;
 	
 	private List<Dimension> facets;
+	private TreeViewer facetsTreeViewer;
 
 	@Inject
 	GeocatMetadataToolBox searchTools;
@@ -110,7 +111,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 	 * inside the constructor)
 	 * !!!! Beware: run it only once !
 	 */
-	public void enhanceControls() {
+	public void enhanceControls() {		
 		// autocomplete in anysearch Text component
 		// TODO : finish this
 		/*
@@ -158,6 +159,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		this.btnSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				page = 1;
 				search(txtFreeSearch.getText());
 			}
 		});
@@ -165,6 +167,7 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
+					page = 1;
 					search(txtFreeSearch.getText());
 				}
 			}
@@ -173,9 +176,14 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 		this.btnReset.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				page = 1;
 				txtFreeSearch.setText("");
 				btnCheckDownloadable.setSelection(false);
 				btnCheckDynamicMap.setSelection(false);
+				sectorSelector.disable();
+				facetsTreeViewer.getTree().dispose();
+				facetsTreeViewer=null;
+				facets.clear();
 			}
 		});
 
@@ -380,12 +388,12 @@ public class GeocatSearchFormImpl extends GeocatSearchForm {
 			c.dispose();
 		}
 		this.facets = resultSet.getSummary().getDimension();
-		TreeViewer viewer = new TreeViewer(grpFacets, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-	    viewer.setContentProvider(new FacetsContentProvider());
-	    viewer.setLabelProvider(new FacetsLabelProvider());
-	    viewer.setInput(resultSet.getSummary());
-	    viewer.expandAll();
-	    Tree tree = viewer.getTree();
+		facetsTreeViewer = new TreeViewer(grpFacets, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+	    facetsTreeViewer.setContentProvider(new FacetsContentProvider());
+	    facetsTreeViewer.setLabelProvider(new FacetsLabelProvider());
+	    facetsTreeViewer.setInput(resultSet.getSummary());
+	    facetsTreeViewer.expandAll();
+	    Tree tree = facetsTreeViewer.getTree();
 		tree.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {

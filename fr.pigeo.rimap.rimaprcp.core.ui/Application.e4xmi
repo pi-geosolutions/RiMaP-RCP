@@ -12,7 +12,7 @@
                 <children xsi:type="basic:Part" xmi:id="_gMIN8MmGEeWEb9mxV_lPdQ" elementId="fr.pigeo.rimap.rimaprcp.part.details" containerData="500" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.swt.LayerDetailsImpl" label="%parts.layerdetails.label" closeable="true"/>
               </children>
             </children>
-            <children xsi:type="basic:Part" xmi:id="_MVY0UN4oEeaQXKnHqoGIgg" elementId="fr.pigeo.rimap.rimaprcp.core.ui.part.geocatalogue" containerData="300" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.views.geocatalogue" label="Geocatalog" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.core.ui/icons/magnifier.png"/>
+            <children xsi:type="basic:Part" xmi:id="_MVY0UN4oEeaQXKnHqoGIgg" elementId="fr.pigeo.rimap.rimaprcp.core.ui.part.geocatalogue" containerData="300" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.views.geocatalogue" label="%part.label.geocatalog" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.core.ui/icons/magnifier.png"/>
           </children>
           <children xsi:type="basic:PartSashContainer" xmi:id="_0AJrMAfFEeaRbecOnodQ-g" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.1" containerData="700">
             <children xsi:type="basic:PartStack" xmi:id="_sWgnQAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.partstack.0" containerData="700">

@@ -80,7 +80,7 @@ public class GeocatMetadataToolBox {
 		String searchUrl = buildSearchURL(text, from, to, sortBy, "", downloadable, dynamic, sector, extentRelation,facetsAsSubstring);
 		// String searchUrl =
 		// this.baseUrl+"srv/"+tsn.iso3_code+"/q?_content_type=json&facet.q=&fast=index&from=1&resultType=details&sortBy=relevance&sortOrder=&to=20&any="+text;
-		System.out.println(searchUrl);
+		//System.out.println(searchUrl);
 		try {
 			if (httpClient != null) {
 				HttpGet httpget = new HttpGet(searchUrl);
@@ -115,14 +115,13 @@ public class GeocatMetadataToolBox {
 						}
 
 						// String json = EntityUtils.toString(entity);
-						System.out.println(json);
+						//System.out.println(json);
 						ObjectMapper mapper = new ObjectMapper(); // can reuse,
 																	// share
 																	// globally
 						GeocatSearchResultSet resultSet = mapper.readValue(json, GeocatSearchResultSet.class);
 
-						System.out.println("Nb results: " + resultSet.getSummary()
-								.get_count());
+						//System.out.println("Nb results: " + resultSet.getSummary().get_count());
 						return resultSet;
 					}
 				} finally {

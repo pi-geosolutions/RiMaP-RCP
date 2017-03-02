@@ -33,7 +33,7 @@ public class CButton extends CLabel {
 	}
 
 	public void setBackgrounds(Color bgcolor, Color shadow) {
-		super.setBackground(bgcolor);
+		this.setBackground(bgcolor);
 		this.bg = bgcolor;
 		this.shadow = shadow;
 	}
