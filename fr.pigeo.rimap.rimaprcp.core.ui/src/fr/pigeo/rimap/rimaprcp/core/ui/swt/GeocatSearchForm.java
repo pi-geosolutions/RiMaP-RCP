@@ -2,18 +2,20 @@ package fr.pigeo.rimap.rimaprcp.core.ui.swt;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
@@ -43,9 +45,11 @@ public class GeocatSearchForm extends Composite {
 	protected ComboViewer comboViewerExtent;
 	protected Group grpFacets;
 	protected Composite advSearchComposite;
+	protected Label lblPleaseFirstPerform;
 
 	public GeocatSearchForm(Composite parent, int style) {
-		super(parent, SWT.NO_BACKGROUND);
+		super(parent, SWT.COLOR_WIDGET_BACKGROUND);
+		//setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
 		
 		createControls();	
 	}
@@ -60,7 +64,6 @@ public class GeocatSearchForm extends Composite {
 		new Label(this, SWT.NONE);
 		
 		txtFreeSearch = new Text(this, SWT.BORDER);
-		txtFreeSearch.setText("population");
 		txtFreeSearch.setToolTipText("");
 		txtFreeSearch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
@@ -110,6 +113,7 @@ public class GeocatSearchForm extends Composite {
 		
 		comboSortBy = new CCombo(resultsTopToolbar, SWT.NONE);
 		GridData gd_comboSortBy = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_comboSortBy.widthHint = 150;
 		gd_comboSortBy.heightHint = 16;
 		comboSortBy.setLayoutData(gd_comboSortBy);
 		comboSortBy.setEditable(false);
@@ -156,10 +160,16 @@ public class GeocatSearchForm extends Composite {
 		ScrolledComposite scrolledComposite = new ScrolledComposite( resultsComposite, SWT.H_SCROLL | SWT.V_SCROLL );
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		scrolledComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
 		resultsListContainerComposite = new Composite(scrolledComposite, SWT.NONE);
 		resultsListContainerComposite.setLayout(new GridLayout(1, false));
 		resultsListContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		resultsListContainerComposite.setBounds(0, 0, 64, 64);
+		resultsListContainerComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
+		
+		lblPleaseFirstPerform = new Label(resultsListContainerComposite, SWT.NONE);
+		lblPleaseFirstPerform.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
+		lblPleaseFirstPerform.setText("Please first perform a search");
 		scrolledComposite.setContent( resultsListContainerComposite );
 		
 				
@@ -179,12 +189,13 @@ public class GeocatSearchForm extends Composite {
 		grpGeographicFilter.setText("Geographic filter");
 		
 		btnDrawExtent = new Button(grpGeographicFilter, SWT.NONE);
+		btnDrawExtent.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));
 		btnDrawExtent.setText("Draw Extent");
 		btnDrawExtent.setToolTipText("Draw Extent");
 		btnDrawExtent.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/draw_rectangle_off.png"));
 		
 		Label label = new Label(grpGeographicFilter, SWT.NONE);
-		label.setText("         ");
+		label.setText("     ");
 		
 		Label lblRelation = new Label(grpGeographicFilter, SWT.NONE);
 		lblRelation.setText("relation: ");
@@ -212,7 +223,7 @@ public class GeocatSearchForm extends Composite {
 		btnCheckDynamicMap = new Button(grpAssociatedResources, SWT.CHECK);
 		btnCheckDynamicMap.setText("Visualisable data");
 		
-		grpFacets = new Group(advSearchComposite, SWT.BORDER | SWT.SHADOW_IN);
+		grpFacets = new Group(advSearchComposite, SWT.SHADOW_IN);
 		grpFacets.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		grpFacets.setText("Refine Search");
 		grpFacets.setBackground(SWTResourceManager.getColor(SWT.COLOR_TRANSPARENT));

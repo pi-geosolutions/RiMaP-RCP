@@ -20,6 +20,8 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -56,12 +58,11 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 		// TODO Auto-generated constructor stub
 	}
 
-	public GeocatSearchResultImpl(GeocatMetadataEntity entity, 
-			GeocatMetadataToolBox searchTools, WwjInstance wwjInst, 
+	public GeocatSearchResultImpl(GeocatMetadataEntity entity, GeocatMetadataToolBox searchTools, WwjInstance wwjInst,
 			IEclipseContext context, Composite parent, int style) {
 		super(parent, style);
 		this.wwjInst = wwjInst;
-		this.context=context;
+		this.context = context;
 		load(entity, searchTools);
 	}
 
@@ -84,13 +85,22 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 		 * 
 		 * });
 		 */
-		this.btnOpenMTD.addSelectionListener(new SelectionAdapter() {
+		this.btnOpenMTD.addListener(SWT.Selection, new Listener() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String mtdLink = searchTools.getFullMetadataViewPath(entity.get_geonet_info().getUuid());
+			public void handleEvent(Event event) {
+				String mtdLink = searchTools.getFullMetadataViewPath(entity.get_geonet_info()
+						.getUuid());
 				Program.launch(mtdLink);
 			}
 		});
+		// this.btnOpenMTD.addSelectionListener(new SelectionAdapter() {
+		// @Override
+		// public void widgetSelected(SelectionEvent e) {
+		// String mtdLink =
+		// searchTools.getFullMetadataViewPath(entity.get_geonet_info().getUuid());
+		// Program.launch(mtdLink);
+		// }
+		// });
 		this.setSummary(entity.get_abstract());
 		this.setOriginator(entity.getFirstResponsibleParty());
 		// set thumbnail
@@ -110,19 +120,19 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 			List<String> links = onlineResources.stream()
 					.filter(s -> s.contains("WWW:LINK"))
 					.collect(Collectors.toList());
-			configureButton(this.btnLinks, links, LinkMode.HTTP, "icons/link-dropdown.png");
+			configureCButton(this.btnLinks, links, LinkMode.HTTP, "icons/link-dropdown.png");
 
 			// download button
 			List<String> downloads = onlineResources.stream()
 					.filter(s -> s.contains("WWW:DOWNLOAD"))
 					.collect(Collectors.toList());
-			configureButton(this.btnDownloads, downloads, LinkMode.HTTP, "icons/download-dropdown.png");
-			
+			configureCButton(this.btnDownloads, downloads, LinkMode.HTTP, "icons/download-dropdown.png");
+
 			// interactive map button
 			List<String> maps = onlineResources.stream()
 					.filter(s -> s.contains("OGC:WMS"))
 					.collect(Collectors.toList());
-			configureButton(this.btnMap, maps, LinkMode.WMS, "icons/globe-dropdown.png");
+			configureCButton(this.btnMap, maps, LinkMode.WMS, "icons/globe-dropdown.png");
 		}
 
 	}
@@ -169,16 +179,107 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 
 	}
 
+	private void configureCButton(CButton btn, List<String> list, LinkMode mode, String multipleValuesIconPath) {
+		btn.setBackgrounds(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY), SWTResourceManager.getColor(SWT.COLOR_GRAY));
+		
+		if (list == null || list.isEmpty()) {
+			// btn.setVisible(false); //hide but keep occupied space
+			btn.dispose();
+			return;
+		}
+		if (list.size() == 1) {
+			String elt = list.get(0);
+			String[] chunks = elt.split("\\|");
+			String desc = chunks[1].length() != 0 ? chunks[1] : chunks[0];
+			btn.setToolTipText(desc);
+			btn.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					switch (mode) {
+					case GOOGLE_EARTH:
+						// TODO : implement ?
+						break;
+					case WMS:
+						String description = chunks[1].length() != 0 ? chunks[1] : chunks[0];
+						String layername = chunks[1].length() != 0 ? chunks[0] : extractNameFromURL(chunks);
+						String url = chunks[2].split("\\?")[0];
+
+						if (context != null) {
+							WmsNode layer = ContextInjectionFactory.make(WmsNode.class, context);
+							layer.setName(description);
+							layer.setLayers(layername);
+							layer.setUrl(url);
+							layer.setMetadata_uuid(entity.get_geonet_info()
+									.getUuid());
+							layer.setChecked(true);
+							Layer wwjLayer = layer.getLayer();
+							wwjInst.addLayer(wwjLayer);
+						}
+						break;
+					case HTTP:
+					default:
+						Program.launch(chunks[2]);
+					}
+				}
+				
+
+				private String extractNameFromURL(String[] chunkss) {
+					String name = chunkss[0];
+					String[] url_split = chunkss[2].split("\\?");
+					if (url_split.length > 1 && url_split[1].length() > 0) {
+						for (String s : url_split[1].split("\\&")) {
+							if (s.startsWith("layers=")) {
+								name = s.split("=")[1];
+								break;
+							}
+						}
+					}
+					return name;
+				}
+
+			});
+			// btn.addSelectionListener(new
+			// ResourceButtonSelectionListener(chunks, mode, entity, context));
+		} else {
+			btn.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", multipleValuesIconPath));
+			btn.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event e) {
+					Shell shell = btn.getShell();
+					Menu menu = new Menu(shell, SWT.POP_UP);
+					list.forEach(s -> {
+						String[] chunks = s.split("\\|");
+						String desc = chunks[1].length() != 0 ? chunks[1] : chunks[0];
+						MenuItem item = new MenuItem(menu, SWT.PUSH);
+						item.setText(desc);
+						item.addSelectionListener(new ResourceButtonSelectionListener(chunks, mode, entity, context));
+					});
+					Point loc = btn.getLocation();
+					Rectangle rect = btn.getBounds();
+
+					Point mLoc = new Point(loc.x - 1, loc.y + rect.height);
+
+					menu.setLocation(shell.getDisplay()
+							.map(btn.getParent(), null, mLoc));
+
+					menu.setVisible(true);
+				}
+			});
+		}
+
+	}
+
 	private class ResourceButtonSelectionListener extends SelectionAdapter {
 		private LinkMode mode;
 		private String[] chunks;
 		private IEclipseContext context;
 		private GeocatMetadataEntity mtdEntity;
 
-		public ResourceButtonSelectionListener(String[] chunks, LinkMode mode, GeocatMetadataEntity mtdEntity, IEclipseContext context) {
+		public ResourceButtonSelectionListener(String[] chunks, LinkMode mode, GeocatMetadataEntity mtdEntity,
+				IEclipseContext context) {
 			this.mode = mode;
 			this.chunks = chunks;
-			this.context=context;
+			this.context = context;
 			this.mtdEntity = mtdEntity;
 		}
 
@@ -192,13 +293,14 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 				String description = chunks[1].length() != 0 ? chunks[1] : chunks[0];
 				String layername = chunks[1].length() != 0 ? chunks[0] : extractNameFromURL(chunks);
 				String url = chunks[2].split("\\?")[0];
-				
-				if (context!=null) {
+
+				if (context != null) {
 					WmsNode layer = ContextInjectionFactory.make(WmsNode.class, context);
 					layer.setName(description);
 					layer.setLayers(layername);
 					layer.setUrl(url);
-					layer.setMetadata_uuid(mtdEntity.get_geonet_info().getUuid());
+					layer.setMetadata_uuid(mtdEntity.get_geonet_info()
+							.getUuid());
 					layer.setChecked(true);
 					Layer wwjLayer = layer.getLayer();
 					wwjInst.addLayer(wwjLayer);
@@ -211,18 +313,77 @@ public class GeocatSearchResultImpl extends GeocatSearchResult {
 		}
 
 		private String extractNameFromURL(String[] chunkss) {
-			String name=chunkss[0];
+			String name = chunkss[0];
 			String[] url_split = chunkss[2].split("\\?");
-			if (url_split.length>1 && url_split[1].length()>0) {
-				for (String s:  url_split[1].split("\\&")) {
+			if (url_split.length > 1 && url_split[1].length() > 0) {
+				for (String s : url_split[1].split("\\&")) {
 					if (s.startsWith("layers=")) {
-						name= s.split("=")[1];
+						name = s.split("=")[1];
 						break;
 					}
 				}
 			}
 			return name;
 		}
+	}
+
+	private class ResourceCButtonSelectionListener implements Listener {
+		private LinkMode mode;
+		private String[] chunks;
+		private IEclipseContext context;
+		private GeocatMetadataEntity mtdEntity;
+
+		public ResourceCButtonSelectionListener(String[] chunks, LinkMode mode, GeocatMetadataEntity mtdEntity,
+				IEclipseContext context) {
+			this.mode = mode;
+			this.chunks = chunks;
+			this.context = context;
+			this.mtdEntity = mtdEntity;
+		}
+
+		@Override
+		public void handleEvent(Event e) {
+			switch (mode) {
+			case GOOGLE_EARTH:
+				// TODO : implement ?
+				break;
+			case WMS:
+				String description = chunks[1].length() != 0 ? chunks[1] : chunks[0];
+				String layername = chunks[1].length() != 0 ? chunks[0] : extractNameFromURL(chunks);
+				String url = chunks[2].split("\\?")[0];
+
+				if (context != null) {
+					WmsNode layer = ContextInjectionFactory.make(WmsNode.class, context);
+					layer.setName(description);
+					layer.setLayers(layername);
+					layer.setUrl(url);
+					layer.setMetadata_uuid(mtdEntity.get_geonet_info()
+							.getUuid());
+					layer.setChecked(true);
+					Layer wwjLayer = layer.getLayer();
+					wwjInst.addLayer(wwjLayer);
+				}
+				break;
+			case HTTP:
+			default:
+				Program.launch(chunks[2]);
+			}
+		}
+
+		private String extractNameFromURL(String[] chunkss) {
+			String name = chunkss[0];
+			String[] url_split = chunkss[2].split("\\?");
+			if (url_split.length > 1 && url_split[1].length() > 0) {
+				for (String s : url_split[1].split("\\&")) {
+					if (s.startsWith("layers=")) {
+						name = s.split("=")[1];
+						break;
+					}
+				}
+			}
+			return name;
+		}
+
 	}
 
 	public void setTitle(String title) {

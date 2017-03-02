@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: RiMaP RCP core plugin
 Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.core
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: fr.pigeo.rimap.rimaprcp.core,
  fr.pigeo.rimap.rimaprcp.core.catalog,
  fr.pigeo.rimap.rimaprcp.core.constants,

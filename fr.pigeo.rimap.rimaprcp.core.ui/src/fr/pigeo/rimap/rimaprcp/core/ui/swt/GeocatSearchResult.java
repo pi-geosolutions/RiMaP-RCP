@@ -21,11 +21,11 @@ public class GeocatSearchResult extends Composite {
 	protected Text txtSummary;
 	protected Label lblColorHint;
 	protected Text lblOriginator;
-	protected Button btnOpenMTD;
+	protected CButton btnOpenMTD;
 	protected Composite buttonsBarComposite;
-	protected Button btnDownloads;
-	protected Button btnMap;
-	protected Button btnLinks;
+	protected CButton btnDownloads;
+	protected CButton btnMap;
+	protected CButton btnLinks;
 	
 	public GeocatSearchResult(Composite parent, int style) {
 		super(parent, SWT.NONE);
@@ -62,11 +62,17 @@ public class GeocatSearchResult extends Composite {
 		txtTitle.setToolTipText("");
 		txtTitle.setText("WorldClim : Données climatologiques interpolées a haute résolution: température annuelle moyenne - Bio1");
 		
-		btnOpenMTD = new Button(headerComposite, SWT.NONE);
+		btnOpenMTD= new CButton(headerComposite, SWT.PUSH);
 		btnOpenMTD.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/plus-square.png"));
 		btnOpenMTD.setToolTipText("Open Full Metadata Window in Browser");
 		btnOpenMTD.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		btnOpenMTD.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
+//		
+//		btnOpenMTD = new Button(headerComposite, SWT.NONE);
+//		btnOpenMTD.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/plus-square.png"));
+//		btnOpenMTD.setToolTipText("Open Full Metadata Window in Browser");
+//		btnOpenMTD.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+//		btnOpenMTD.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
+		
 		new Label(headerComposite, SWT.NONE);
 		
 		lblThumbnail = new Label(this, SWT.CENTER);
@@ -104,23 +110,20 @@ public class GeocatSearchResult extends Composite {
 		
 		int btnWidth = 40;
 		
-		btnDownloads = new Button(buttonsBarComposite, SWT.NONE);
+		btnDownloads = new CButton(buttonsBarComposite, SWT.PUSH);
 		btnDownloads.setLayoutData(new RowData(btnWidth, SWT.DEFAULT));
 		btnDownloads.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		btnDownloads.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/download.png"));
-		btnDownloads.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 		
-		btnMap = new Button(buttonsBarComposite, SWT.NONE);
+		btnMap = new CButton(buttonsBarComposite, SWT.PUSH);
 		btnMap.setLayoutData(new RowData(btnWidth, SWT.DEFAULT));
 		btnMap.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/globe.png"));
 		btnMap.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		btnMap.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 		
-		btnLinks = new Button(buttonsBarComposite, SWT.NONE);
+		btnLinks = new CButton(buttonsBarComposite, SWT.PUSH);
 		btnLinks.setLayoutData(new RowData(btnWidth, SWT.DEFAULT));
 		btnLinks.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/link.png"));
 		btnLinks.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		btnLinks.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 	}
 	
 }
