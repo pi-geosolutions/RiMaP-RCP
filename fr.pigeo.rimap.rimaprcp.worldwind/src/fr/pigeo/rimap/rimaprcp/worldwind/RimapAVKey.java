@@ -9,4 +9,7 @@ public interface RimapAVKey extends AVKey {
     final String LAYER_PARENTNODE = "fr.pigeo.rimap.worldwind.avkey.ParentNode";
     final String LAYER_ISPOLYGONQUERYABLE = "fr.pigeo.rimap.worldwind.avkey.IsPolygonQueryable";
     final String LAYER_POLYGONQUERYPARAMS = "fr.pigeo.rimap.worldwind.avkey.PolygonQuery.params";
+    final String LAYER_TIME_DIMENSION_ENABLED = "fr.pigeo.rimap.worldwind.avkey.layer.time.enabled";
+    final String LAYER_TIME_DIMENSION_DEFAULT_VALUE = "fr.pigeo.rimap.worldwind.avkey.layer.time.defaultvalue";
+    final String LAYER_TIME_DIMENSION_VALUES = "fr.pigeo.rimap.worldwind.avkey.layer.time.values";
 }

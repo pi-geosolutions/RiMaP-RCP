@@ -8,3 +8,7 @@
 	background-color: #c1d5ef;
 }
 
+.MPartStack {
+  swt-minimize-visible: false;
+  swt-maximize-visible: false;
+}

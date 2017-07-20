@@ -10,7 +10,7 @@ Export-Package: fr.pigeo.rimap.rimaprcp.core.ui.core,
  fr.pigeo.rimap.rimaprcp.core.ui.views,
  org.eclipse.wb.swt
 Require-Bundle: org.eclipse.swt;bundle-version="3.104.1",
- gov.nasa.worldwind;bundle-version="2.0.0",
+ gov.nasa.official.worldwind,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.ui.model.workbench,
  org.eclipse.e4.core.di,

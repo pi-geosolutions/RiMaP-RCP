@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="1.1.100.v20150
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.workbench,
  fr.pigeo.externals.com.fasterxml.jackson.core,
- gov.nasa.worldwind
+ gov.nasa.official.worldwind;bundle-version="2.1.0"
 Import-Package: javax.inject;version="1.0.0",
  org.eclipse.jface.dialogs,
  org.eclipse.jface.window,

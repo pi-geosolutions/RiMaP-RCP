@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="PADRE2 3D" uid="fr.pigeo.rimap.rimaprcp.product" id="fr.pigeo.rimap.rimaprcp.core.ui.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.6.0" useFeatures="true" includeLaunchers="true">
-
+<product name="PADRE2 3D" uid="fr.pigeo.rimap.rimaprcp.product" id="fr.pigeo.rimap.rimaprcp.core.ui.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.7.0" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -29,26 +28,24 @@
       </win>
    </launcher>
 
-
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
       <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
       <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
    </vm>
 
-
    <plugins>
    </plugins>
 
    <features>
-      <feature id="fr.pigeo.rimap.rimaprcp.admintools.feature" version="1.0.0.qualifier"/>
-      <feature id="fr.pigeo.rimap.rimaprcp.core.feature" version="1.0.0.qualifier"/>
       <feature id="fr.pigeo.rimap.rimaprcp.getfeatureinfo.feature" version="1.0.0.qualifier"/>
+      <feature id="fr.pigeo.rimap.rimaprcp.animations.feature" version="1.0.0.qualifier"/>
+      <feature id="fr.pigeo.rimap.rimaprcp.admintools.feature" version="1.0.0.qualifier"/>
+      <feature id="fr.pigeo.rimap.cachemanager.feature" version="1.0.1.qualifier"/>
+      <feature id="fr.pigeo.rimap.rimaprcp.core.feature"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.eclipse.emf.common"/>
-      <feature id="fr.pigeo.rimap.rimaprcp.animations.feature" version="1.0.0.qualifier"/>
-      <feature id="fr.pigeo.rimap.cachemanager.feature" version="1.0.1.qualifier"/>
    </features>
 
    <configurations>

@@ -15,7 +15,7 @@ Require-Bundle: fr.pigeo.rimap.rimaprcp.getfeatureinfo.core,
  org.eclipse.e4.ui.di,
  org.eclipse.e4.core.contexts,
  fr.pigeo.rimap.rimaprcp.core,
- gov.nasa.worldwind,
+ gov.nasa.official.worldwind,
  org.eclipse.e4.ui.workbench,
  org.eclipse.core.jobs
 Import-Package: gov.nasa.worldwind.geom,

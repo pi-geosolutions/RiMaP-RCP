@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.nls.Translation;
 import org.osgi.service.prefs.Preferences;
 
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalog;
@@ -17,6 +18,7 @@ import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.CatalogParams;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.PadreCatalog;
+import fr.pigeo.rimap.rimaprcp.core.services.catalog.translation.Messages;
 
 public class CatalogServiceImpl implements ICatalogService {
 
@@ -31,6 +33,10 @@ public class CatalogServiceImpl implements ICatalogService {
 
 	@Inject
 	ISessionService sessionService;
+	
+	@Inject
+	@Translation
+	Messages messages;
 
 	ICatalog mainCatalog;
 
@@ -63,7 +69,7 @@ public class CatalogServiceImpl implements ICatalogService {
 		Preferences config = preferences.node("config");
 		String cachePath = config.get(RimapConstants.CACHE_PATH_PREF_TAG, RimapConstants.CACHE_PATH_PREF_DEFAULT);
 
-		CatalogParams params = new CatalogParams(layertree_service_url, "layertree", "PadreCatalog", web_usage_level,
+		CatalogParams params = new CatalogParams(layertree_service_url, messages.catalog_main_layertree_name, "PadreCatalog", web_usage_level,
 				cachePath);
 		// create new context
 		IEclipseContext catCtx = context.createChild();

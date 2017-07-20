@@ -5,6 +5,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,17 +24,17 @@ import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.ogc.OGCConstants;
 import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
+import gov.nasa.worldwind.ogc.wms.WMSLayerDimension;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.DataConfigurationUtils;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.WWIO;
 import gov.nasa.worldwind.util.WWXML;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
-import gov.nasa.worldwind.wms.WMSTiledImageLayer.URLBuilder;
 
 public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQueryableLayer, IPolygonQueryableLayer {
 	private WmsNode parent;
@@ -97,9 +99,19 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 		if (params == null)
 			params = new AVListImpl();
 
-		if (params.hasKey(AVKey.LAYER_NAMES) && caps.getLayerByName(params.getStringValue(AVKey.LAYER_NAMES)) != null) {
+		WMSLayerCapabilities layerCaps = caps.getLayerByName(params.getStringValue(AVKey.LAYER_NAMES));
+		if (params.hasKey(AVKey.LAYER_NAMES) && layerCaps != null) {
 			try {
 				DataConfigurationUtils.getWMSLayerConfigParams(caps, formatOrderPreference, params);
+				List<WMSLayerDimension> timeDimensions = layerCaps.getDimensions().stream().filter(dim -> dim.getName().equalsIgnoreCase("time")).collect(Collectors.toList());
+				//we shouldn't get more than one time dimension
+				WMSLayerDimension timeDimension = timeDimensions.isEmpty() ? null : timeDimensions.get(0);
+				if (timeDimension!=null) {
+					params.setValue(RimapAVKey.LAYER_TIME_DIMENSION_ENABLED, true);
+					params.setValue(RimapAVKey.LAYER_TIME_DIMENSION_DEFAULT_VALUE, timeDimension.getDefaultValue());
+					params.setValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES, timeDimension.getField("CharactersContent"));
+					System.out.format("Layer %s has time dimension. Its avalable values are %s", params.getStringValue(AVKey.LAYER_NAMES), params.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES));
+				}
 			} catch (IllegalArgumentException e) {
 				String message = Logging.getMessage("WMS.MissingLayerParameters");
 				Logging.logger()

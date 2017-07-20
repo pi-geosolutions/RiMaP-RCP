@@ -4,6 +4,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.SWT;
 
 import fr.pigeo.rimap.rimaprcp.cachemanager.wwutil.Downloadable;
 import gov.nasa.worldwind.layers.BasicTiledImageLayer;
@@ -28,7 +29,7 @@ public class ResolutionEditingSupport extends EditingSupport {
 		for (int i = 0; i < levels.length; i++) {
 			levels[i] = String.format("%.2f m", resolutions[i]);
 		}
-		return new ComboBoxCellEditor(viewer.getTable(), levels);
+		return new ComboBoxCellEditor(viewer.getTable(), levels, SWT.READ_ONLY);
 	}
 
 	@Override

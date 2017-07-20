@@ -42,6 +42,8 @@ import fr.pigeo.rimap.rimaprcp.core.ui.dnd.LayerDropListener;
 import fr.pigeo.rimap.rimaprcp.core.ui.views.OrganizeTabPart;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
@@ -72,6 +74,7 @@ public class LayersListTableComposite extends Composite {
 	protected final Image METADATA = getImage("icon_metadata_16px.png");
 	protected final Image PQUERY = getImage("polygon_query_16px.png");
 	protected final Image WMSICON = getImage("wms.png");
+	protected final Image WMST = getImage("clock_play.png");
 
 	public LayersListTableComposite(Composite parent, int style, WwjInstance wwjInst) {
 		super(parent, style);
@@ -193,6 +196,30 @@ public class LayersListTableComposite extends Composite {
 			}
 		});
 
+		// create a column telling if time dimension is available
+		TableViewerColumn timeCol = new TableViewerColumn(tv, SWT.NONE);
+		timeCol.getColumn()
+				.setText("t");
+		timeCol.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return null; // no string representation, we only want to
+								// display the image
+			}
+
+			@Override
+			public Image getImage(Object element) {
+				if (element instanceof WMSTiledImageLayer) {
+					WMSTiledImageLayer l = (WMSTiledImageLayer) element;
+					AVList avl = (AVList) l.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+					if (avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_ENABLED)) {
+							return WMST;
+					}
+				}
+				return null;
+			}
+		});
+
 		// create a column telling if metadata is linked
 		TableViewerColumn mtdCol = new TableViewerColumn(tv, SWT.NONE);
 		// mtdCol.getColumn().setAlignment(SWT.CENTER);
@@ -225,6 +252,7 @@ public class LayersListTableComposite extends Composite {
 		tcl.setColumnData(nameCol.getColumn(), new ColumnWeightData(20, 200, true));
 		tcl.setColumnData(qCol.getColumn(), new ColumnPixelData(20));
 		tcl.setColumnData(pqCol.getColumn(), new ColumnPixelData(20));
+		tcl.setColumnData(timeCol.getColumn(), new ColumnPixelData(20));
 		tcl.setColumnData(mtdCol.getColumn(), new ColumnPixelData(20));
 
 	}
