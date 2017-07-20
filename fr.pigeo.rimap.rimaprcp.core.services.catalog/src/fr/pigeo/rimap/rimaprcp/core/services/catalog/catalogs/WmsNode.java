@@ -235,12 +235,21 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 	public boolean getChecked() {
 		return checked;
 	}
-
+	
 	@Override
 	public Layer getLayer() {
+		return this.getLayer(false);
+	}
+	
+	
+	public Layer getLayer(boolean forceReload) {
+		if (forceReload) {
+			this.layer=null;
+		}
+		
 		if (this.layer == null) {
 
-			WMSCapabilities caps = wmsService.getServerCapabilities(this.url);
+			WMSCapabilities caps = wmsService.getServerCapabilities(this.url, forceReload);
 			if (caps==null) {
 				return null;
 			}

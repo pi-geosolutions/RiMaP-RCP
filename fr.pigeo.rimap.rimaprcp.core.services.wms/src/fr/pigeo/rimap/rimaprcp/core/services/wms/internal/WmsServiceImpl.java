@@ -52,12 +52,12 @@ public class WmsServiceImpl implements IWmsService {
 	}
 
 	@Override
-	public WMSCapabilities getServerCapabilities(String url) {
+	public WMSCapabilities getServerCapabilities(String url, boolean reload) {
 		url = resourceService.cleanURL(url);
 
 		ServerCapability capability = serverCapabilitiesList.get(url.toLowerCase());
-		if (capability == null) {
-			capability = makeCapability(url);
+		if (capability == null || reload) {
+			capability = makeCapability(url, reload);
 		}
 		if (capability == null) {
 			// means no way we can get it
@@ -67,6 +67,10 @@ public class WmsServiceImpl implements IWmsService {
 	}
 
 	private ServerCapability makeCapability(String url) {
+		return makeCapability(url, false);
+	}
+
+	private ServerCapability makeCapability(String url, boolean reload) {
 		url = resourceService.cleanURL(url);
 		ServerCapability capability = null;
 		// we create the capability object and add it to the hash
@@ -86,7 +90,8 @@ public class WmsServiceImpl implements IWmsService {
 				byte[] b;
 				if (resourceService != null) {
 					logger.info("Recovering getCapabilities using ResourceService plugin");
-					b = resourceService.getResource(address, getWebUsageLevel());
+					int lev = reload ? 9 :  getWebUsageLevel();
+					b = resourceService.getResource(address, lev);
 				} else {
 					logger.info("ResourceService plugin unavailable. Recovering getCapabilities directly from URL");
 					b = IOUtils.toByteArray(request.getUri()
@@ -100,7 +105,7 @@ public class WmsServiceImpl implements IWmsService {
 					capability = new ServerCapability(url, caps);
 					serverCapabilitiesList.put(url.toLowerCase(), capability);
 				} catch (XMLStreamException e) {
-					logger.error("XMLStreamException : could not retrieve capabilities from "+url);
+					logger.error("XMLStreamException : could not retrieve capabilities from " + url);
 					// we delete the corrupted resource
 					resourceService.deleteResource(address);
 					return null;

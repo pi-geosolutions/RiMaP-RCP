@@ -47,6 +47,7 @@ public class LayerDetails {
 	protected Label lblDate;
 	protected Combo comboDate;
 	protected ComboViewer comboDateViewer;
+	protected Button btnReloadLayer;
 
 	@Inject
 	public LayerDetails() {
@@ -96,8 +97,15 @@ public class LayerDetails {
 		FormData fd_comboDate = new FormData();
 		fd_comboDate.top = new FormAttachment(lblDate, -2, SWT.TOP);
 		fd_comboDate.left = new FormAttachment(lblDate, 30);
-		fd_comboDate.right = new FormAttachment(100, -10);
 		comboDate.setLayoutData(fd_comboDate);
+		
+		btnReloadLayer = new Button(timeChooserComposite, SWT.NONE);
+		btnReloadLayer.setToolTipText("Update from server");
+		fd_comboDate.right = new FormAttachment(btnReloadLayer, -5);
+		btnReloadLayer.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/arrow_refresh.png"));
+		FormData fd_btnReloadLayer = new FormData();
+		fd_btnReloadLayer.right = new FormAttachment(100, -2);
+		btnReloadLayer.setLayoutData(fd_btnReloadLayer);
 		
 				lblOpacity = new Label(grpDetails, SWT.NONE);
 				lblOpacity.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));

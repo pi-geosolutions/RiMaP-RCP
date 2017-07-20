@@ -29,11 +29,15 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
@@ -166,11 +170,12 @@ public class LayerDetailsImpl extends LayerDetails {
 			this.lblLayerName.setFont(SWTResourceManager.getFont("Sans", 10, SWT.BOLD));
 
 		}
-		//hide by default
+		// hide by default
 		this.timeChooserComposite.setVisible(false);
-		((GridData) this.timeChooserComposite.getLayoutData()).exclude=true;
-		this.timeChooserComposite.getParent().layout();
-		
+		((GridData) this.timeChooserComposite.getLayoutData()).exclude = true;
+		this.timeChooserComposite.getParent()
+				.layout();
+
 		this.btnZoomToExtent.setVisible(isLayer);
 		this.lblOpacity.setVisible(isLayer);
 		this.scaleOpacity.setVisible(isLayer);
@@ -195,14 +200,24 @@ public class LayerDetailsImpl extends LayerDetails {
 				this.btnMetadataSelectionAdapter = new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						/*String baseurl = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
-								RimapConstants.PROJECT_BASEURL_PREF_TAG, RimapConstants.PROJECT_BASEURL_PREF_DEFAULT,
-								null);
-						// TODO : use constants
-						String mtdService = prefService.getString(RimapConstants.RIMAP_DEFAULT_PREFERENCE_NODE,
-								RimapConstants.CATALOG_METADATA_BY_UUID_RELPATH_PREF_TAG,
-								RimapConstants.CATALOG_METADATA_BY_UUID_PREF_DEFAULT, null);
-						String link = baseurl + mtdService + wmsNode.getMetadata_uuid();*/
+						/*
+						 * String baseurl =
+						 * prefService.getString(RimapConstants.
+						 * RIMAP_DEFAULT_PREFERENCE_NODE,
+						 * RimapConstants.PROJECT_BASEURL_PREF_TAG,
+						 * RimapConstants.PROJECT_BASEURL_PREF_DEFAULT,
+						 * null);
+						 * // TODO : use constants
+						 * String mtdService =
+						 * prefService.getString(RimapConstants.
+						 * RIMAP_DEFAULT_PREFERENCE_NODE,
+						 * RimapConstants.
+						 * CATALOG_METADATA_BY_UUID_RELPATH_PREF_TAG,
+						 * RimapConstants.CATALOG_METADATA_BY_UUID_PREF_DEFAULT,
+						 * null);
+						 * String link = baseurl + mtdService +
+						 * wmsNode.getMetadata_uuid();
+						 */
 						String link = metadataToolBox.getFullMetadataViewPath(wmsNode.getMetadata_uuid());
 						Program.launch(link);
 					}
@@ -259,69 +274,95 @@ public class LayerDetailsImpl extends LayerDetails {
 				public void widgetSelected(SelectionEvent e) {
 				}
 			});
-			
-			//WMS-Time support
+
+			// WMS-Time support
 			AVList avl = (AVList) l.getValue(AVKey.CONSTRUCTION_PARAMETERS);
 			if (avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_ENABLED)) {
-				//make it visible
+				// make it visible
 				this.timeChooserComposite.setVisible(true);
-				((GridData) this.timeChooserComposite.getLayoutData()).exclude=false;
-				this.timeChooserComposite.getParent().layout(true);
+				((GridData) this.timeChooserComposite.getLayoutData()).exclude = false;
+				this.timeChooserComposite.getParent()
+						.layout(true);
 
 				comboDateViewer.setContentProvider(ArrayContentProvider.getInstance());
 				comboDateViewer.setLabelProvider(new LabelProvider() {
-				    @Override
-				    public String getText(Object element) {
-				        if (element instanceof ZonedDateTime) {
-				        	ZonedDateTime date = (ZonedDateTime) element;
-				            return formatDateTime(date);
-				        }
-				        return super.getText(element);
-				    }
+					@Override
+					public String getText(Object element) {
+						if (element instanceof ZonedDateTime) {
+							ZonedDateTime date = (ZonedDateTime) element;
+							return formatDateTime(date);
+						}
+						return super.getText(element);
+					}
 				});
-				
-				List<ZonedDateTime> dates = stringToDatesList(avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES));
-				comboDateViewer.setInput(dates);
-				String current = avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE)? 
-						avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE) : 
-							avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_DEFAULT_VALUE);
-				ZonedDateTime currentDate = parseDate(current);
-				comboDateViewer.setSelection(new StructuredSelection(currentDate));
+
+				this.btnReloadLayer.addListener(SWT.Selection, new Listener() {
+					public void handleEvent(Event e) {
+						switch (e.type) {
+						case SWT.Selection:
+							BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
+
+								public void run() {
+									RimapWMSTiledImageLayer newl = (RimapWMSTiledImageLayer) l.getParent()
+											.getLayer(true);
+									AVList newavl = (AVList) newl.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+									updateComboViewer(newavl);
+								}
+							});
+
+							break;
+						}
+					}
+				});
+
+				updateComboViewer(avl);
 				comboDateViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
-						IStructuredSelection selection = (IStructuredSelection) event
-					            .getSelection();
-					        if (selection.size() > 0){
-					        	ZonedDateTime selected = (ZonedDateTime) selection.getFirstElement();
-					        	avl.setValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE, selected.toString());
-					        	l.refresh(true);
-					        	wwj.getWwd().redrawNow();
-					        }
+						IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+						if (selection.size() > 0) {
+							ZonedDateTime selected = (ZonedDateTime) selection.getFirstElement();
+							avl.setValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE, selected.toString());
+							l.refresh(true);
+							wwj.getWwd()
+									.redrawNow();
+						}
 					}
 				});
 			}
 		}
 
 	}
-	
-	
-	//TODO: check it would support all possible date formats in the WMS-time context
-	private List<ZonedDateTime> stringToDatesList(String datesString) {
-		return Arrays.stream(datesString.split(",")).map(s->parseDate(s)).collect(Collectors.toList());
+
+	private void updateComboViewer(AVList avl) {
+		List<ZonedDateTime> dates = stringToDatesList(avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES));
+		comboDateViewer.setInput(dates);
+		String current = avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE)
+				? avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE)
+				: avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_DEFAULT_VALUE);
+		ZonedDateTime currentDate = parseDate(current);
+		comboDateViewer.setSelection(new StructuredSelection(currentDate));
 	}
-	
+
+	// TODO: check it would support all possible date formats in the WMS-time
+	// context
+	private List<ZonedDateTime> stringToDatesList(String datesString) {
+		return Arrays.stream(datesString.split(","))
+				.map(s -> parseDate(s))
+				.collect(Collectors.toList());
+	}
+
 	private ZonedDateTime parseDate(String s) {
 		return ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME);
 	}
-	
+
 	private String formatDateTime(ZonedDateTime date) {
-		DateTimeFormatter formatter = DateTimeFormatter
-		        .ofLocalizedDateTime(FormatStyle.FULL, FormatStyle.FULL).withLocale(Locale.FRENCH);
-	    //System.out.println(formatter.getLocale()); // fr
-	    //System.out.println(formatter.format(date)); 
-		return formatter.format(date);//date.format(formatter);
+		DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL, FormatStyle.FULL)
+				.withLocale(Locale.FRENCH);
+		// System.out.println(formatter.getLocale()); // fr
+		// System.out.println(formatter.format(date));
+		return formatter.format(date);// date.format(formatter);
 	}
 
 	/*
