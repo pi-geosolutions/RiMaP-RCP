@@ -74,7 +74,7 @@ public class LayersListTableComposite extends Composite {
 	protected final Image METADATA = getImage("icon_metadata_16px.png");
 	protected final Image PQUERY = getImage("polygon_query_16px.png");
 	protected final Image WMSICON = getImage("wms.png");
-	protected final Image WMST = getImage("clock_play.png");
+	protected final Image WMST = getImage("clock.png");
 
 	public LayersListTableComposite(Composite parent, int style, WwjInstance wwjInst) {
 		super(parent, style);

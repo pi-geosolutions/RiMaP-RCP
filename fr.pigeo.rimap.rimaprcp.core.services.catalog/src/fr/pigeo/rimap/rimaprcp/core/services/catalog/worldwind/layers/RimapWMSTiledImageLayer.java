@@ -32,6 +32,7 @@ import gov.nasa.worldwind.ogc.wms.WMSLayerDimension;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.DataConfigurationUtils;
 import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.Tile;
 import gov.nasa.worldwind.util.WWIO;
 import gov.nasa.worldwind.util.WWXML;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
@@ -103,14 +104,21 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 		if (params.hasKey(AVKey.LAYER_NAMES) && layerCaps != null) {
 			try {
 				DataConfigurationUtils.getWMSLayerConfigParams(caps, formatOrderPreference, params);
-				List<WMSLayerDimension> timeDimensions = layerCaps.getDimensions().stream().filter(dim -> dim.getName().equalsIgnoreCase("time")).collect(Collectors.toList());
-				//we shouldn't get more than one time dimension
+				List<WMSLayerDimension> timeDimensions = layerCaps.getDimensions()
+						.stream()
+						.filter(dim -> dim.getName()
+								.equalsIgnoreCase("time"))
+						.collect(Collectors.toList());
+				// we shouldn't get more than one time dimension
 				WMSLayerDimension timeDimension = timeDimensions.isEmpty() ? null : timeDimensions.get(0);
-				if (timeDimension!=null) {
+				if (timeDimension != null) {
 					params.setValue(RimapAVKey.LAYER_TIME_DIMENSION_ENABLED, true);
 					params.setValue(RimapAVKey.LAYER_TIME_DIMENSION_DEFAULT_VALUE, timeDimension.getDefaultValue());
-					params.setValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES, timeDimension.getField("CharactersContent"));
-					System.out.format("Layer %s has time dimension. Its avalable values are %s", params.getStringValue(AVKey.LAYER_NAMES), params.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES));
+					params.setValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES,
+							timeDimension.getField("CharactersContent"));
+					System.out.format("Layer %s has time dimension. Its avalable values are %s",
+							params.getStringValue(AVKey.LAYER_NAMES),
+							params.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES));
 				}
 			} catch (IllegalArgumentException e) {
 				String message = Logging.getMessage("WMS.MissingLayerParameters");
@@ -156,9 +164,9 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 		params.setValue(AVKey.NUM_LEVELS, 19); // approximately 0.1 meters per
 												// pixel
 		params.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
-		
-		//taken from DataConfigurationUtils.getWMSLayerConfigParams:
-		
+
+		// taken from DataConfigurationUtils.getWMSLayerConfigParams:
+
 		params.setValue(AVKey.COORDINATE_SYSTEM, "EPSG:4326");
 		// should be already set
 		// params.setValue(AVKey.DISPLAY_NAME, "hand made layer");
@@ -239,9 +247,8 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 					.severe("WMS.NoImageFormats");
 			throw new WWRuntimeException(Logging.getMessage("WMS.NoImageFormats"));
 		}
-		
 
-		//TODO: improve : get the capabilities global extent
+		// TODO: improve : get the capabilities global extent
 		params.setValue(AVKey.SECTOR, Sector.FULL_SPHERE);
 	}
 
@@ -305,6 +312,7 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 		private final String wmsVersion;
 		private final String crs;
 		private final String wmsGetMap;
+		private String currentDateTime = null;
 		public String URLTemplate;
 
 		public URLBuilder(AVList params) {
@@ -315,6 +323,17 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 
 			this.wmsVersion = version;
 			this.crs = "&srs=EPSG:4326";
+		}
+
+		public URL getURL(Tile tile, String altImageFormat) throws MalformedURLException {
+			URL url = super.getURL(tile, altImageFormat);
+			if (this.currentDateTime!=null) {
+				String str = url.toString();
+				str += "&TIME=" + this.currentDateTime;
+				url = new java.net.URL(str.replace(" ", "%20"));
+			}
+
+			return url;
 		}
 
 		/*
@@ -367,6 +386,10 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 			sb.append("&feature_count=50");
 			return new URL(sb.toString());
 		}
+
+		public void setDateTime(String currentTime) {
+			this.currentDateTime=currentTime;
+		}
 	}
 
 	@Override
@@ -414,5 +437,19 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 
 		return formats[0].toString(); // No preferred formats recognized; just
 										// use the first in the caps list.
+	}
+
+	// for now, takes into account time change (WMSTime layers)
+	public void refresh(boolean clearCache) {
+		AVList avl = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+		URLBuilder builder = (URLBuilder) avl.getValue(AVKey.TILE_URL_BUILDER);
+		if (avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_ENABLED)) {
+			String currentTime = avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE)
+					? avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE)
+					: avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_DEFAULT_VALUE);
+
+			builder.setDateTime(currentTime);
+		}
+		this.setExpiryTime(System.currentTimeMillis()-1);
 	}
 }

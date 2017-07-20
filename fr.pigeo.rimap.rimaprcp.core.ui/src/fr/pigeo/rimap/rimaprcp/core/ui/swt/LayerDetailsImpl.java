@@ -1,5 +1,13 @@
 package fr.pigeo.rimap.rimaprcp.core.ui.swt;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -14,9 +22,16 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -25,13 +40,15 @@ import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
-import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
+import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.LayerOpacityChangeListener;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.OpacityToScaleConverter;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.ScaleToOpacityConverter;
+import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Extent;
@@ -149,6 +166,11 @@ public class LayerDetailsImpl extends LayerDetails {
 			this.lblLayerName.setFont(SWTResourceManager.getFont("Sans", 10, SWT.BOLD));
 
 		}
+		//hide by default
+		this.timeChooserComposite.setVisible(false);
+		((GridData) this.timeChooserComposite.getLayoutData()).exclude=true;
+		this.timeChooserComposite.getParent().layout();
+		
 		this.btnZoomToExtent.setVisible(isLayer);
 		this.lblOpacity.setVisible(isLayer);
 		this.scaleOpacity.setVisible(isLayer);
@@ -159,7 +181,7 @@ public class LayerDetailsImpl extends LayerDetails {
 		this.btnShowLegend.setVisible(isRimapLayer);
 
 		if (isRimapLayer) {
-			final WMSTiledImageLayer l = (WMSTiledImageLayer) layer;
+			final RimapWMSTiledImageLayer l = (RimapWMSTiledImageLayer) layer;
 			wmsNode = (WmsNode) l.getValue(RimapAVKey.LAYER_PARENTNODE);
 			this.txtLayerDescription.setText(wmsNode.getComments());
 
@@ -237,8 +259,69 @@ public class LayerDetailsImpl extends LayerDetails {
 				public void widgetSelected(SelectionEvent e) {
 				}
 			});
+			
+			//WMS-Time support
+			AVList avl = (AVList) l.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+			if (avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_ENABLED)) {
+				//make it visible
+				this.timeChooserComposite.setVisible(true);
+				((GridData) this.timeChooserComposite.getLayoutData()).exclude=false;
+				this.timeChooserComposite.getParent().layout(true);
+
+				comboDateViewer.setContentProvider(ArrayContentProvider.getInstance());
+				comboDateViewer.setLabelProvider(new LabelProvider() {
+				    @Override
+				    public String getText(Object element) {
+				        if (element instanceof ZonedDateTime) {
+				        	ZonedDateTime date = (ZonedDateTime) element;
+				            return formatDateTime(date);
+				        }
+				        return super.getText(element);
+				    }
+				});
+				
+				List<ZonedDateTime> dates = stringToDatesList(avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES));
+				comboDateViewer.setInput(dates);
+				String current = avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE)? 
+						avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE) : 
+							avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_DEFAULT_VALUE);
+				ZonedDateTime currentDate = parseDate(current);
+				comboDateViewer.setSelection(new StructuredSelection(currentDate));
+				comboDateViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+					@Override
+					public void selectionChanged(SelectionChangedEvent event) {
+						IStructuredSelection selection = (IStructuredSelection) event
+					            .getSelection();
+					        if (selection.size() > 0){
+					        	ZonedDateTime selected = (ZonedDateTime) selection.getFirstElement();
+					        	avl.setValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE, selected.toString());
+					        	l.refresh(true);
+					        	wwj.getWwd().redrawNow();
+					        }
+					}
+				});
+			}
 		}
 
+	}
+	
+	
+	//TODO: check it would support all possible date formats in the WMS-time context
+	private List<ZonedDateTime> stringToDatesList(String datesString) {
+		return Arrays.stream(datesString.split(",")).map(s->parseDate(s)).collect(Collectors.toList());
+	}
+	
+	private ZonedDateTime parseDate(String s) {
+		return ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME);
+	}
+	
+	private String formatDateTime(ZonedDateTime date) {
+		DateTimeFormatter formatter = DateTimeFormatter
+		        .ofLocalizedDateTime(FormatStyle.FULL, FormatStyle.FULL).withLocale(Locale.FRENCH);
+	    //System.out.println(formatter.getLocale()); // fr
+	    //System.out.println(formatter.format(date)); 
+		return formatter.format(date);//date.format(formatter);
 	}
 
 	/*

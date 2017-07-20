@@ -26,6 +26,12 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.OpacityToScaleConverter;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.ScaleToOpacityConverter;
 import gov.nasa.worldwind.layers.Layer;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
 
 public class LayerDetails {
 	protected DataBindingContext m_bindingContext;
@@ -37,6 +43,10 @@ public class LayerDetails {
 	protected Button btnShowMetadata, btnShowLegend;
 	protected Text txtLayerDescription;
 	protected Button btnZoomToExtent;
+	protected Composite timeChooserComposite;
+	protected Label lblDate;
+	protected Combo comboDate;
+	protected ComboViewer comboDateViewer;
 
 	@Inject
 	public LayerDetails() {
@@ -66,10 +76,32 @@ public class LayerDetails {
 		btnZoomToExtent.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		btnZoomToExtent.setImage(
 				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/icon_zoomlayer.png"));
-
-		lblOpacity = new Label(grpDetails, SWT.NONE);
-		lblOpacity.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-		lblOpacity.setText("Opacity:");
+		
+		timeChooserComposite = new Composite(grpDetails, SWT.NO_BACKGROUND);
+		timeChooserComposite.setLayout(new FormLayout());
+		GridData gd_timeChooserComposite = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		gd_timeChooserComposite.heightHint = 25;
+		timeChooserComposite.setLayoutData(gd_timeChooserComposite);
+		
+		lblDate = new Label(timeChooserComposite, SWT.NONE);
+		FormData fd_lblDate = new FormData();
+		fd_lblDate.top = new FormAttachment(0, 5);
+		fd_lblDate.bottom = new FormAttachment(100);
+		fd_lblDate.left = new FormAttachment(0, 10);
+		lblDate.setLayoutData(fd_lblDate);
+		lblDate.setText("Date/Time");
+		
+		comboDateViewer = new ComboViewer(timeChooserComposite, SWT.READ_ONLY);
+		comboDate = comboDateViewer.getCombo();
+		FormData fd_comboDate = new FormData();
+		fd_comboDate.top = new FormAttachment(lblDate, -2, SWT.TOP);
+		fd_comboDate.left = new FormAttachment(lblDate, 30);
+		fd_comboDate.right = new FormAttachment(100, -10);
+		comboDate.setLayoutData(fd_comboDate);
+		
+				lblOpacity = new Label(grpDetails, SWT.NONE);
+				lblOpacity.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+				lblOpacity.setText("Opacity:");
 		new Label(grpDetails, SWT.NONE);
 
 		scaleOpacity = new Scale(grpDetails, SWT.NONE);
