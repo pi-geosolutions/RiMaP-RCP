@@ -54,9 +54,12 @@ public class WmsServiceImpl implements IWmsService {
 	@Override
 	public WMSCapabilities getServerCapabilities(String url, boolean reload) {
 		url = resourceService.cleanURL(url);
-
+		if (reload) {
+			serverCapabilitiesList.remove(url.toLowerCase());
+		}
+		
 		ServerCapability capability = serverCapabilitiesList.get(url.toLowerCase());
-		if (capability == null || reload) {
+		if (capability == null) {
 			capability = makeCapability(url, reload);
 		}
 		if (capability == null) {
@@ -89,9 +92,11 @@ public class WmsServiceImpl implements IWmsService {
 
 				byte[] b;
 				if (resourceService != null) {
+					if (reload) {
+						resourceService.deleteResource(address);
+					}
 					logger.info("Recovering getCapabilities using ResourceService plugin");
-					int lev = reload ? 9 :  getWebUsageLevel();
-					b = resourceService.getResource(address, lev);
+					b = resourceService.getResource(address, getWebUsageLevel());
 				} else {
 					logger.info("ResourceService plugin unavailable. Recovering getCapabilities directly from URL");
 					b = IOUtils.toByteArray(request.getUri()

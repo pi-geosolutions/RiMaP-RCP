@@ -62,7 +62,7 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
 public class LayerDetailsImpl extends LayerDetails {
-	private SelectionAdapter btnMetadataSelectionAdapter, btnExtentSelectionAdapter, btnLegendSelectionAdapter;
+	private SelectionAdapter btnMetadataSelectionAdapter, btnExtentSelectionAdapter, btnLegendSelectionAdapter, btnAnimationsSelectionAdapter;
 
 	private WmsNode wmsNode;
 	private WwjInstance wwj;
@@ -174,7 +174,7 @@ public class LayerDetailsImpl extends LayerDetails {
 		this.timeChooserComposite.setVisible(false);
 		((GridData) this.timeChooserComposite.getLayoutData()).exclude = true;
 		this.timeChooserComposite.getParent()
-				.layout();
+				.layout(true);
 
 		this.btnZoomToExtent.setVisible(isLayer);
 		this.lblOpacity.setVisible(isLayer);
@@ -269,11 +269,6 @@ public class LayerDetailsImpl extends LayerDetails {
 				}
 			};
 			this.btnShowLegend.addSelectionListener(this.btnLegendSelectionAdapter);
-			btnShowLegend.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-				}
-			});
 
 			// WMS-Time support
 			AVList avl = (AVList) l.getValue(AVKey.CONSTRUCTION_PARAMETERS);
@@ -293,6 +288,20 @@ public class LayerDetailsImpl extends LayerDetails {
 							return formatDateTime(date);
 						}
 						return super.getText(element);
+					}
+				});
+				comboDateViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+					@Override
+					public void selectionChanged(SelectionChangedEvent event) {
+						IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+						if (selection.size() > 0) {
+							ZonedDateTime selected = (ZonedDateTime) selection.getFirstElement();
+							avl.setValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE, selected.toString());
+							l.refresh(true);
+							wwj.getWwd()
+									.redrawNow();
+						}
 					}
 				});
 
@@ -316,20 +325,19 @@ public class LayerDetailsImpl extends LayerDetails {
 				});
 
 				updateComboViewer(avl);
-				comboDateViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
+				
+				// Open Animation widget button events
+				if (this.btnAnimationsSelectionAdapter != null)
+					this.btnAnimate.removeSelectionListener(this.btnAnimationsSelectionAdapter);
+				this.btnAnimationsSelectionAdapter = new SelectionAdapter() {
 					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-						if (selection.size() > 0) {
-							ZonedDateTime selected = (ZonedDateTime) selection.getFirstElement();
-							avl.setValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE, selected.toString());
-							l.refresh(true);
-							wwj.getWwd()
-									.redrawNow();
-						}
+					public void widgetSelected(SelectionEvent e) {
+						AnimationsDialog animationsDialog = new AnimationsDialog(parent.getShell());
+						ContextInjectionFactory.inject(animationsDialog, context);
+						animationsDialog.open();
 					}
-				});
+				};
+				this.btnAnimate.addSelectionListener(this.btnAnimationsSelectionAdapter);
 			}
 		}
 

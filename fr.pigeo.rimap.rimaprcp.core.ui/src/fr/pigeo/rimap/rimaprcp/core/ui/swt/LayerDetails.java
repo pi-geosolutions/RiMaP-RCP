@@ -48,6 +48,7 @@ public class LayerDetails {
 	protected Combo comboDate;
 	protected ComboViewer comboDateViewer;
 	protected Button btnReloadLayer;
+	protected Button btnAnimate;
 
 	@Inject
 	public LayerDetails() {
@@ -78,7 +79,7 @@ public class LayerDetails {
 		btnZoomToExtent.setImage(
 				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/icon_zoomlayer.png"));
 		
-		timeChooserComposite = new Composite(grpDetails, SWT.NO_BACKGROUND);
+		timeChooserComposite = new Composite(grpDetails, SWT.BORDER | SWT.NO_BACKGROUND);
 		timeChooserComposite.setLayout(new FormLayout());
 		GridData gd_timeChooserComposite = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		gd_timeChooserComposite.heightHint = 25;
@@ -92,6 +93,13 @@ public class LayerDetails {
 		lblDate.setLayoutData(fd_lblDate);
 		lblDate.setText("Date/Time");
 		
+		btnAnimate = new Button(timeChooserComposite, SWT.NONE);
+		btnAnimate.setToolTipText("Play as an animation");
+		btnAnimate.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/clock_play.png"));
+		FormData fd_btnAnimate = new FormData();
+		fd_btnAnimate.right = new FormAttachment(100, -2);
+		btnAnimate.setLayoutData(fd_btnAnimate);
+		
 		comboDateViewer = new ComboViewer(timeChooserComposite, SWT.READ_ONLY);
 		comboDate = comboDateViewer.getCombo();
 		FormData fd_comboDate = new FormData();
@@ -104,7 +112,7 @@ public class LayerDetails {
 		fd_comboDate.right = new FormAttachment(btnReloadLayer, -5);
 		btnReloadLayer.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/arrow_refresh.png"));
 		FormData fd_btnReloadLayer = new FormData();
-		fd_btnReloadLayer.right = new FormAttachment(100, -2);
+		fd_btnReloadLayer.right = new FormAttachment(btnAnimate, -5);
 		btnReloadLayer.setLayoutData(fd_btnReloadLayer);
 		
 				lblOpacity = new Label(grpDetails, SWT.NONE);

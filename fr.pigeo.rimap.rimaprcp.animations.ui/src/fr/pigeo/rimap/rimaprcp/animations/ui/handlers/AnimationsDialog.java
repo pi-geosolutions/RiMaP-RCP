@@ -120,7 +120,6 @@ public class AnimationsDialog extends Dialog {
 		compositeControls = new Composite(container, SWT.NONE);
 		compositeControls.setLayout(new GridLayout(2, false));
 		compositeControls.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		compositeControls.setVisible(false);
 
 		scale = new Scale(compositeControls, SWT.NONE);
 		scale.setSelection(100);

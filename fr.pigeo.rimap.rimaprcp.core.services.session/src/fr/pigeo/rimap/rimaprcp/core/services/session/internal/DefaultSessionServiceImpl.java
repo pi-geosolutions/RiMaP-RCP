@@ -58,7 +58,7 @@ public class DefaultSessionServiceImpl implements ISessionService {
 	@Inject
 	@Named(IServiceConstants.ACTIVE_SHELL)
 	Shell shell;
-
+	
 	@Inject
 	@Translation
 	Messages messages;
