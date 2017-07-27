@@ -1,5 +1,7 @@
 package fr.pigeo.rimap.rimaprcp.core.ui.translation;
 
+import java.lang.reflect.Field;
+
 public class Messages {
 	// Display menu
 	public String menu_display_show;
@@ -85,6 +87,7 @@ public class Messages {
 	public String animations_dialog_btn_last_ttip;
 	public String animations_dialog_progressbar_ttip_wait;
 	public String animations_dialog_progressbar_ttip_ready;
+	public String animations_extent_invalid;
 	
 	//AnimationsModel translations
 	public String ANIM_EXTENT_FULL;
@@ -99,5 +102,4 @@ public class Messages {
 
 	public Messages() {
 	}
-
 }

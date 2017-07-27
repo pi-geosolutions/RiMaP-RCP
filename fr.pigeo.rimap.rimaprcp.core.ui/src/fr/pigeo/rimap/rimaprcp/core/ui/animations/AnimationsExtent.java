@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
 
+import fr.pigeo.rimap.rimaprcp.core.ui.core.Plugin;
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
@@ -30,11 +31,10 @@ public class AnimationsExtent {
 		this.eventBroker = eventBroker;
 	}
 
-	public void setFullExtent(RimapWMSTiledImageLayer layer) {
+	public void setFullExtent(RimapWMSTiledImageLayer layer) throws InvalidExtentException {
 		Sector sector = (Sector) layer.getValue(AVKey.SECTOR);
 		if (sector==null) {
-			return;
-			
+			throw new InvalidExtentException(Plugin.translate("animations.extent.exception.unknown"));
 		}
 		currentSector = new Sector(sector); // clone sector, so that it won't be
 											// edited
@@ -47,7 +47,7 @@ public class AnimationsExtent {
 	 * epsilon is used to get slightly inner boundaries, so that the user sees
 	 * the box
 	 */
-	public void setViewExtent() {
+	public void setViewExtent() throws InvalidExtentException {
 		View view = this.wwj.getWwd()
 				.getView();
 		if (view != null) {
@@ -58,7 +58,7 @@ public class AnimationsExtent {
 													// won't be edited
 				drawSector(sector);
 			} else {
-				System.out.println("ohoh, off-globe sector !");
+				throw new InvalidExtentException(Plugin.translate("animations.extent.exception.offglobesector"));
 			}
 		}
 	}
@@ -154,6 +154,15 @@ public class AnimationsExtent {
 
 	private String formatAngle(Angle angle, int digits) {
 		return String.format(Locale.US, "%." + digits + "f", angle.degrees);
+	}
+	
+	public class InvalidExtentException extends Exception {
+		public InvalidExtentException() {
+			super();
+		}
+		public InvalidExtentException(String message) {
+			super(message);
+		}
 	}
 
 }

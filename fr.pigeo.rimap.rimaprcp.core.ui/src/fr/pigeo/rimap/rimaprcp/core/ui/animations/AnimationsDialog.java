@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
@@ -48,7 +49,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapEventConstants;
-import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
+import fr.pigeo.rimap.rimaprcp.core.ui.animations.AnimationsExtent.InvalidExtentException;
 import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 
@@ -129,7 +130,7 @@ public class AnimationsDialog extends Dialog {
 		lblSelectExtent.setText(messages.animations_dialog_lbl_extent);
 
 		btnView = new Button(container, SWT.NONE);
-		btnView.addSelectionListener(new ExtentSelectionListener(messages.ANIM_EXTENT_VIEW));
+		btnView.addSelectionListener(new ExtentSelectionListener(this, messages.ANIM_EXTENT_VIEW));
 		FormData fd_btnView = new FormData();
 		fd_btnView.top = new FormAttachment(lblSelectExtent, -5, SWT.TOP);
 		fd_btnView.right = new FormAttachment(100);
@@ -138,7 +139,7 @@ public class AnimationsDialog extends Dialog {
 		btnView.setToolTipText(messages.animations_dialog_extent_viewextent_ttip);
 
 		btnFullExtent = new Button(container, SWT.NONE);
-		btnFullExtent.addSelectionListener(new ExtentSelectionListener(messages.ANIM_EXTENT_FULL));
+		btnFullExtent.addSelectionListener(new ExtentSelectionListener(this, messages.ANIM_EXTENT_FULL));
 		FormData fd_btnFullExtent = new FormData();
 		fd_btnFullExtent.right = new FormAttachment(btnView);
 		fd_btnFullExtent.bottom = new FormAttachment(btnView, 0, SWT.BOTTOM);
@@ -187,7 +188,7 @@ public class AnimationsDialog extends Dialog {
 		lblLoadImages.setText("3.");
 
 		btnLoadImages = new Button(container, SWT.NONE);
-		btnLoadImages.setEnabled(false);
+		btnLoadImages.setEnabled(controller.isExtentValid());
 		btnLoadImages.addSelectionListener(new BtnLoadImagesSelectionListener());
 		FormData fd_btnLoadImages = new FormData();
 		fd_btnLoadImages.left = new FormAttachment(lblLoadImages);
@@ -360,14 +361,23 @@ public class AnimationsDialog extends Dialog {
 
 	private class ExtentSelectionListener extends SelectionAdapter {
 		String extentType = messages.ANIM_EXTENT_UNDEFINED;
+		Dialog parentDialog;
 
-		public ExtentSelectionListener(String extent_type) {
+		public ExtentSelectionListener(Dialog parentDialog, String extent_type) {
 			this.extentType = extent_type;
+			this.parentDialog = parentDialog;
 		}
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			controller.setExtentType(this.extentType);
+			try {
+				controller.setExtentType(this.extentType);
+			} catch (InvalidExtentException e1) {
+				MessageBox warn = new MessageBox(parentDialog.getShell(), SWT.ICON_ERROR | SWT.OK);
+				warn.setText(messages.animations_extent_invalid);
+				warn.setMessage(e1.getLocalizedMessage());
+				warn.open();
+			}
 			if (controller.isExtentValid()) {
 				btnLoadImages.setEnabled(true);
 			} else {
@@ -380,7 +390,8 @@ public class AnimationsDialog extends Dialog {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			lblLoading.setText(messages.loading);
-			progressBar.setMaximum(controller.getModel().getTimestamps().length);
+			progressBar.setMaximum(controller.getModel()
+					.getTimestamps().length);
 			controller.preloadImages();
 		}
 	}

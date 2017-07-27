@@ -22,6 +22,7 @@ import fr.pigeo.rimap.rimaprcp.core.constants.RimapEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
 import fr.pigeo.rimap.rimaprcp.core.resource.WebUsageLevel;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
+import fr.pigeo.rimap.rimaprcp.core.ui.animations.AnimationsExtent.InvalidExtentException;
 import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
@@ -101,14 +102,13 @@ public class AnimationsController {
 		return model.getExtentType();
 	}
 
-	public void setExtentType(String extent) {
-		model.setExtentType(extent);
+	public void setExtentType(String extent) throws InvalidExtentException {
 		if (extent.equals(i18n.ANIM_EXTENT_FULL)) {
 			this.animationExtent.setFullExtent(this.layer);
 		} else if (extent.equals(i18n.ANIM_EXTENT_VIEW)) {
 			this.animationExtent.setViewExtent();
 		}
-		;
+		model.setExtentType(extent);
 	}
 
 	public boolean isExtentValid() {
@@ -178,6 +178,7 @@ public class AnimationsController {
 	}
 
 	public void cleanup() {
+		this.cancelPreloadJob();
 		this.animationExtent.removeRenderables();
 	}
 
