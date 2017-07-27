@@ -65,15 +65,17 @@ public class Messages {
 	public String animations_dialog_title;
 	public String animations_dialog_close_label;
 	public String animations_dialog_choosedataset;
+	public String animations_dialog_lbl_layername;
+	public String animations_dialog_layername_isnull;
+	public String animations_dialog_lbl_extent;
+	public String animations_dialog_extent_fullextent;
+	public String animations_dialog_extent_viewextent;
+	public String animations_dialog_extent_fullextent_ttip;
+	public String animations_dialog_extent_viewextent_ttip;
 	public String animations_dialog_load;
 	public String animations_dialog_update;
 	public String animations_dialog_date_label;
 	public String animations_dialog_date_text;
-	public String animations_dialog_btn_first;
-	public String animations_dialog_btn_prev;
-	public String animations_dialog_btn_pause;
-	public String animations_dialog_btn_next;
-	public String animations_dialog_btn_last;
 	public String animations_dialog_btn_first_ttip;
 	public String animations_dialog_btn_prev_ttip;
 	public String animations_dialog_btn_playbackward_ttip;
@@ -84,7 +86,16 @@ public class Messages {
 	public String animations_dialog_progressbar_ttip_wait;
 	public String animations_dialog_progressbar_ttip_ready;
 	
+	//AnimationsModel translations
+	public String ANIM_EXTENT_FULL;
+	public String ANIM_EXTENT_VIEW;
+	public String ANIM_EXTENT_CUSTOM;
+	public String ANIM_EXTENT_UNDEFINED;
 	
+	//Animations Resolutions (combo values)
+	public String ANIM_RESOL_HIGH;
+	public String ANIM_RESOL_MEDIUM;
+	public String ANIM_RESOL_LOW;
 
 	public Messages() {
 	}

@@ -74,7 +74,7 @@ public class SectorSelector extends WWObjectImpl
 		this.shape = new RegionShape(Sector.EMPTY_SECTOR);
 		((RenderableLayer) this.layer).addRenderable(this.shape);
 	}
-	
+
 	public SectorSelector(WorldWindow worldWindow, RenderableLayer rLayer) {
 		if (worldWindow == null) {
 			String msg = Logging.getMessage("nullValue.WorldWindow");
@@ -88,6 +88,27 @@ public class SectorSelector extends WWObjectImpl
 		this.layer = rLayer;
 		this.shape = new RegionShape(Sector.EMPTY_SECTOR);
 		rLayer.addRenderable(this.shape);
+	}
+
+	/*
+	 * Sets a predefined sector. It skips the "drawing" parts and goes directly
+	 * to the "adjusting" part
+	 * (simulates the mousePressed event)
+	 */
+	public SectorSelector(WorldWindow worldWindow, Sector sector, RenderableLayer rLayer) {
+		if (worldWindow == null) {
+			String msg = Logging.getMessage("nullValue.WorldWindow");
+			Logging.logger()
+					.log(java.util.logging.Level.SEVERE, msg);
+			throw new IllegalArgumentException(msg);
+		}
+
+		this.wwd = worldWindow;
+
+		this.layer = rLayer;
+		this.shape = new RegionShape(sector);
+		rLayer.addRenderable(this.shape);
+
 	}
 
 	protected SectorSelector(WorldWindow worldWindow, RegionShape shape, RenderableLayer rLayer) {
@@ -157,6 +178,40 @@ public class SectorSelector extends WWObjectImpl
 				.addMouseMotionListener(this);
 
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+	}
+
+	public void setEditable() {
+		((RenderableLayer) this.layer).addRenderable(this.shape);
+		// this.getShape().setStartPosition(null);
+
+		LayerList layers = this.getWwd()
+				.getModel()
+				.getLayers();
+
+		if (!layers.contains(this.getLayer()))
+			layers.add(this.getLayer());
+
+
+		this.getWwd()
+				.addRenderingListener(this);
+		this.getWwd()
+				.addSelectListener(this);
+		this.getWwd()
+				.getInputHandler()
+				.addMouseListener(this);
+		this.getWwd()
+				.getInputHandler()
+				.addMouseMotionListener(this);
+
+		if (!this.getLayer()
+				.isEnabled())
+			this.getLayer()
+					.setEnabled(true);
+
+		this.setArmed(false);
+		this.getShape()
+				.setResizeable(false);
+
 	}
 
 	public void disable() {
@@ -328,7 +383,6 @@ public class SectorSelector extends WWObjectImpl
 		this.getShape()
 				.setStartPosition(null);
 		this.setArmed(false);
-
 		mouseEvent.consume();
 	}
 
@@ -640,6 +694,11 @@ public class SectorSelector extends WWObjectImpl
 
 			// Create the default border shape.
 			this.setBorder(new SurfaceSector(sector));
+			
+			if (sector!= Sector.EMPTY_SECTOR) {
+				this.setStartPosition(new Position(sector.getCorners()[0], 0));
+				this.setEndPosition(new Position(sector.getCorners()[2], 0));
+			}
 
 			// The edges of the region shape should be constant lines of
 			// latitude and longitude.

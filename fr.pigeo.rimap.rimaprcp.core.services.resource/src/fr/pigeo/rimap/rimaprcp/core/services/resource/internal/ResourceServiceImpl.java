@@ -81,11 +81,11 @@ public class ResourceServiceImpl implements IResourceService {
 		}
 		url = cleanURL(url);
 		if (web_usage_level > 1 || !secureResourceService.isResourceAvailable(cachePath, category, name)) {
-			logger.info("Should load " + url + " from URL");
+			//logger.info("Should load " + url + " from URL");
 			return getResourceFromURL(url, category, name);
 		} else {
 			// Load from file
-			logger.info("Should load " + url + " from file");
+			//logger.info("Should load " + url + " from file");
 			return getResourceFromFile(url, category, name);
 		}
 	}

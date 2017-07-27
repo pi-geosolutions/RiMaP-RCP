@@ -45,6 +45,8 @@ import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
+import fr.pigeo.rimap.rimaprcp.core.ui.animations.AnimationsController;
+import fr.pigeo.rimap.rimaprcp.core.ui.animations.AnimationsDialog;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.LayerOpacityChangeListener;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.OpacityToScaleConverter;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.ScaleToOpacityConverter;
@@ -81,10 +83,9 @@ public class LayerDetailsImpl extends LayerDetails {
 
 	@Inject
 	GeocatMetadataToolBox metadataToolBox;
-
-	public LayerDetailsImpl() {
-
-	}
+	
+	@Inject
+	AnimationsController animationsController;
 
 	@PostConstruct
 	public void getInjections(Composite parent, WwjInstance wwjInst) {
@@ -332,9 +333,7 @@ public class LayerDetailsImpl extends LayerDetails {
 				this.btnAnimationsSelectionAdapter = new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						AnimationsDialog animationsDialog = new AnimationsDialog(parent.getShell());
-						ContextInjectionFactory.inject(animationsDialog, context);
-						animationsDialog.open();
+						animationsController.openDialog(parent.getShell(), l);
 					}
 				};
 				this.btnAnimate.addSelectionListener(this.btnAnimationsSelectionAdapter);

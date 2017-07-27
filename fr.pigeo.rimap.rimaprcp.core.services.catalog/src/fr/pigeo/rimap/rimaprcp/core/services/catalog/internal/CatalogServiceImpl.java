@@ -33,7 +33,7 @@ public class CatalogServiceImpl implements ICatalogService {
 
 	@Inject
 	ISessionService sessionService;
-	
+
 	@Inject
 	@Translation
 	Messages messages;

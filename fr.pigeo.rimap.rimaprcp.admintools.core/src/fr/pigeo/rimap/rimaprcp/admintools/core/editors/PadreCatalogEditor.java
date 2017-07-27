@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.pigeo.rimap.rimaprcp.admintools.core.constants.AdminToolsConstants;
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
+import fr.pigeo.rimap.rimaprcp.core.resource.WebUsageLevel;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.NodeUtils;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.PadreCatalog;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.CatalogConstants;
@@ -67,7 +68,7 @@ public class PadreCatalogEditor {
 		if (this.jsonCurrent == null) {
 			if (this.jsonOriginal == null) {
 				// we get the resource from the web (imperative !)
-				byte[] b = resourceService.getResource(layertree_service_url, 9);
+				byte[] b = resourceService.getResource(layertree_service_url, WebUsageLevel.PRIORITY_WEB);
 				if (b != null) {
 					String lt = new String(b, StandardCharsets.UTF_8);
 					ObjectMapper objectMapper = new ObjectMapper();
