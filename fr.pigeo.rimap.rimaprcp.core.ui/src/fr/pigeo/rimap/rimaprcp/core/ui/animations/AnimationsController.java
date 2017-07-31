@@ -23,7 +23,6 @@ import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.widgets.Shell;
 
-import fr.pigeo.rimap.rimaprcp.core.constants.RimapEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
 import fr.pigeo.rimap.rimaprcp.core.resource.WebUsageLevel;
@@ -65,6 +64,9 @@ public class AnimationsController {
 	@Inject
 	IEclipseContext context;
 
+	@Inject
+	Shell shell;
+
 	private AnimationsModel model;
 	private AnimationsExtent animationExtent;
 	private AnimationsDialog animationsDialog;
@@ -77,6 +79,9 @@ public class AnimationsController {
 	// current* are used to freeze the values during preload, even if View
 	// changes
 	private double currentResolution;
+	private int playStep = 0;
+	//used to  track play direction changes (and stop deprecated play loops)
+	private int playSeqId=0;
 
 	@Inject
 	public AnimationsController(@Translation Messages i18n, WwjInstance wwj, IEventBroker eventBroker) {
@@ -174,10 +179,10 @@ public class AnimationsController {
 							WebUsageLevel.PRIORITY_LOCAL);
 					count++;
 					if (!isPreloadJobCanceled()) {
-						eventBroker.send(RimapEventConstants.ANIMATIONS_FILES_LOAD_PROGRESS, count);
+						eventBroker.send(RiMaPEventConstants.ANIMATIONS_FILES_LOAD_PROGRESS, count);
 					}
 				}
-				eventBroker.send(RimapEventConstants.ANIMATIONS_FILES_LOAD_COMPLETE, timestamps);
+				eventBroker.send(RiMaPEventConstants.ANIMATIONS_FILES_LOAD_COMPLETE, timestamps);
 
 				animationExtent.freezeExtent(false);
 				return Status.OK_STATUS;
@@ -285,7 +290,7 @@ public class AnimationsController {
 		this.animationExtent.removeRenderables();
 
 		// remove image layer and re-enable normal layer
-		if (this.wwjLayer!=null) {
+		if (this.wwjLayer != null) {
 			wwj.removeLayer(this.wwjLayer);
 		}
 		layer.setEnabled(true);
@@ -299,12 +304,12 @@ public class AnimationsController {
 
 	@Inject
 	@Optional
-	void sectorChanged(@UIEventTopic(RimapEventConstants.ANIMATIONS_SECTORSELECTOR_SECTOR_CHANGED) Sector sector) {
+	void sectorChanged(@UIEventTopic(RiMaPEventConstants.ANIMATIONS_SECTORSELECTOR_SECTOR_CHANGED) Sector sector) {
 		this.model.setExtentType(i18n.ANIM_EXTENT_CUSTOM);
 	}
 
 	public void showImage(int index) {
-		System.out.println(index + "/" + model.getTimestamps().length);
+		index = normalizeIndex(index);
 		model.setCurrentDateIndex(index);
 		BufferedImage bi = getBufferedImage(model.getCurrentDate());
 		if (bi == null) {
@@ -321,6 +326,9 @@ public class AnimationsController {
 			wwjSurfaceImage.setImageSource(bi, this.animationExtent.getSurfaceSector()
 					.getSector());
 		}
+		//send event. Used at least for slider update in UI
+		eventBroker.send(RiMaPEventConstants.ANIMATIONS_PLAYER_DATE_CHANGED, index);
+		
 		wwjLayer.setName(layer.getName() + "(animation)");
 
 		// Will actually update the layer, if it is already in the model:
@@ -357,6 +365,44 @@ public class AnimationsController {
 
 	public void showLastImage() {
 		showImage(-1);
+	}
+
+	/**
+	 * Runs the animation (Play buttons)
+	 * 
+	 * @param step
+	 *            : usually +1 or -1 to play forward or backward. If set to 0,
+	 *            stops the animation
+	 */
+	public void play(int step, int sleepTime) {
+		this.playStep = step;
+		this.playSeqId++;
+		if (step != 0) {
+			this.playAnimation(sleepTime, this.playSeqId);
+		}
+	}
+
+	private void playAnimation(int sleepTime, int seqId) {
+		if (this.playStep == 0 || seqId < this.playSeqId) {
+			return;
+		}
+		int index = normalizeIndex(model.getCurrentDateIndex() + playStep);
+		showImage(index);
+		if (shell != null) {
+			//Used to check, at next iteration, we can continue on playing this loop
+			int s = seqId;
+			shell.getDisplay()
+					.timerExec(sleepTime, new Runnable() {
+						public void run() {
+							playAnimation(sleepTime, seqId);
+						}
+					});
+		}
+	}
+	
+	public void stop() {
+		this.playStep = 0;
+		this.playSeqId++;
 	}
 
 }

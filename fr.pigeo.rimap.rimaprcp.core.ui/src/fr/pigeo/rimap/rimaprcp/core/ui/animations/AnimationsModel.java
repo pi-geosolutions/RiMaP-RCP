@@ -2,11 +2,16 @@ package fr.pigeo.rimap.rimaprcp.core.ui.animations;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
+import fr.pigeo.rimap.rimaprcp.core.ui.swt.LayerDetailsImpl;
 import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 
@@ -21,7 +26,6 @@ public class AnimationsModel {
 
 	private Messages i18n;
 	private String name, extentType, resolution;
-	private IObservableList resolutionsList;
 	private String[] timestamps;
 	private String currentDate;
 	private int currentDateIndex;
@@ -120,5 +124,6 @@ public class AnimationsModel {
 	
 		return 0;//shouldn't happen
 	}
+
 
 }

@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -51,7 +52,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-import fr.pigeo.rimap.rimaprcp.core.constants.RimapEventConstants;
+import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.ui.animations.AnimationsExtent.InvalidExtentException;
 import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
@@ -84,7 +85,7 @@ public class AnimationsDialog extends Dialog {
 	protected ProgressBar progressBar;
 	protected Button btnX;
 	protected Label lblLoading;
-	protected Composite playerComposite;
+	protected Group playerComposite;
 	protected Scale playerScale;
 	protected Label playerLblDate;
 	protected Text playerTxtDate;
@@ -236,7 +237,7 @@ public class AnimationsDialog extends Dialog {
 		fd_lblLoading.top = new FormAttachment(progressBar, 0, SWT.DEFAULT);
 		lblLoading.setLayoutData(fd_lblLoading);
 
-		playerComposite = new Composite(container, SWT.NONE);
+		playerComposite = new Group(container, SWT.NONE);
 		playerComposite.setEnabled(false);
 		playerComposite.setLayout(new GridLayout(2, false));
 		FormData fd_playerComposite = new FormData();
@@ -245,6 +246,7 @@ public class AnimationsDialog extends Dialog {
 		fd_playerComposite.right = new FormAttachment(btnView, 0, SWT.RIGHT);
 		fd_playerComposite.left = new FormAttachment(0, 10);
 		playerComposite.setLayoutData(fd_playerComposite);
+		playerComposite.setText(messages.animations_dialog_grp_play);
 
 		playerScale = new Scale(playerComposite, SWT.NONE);
 		playerScale.addSelectionListener(new PlayerScaleSelectionListener());
@@ -255,7 +257,7 @@ public class AnimationsDialog extends Dialog {
 		GridData gd_playerLblDate = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		gd_playerLblDate.widthHint = 100;
 		playerLblDate.setLayoutData(gd_playerLblDate);
-		playerLblDate.setText("Date:");
+		playerLblDate.setText(messages.animations_dialog_date_label);
 
 		playerTxtDate = new Text(playerComposite, SWT.BORDER);
 		playerTxtDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -265,48 +267,58 @@ public class AnimationsDialog extends Dialog {
 		playerButtonsComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		playerBtnFirst = new Button(playerButtonsComposite, SWT.NONE);
-		playerBtnFirst.setImage(
-				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-first.png"));
+		playerBtnFirst.addSelectionListener(new PlayerBtnFirstSelectionListener());
 		playerBtnFirst.setToolTipText(messages.animations_dialog_btn_first_ttip);
 
 		playerBtnPrev = new Button(playerButtonsComposite, SWT.NONE);
 		playerBtnPrev.addSelectionListener(new PlayerBtnPrevSelectionListener());
-		playerBtnPrev.setImage(
-				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-fb.png"));
 		playerBtnPrev.setToolTipText(messages.animations_dialog_btn_prev_ttip);
 
-		playerBtnBPlay = new Button(playerButtonsComposite, SWT.NONE);
-		playerBtnBPlay.setImage(
-				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-b.png"));
+		playerBtnBPlay = new Button(playerButtonsComposite, SWT.TOGGLE);
 		playerBtnBPlay.setToolTipText(messages.animations_dialog_btn_playbackward_ttip);
+		playerBtnBPlay.addSelectionListener(new PlayerBtnPlaySelectionListener(-1));
 
 		playerBtnPause = new Button(playerButtonsComposite, SWT.NONE);
 		playerBtnPause.setToolTipText(messages.animations_dialog_btn_pause_ttip);
-		playerBtnPause.setImage(
-				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/stop.png"));
+		playerBtnPause.addSelectionListener(new PlayerBtnPlaySelectionListener(0));
 
-		playerBtnFPlay = new Button(playerButtonsComposite, SWT.NONE);
-		playerBtnFPlay.setSelection(true);
-		playerBtnFPlay.setImage(
-				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play.png"));
+		playerBtnFPlay = new Button(playerButtonsComposite, SWT.TOGGLE);
+		playerBtnFPlay.addSelectionListener(new PlayerBtnPlaySelectionListener(1));
 		playerBtnFPlay.setToolTipText(messages.animations_dialog_btn_playforward_ttip);
 
 		playerBtnNext = new Button(playerButtonsComposite, SWT.NONE);
 		playerBtnNext.addSelectionListener(new PlayerBtnNextSelectionListener());
-		playerBtnNext.setImage(
-				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-ff.png"));
 		playerBtnNext.setToolTipText(messages.animations_dialog_btn_next_ttip);
 
 		playerBtnLast = new Button(playerButtonsComposite, SWT.NONE);
-		playerBtnLast.setImage(
-				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-last.png"));
+		playerBtnLast.addSelectionListener(new PlayerBtnLastSelectionListener());
 		playerBtnLast.setToolTipText(messages.animations_dialog_btn_last_ttip);
-
+		
+		setPlayerButtonsImages();
+		
 		defineBindings();
 
 		controller.init();
 
 		return container;
+	}
+	
+	private void setPlayerButtonsImages() {
+		playerBtnFirst.setImage(
+				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-first.png"));
+		playerBtnPrev.setImage(
+				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-fb.png"));
+		playerBtnBPlay.setImage(
+				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-b.png"));
+		playerBtnPause.setImage(
+				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/stop.png"));
+		playerBtnFPlay.setImage(
+				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play.png"));
+		playerBtnNext.setImage(
+				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-ff.png"));
+		playerBtnLast.setImage(
+				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-last.png"));
+
 	}
 
 	private void defineBindings() {
@@ -368,7 +380,7 @@ public class AnimationsDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(570, 476);
+		return new Point(570, 380);
 	}
 
 	protected Image getAnImage(String file, Control owner) {
@@ -457,16 +469,62 @@ public class AnimationsDialog extends Dialog {
 			controller.showImage(playerScale.getSelection());
 		}
 	}
+	private class PlayerBtnFirstSelectionListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			controller.showFirstImage();
+			playerScale.setSelection(controller.getModel().getCurrentDateIndex());
+		}
+	}
+	private class PlayerBtnLastSelectionListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			controller.showLastImage();
+			playerScale.setSelection(controller.getModel().getCurrentDateIndex());
+		}
+	}
+	private class PlayerBtnPlaySelectionListener extends SelectionAdapter {
+		private int step;
+		public PlayerBtnPlaySelectionListener(int step) {
+			this.step=step;
+		}
+		
+		@Override
+		public void widgetSelected(SelectionEvent e) {	
+			pressButton((Button) e.getSource());
+			controller.play(step, 1000);
+		}
+	}
+	
+	//toggles/untoggles play buttons
+	private void pressButton(Button btn) {
+		//deselect the play buttons
+		playerBtnFPlay.setSelection(false);
+		playerBtnBPlay.setSelection(false);
+		
+		//select the one
+		btn.setSelection(true);
+		
+		//if btn is pause, we deselect it anyway
+		playerBtnPause.setSelection(false);
+
+	}
 
 	@Inject
 	@Optional
-	void filesLoadProgress(@UIEventTopic(RimapEventConstants.ANIMATIONS_FILES_LOAD_PROGRESS) int count) {
+	void currentDateChanged(@UIEventTopic(RiMaPEventConstants.ANIMATIONS_PLAYER_DATE_CHANGED) int value) {
+		this.playerScale.setSelection(value);
+	}
+
+	@Inject
+	@Optional
+	void filesLoadProgress(@UIEventTopic(RiMaPEventConstants.ANIMATIONS_FILES_LOAD_PROGRESS) int count) {
 		progressBar.setSelection(count);
 	}
 
 	@Inject
 	@Optional
-	void filesLoadComplete(@UIEventTopic(RimapEventConstants.ANIMATIONS_FILES_LOAD_COMPLETE) String[] ts) {
+	void filesLoadComplete(@UIEventTopic(RiMaPEventConstants.ANIMATIONS_FILES_LOAD_COMPLETE) String[] ts) {
 		lblLoading.setText(messages.animations_dialog_progressbar_ttip_ready);
 		playerComposite.setEnabled(true);
 		controller.initPlayer();
@@ -488,6 +546,7 @@ public class AnimationsDialog extends Dialog {
 
 	@Override
 	public boolean close() {
+		controller.stop();
 		controller.cleanup();
 		return super.close();
 	}

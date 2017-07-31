@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
 
-import fr.pigeo.rimap.rimaprcp.core.constants.RimapEventConstants;
+import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
 import fr.pigeo.rimap.rimaprcp.core.ui.core.Plugin;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
@@ -101,7 +101,7 @@ public class AnimationsExtent {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getNewValue() == null) {
 					// means mouse released, means finished drawing
-					eventBroker.post(RimapEventConstants.ANIMATIONS_SECTORSELECTOR_SECTOR_CHANGED,
+					eventBroker.post(RiMaPEventConstants.ANIMATIONS_SECTORSELECTOR_SECTOR_CHANGED,
 							selector.getSector());
 					currentSector = selector.getMeasurableSector();
 				} else {

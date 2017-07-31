@@ -370,7 +370,7 @@ public class LayerDetailsImpl extends LayerDetails {
 		return ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME);
 	}
 
-	private static String formatDateTime(ZonedDateTime date) {
+	private String formatDateTime(ZonedDateTime date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL, FormatStyle.FULL)
 				.withLocale(Locale.FRENCH);
 		// System.out.println(formatter.getLocale()); // fr
