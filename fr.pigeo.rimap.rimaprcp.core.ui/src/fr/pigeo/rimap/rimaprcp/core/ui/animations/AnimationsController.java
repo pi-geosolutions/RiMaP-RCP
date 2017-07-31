@@ -3,6 +3,7 @@ package fr.pigeo.rimap.rimaprcp.core.ui.animations;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -71,17 +72,18 @@ public class AnimationsController {
 	private AnimationsExtent animationExtent;
 	private AnimationsDialog animationsDialog;
 	private RimapWMSTiledImageLayer layer;
-	private String storagePath = "wmst/";
+	private String storagePath = "wmst" + File.separator;
 	private Job preloadJob;
 	private boolean cancelPreloadJob = false;
 	private RenderableLayer wwjLayer;
 	private SurfaceImage wwjSurfaceImage;
+	private String imageExtension = "png";
 	// current* are used to freeze the values during preload, even if View
 	// changes
 	private double currentResolution;
 	private int playStep = 0;
-	//used to  track play direction changes (and stop deprecated play loops)
-	private int playSeqId=0;
+	// used to track play direction changes (and stop deprecated play loops)
+	private int playSeqId = 0;
 
 	@Inject
 	public AnimationsController(@Translation Messages i18n, WwjInstance wwj, IEventBroker eventBroker) {
@@ -100,6 +102,11 @@ public class AnimationsController {
 	}
 
 	public void setLayer(RimapWMSTiledImageLayer layer) {
+		if (this.layer != null) {
+			// clean previous config
+			this.cleanup();
+		}
+
 		this.layer = layer;
 		if (model != null) {
 			this.model.setName(layer.getName());
@@ -170,11 +177,6 @@ public class AnimationsController {
 						return Status.CANCEL_STATUS;
 					}
 					String filename = getFilename(timestamp);
-					// makes it suitable for a filename
-					filename = filename.replaceAll("[=.:]", "-");
-					filename = filename.replaceAll("[&,]", "_");
-					// add extension
-					filename += ".png";
 					resourceService.getResource(buildImageURL(timestamp), category, filename,
 							WebUsageLevel.PRIORITY_LOCAL);
 					count++;
@@ -193,13 +195,24 @@ public class AnimationsController {
 		return true;
 	}
 
+	public String secureFilename(String name) {
+		// makes it suitable for a filename
+		name = name.replaceAll("[=.:]", "-");
+		name = name.replaceAll("[&,]", "_");
+		return name;
+	}
+
 	private String getFolderName() {
-		return this.storagePath + layer.getParent()
-				.getLayers();
+		return secureFilename(this.storagePath + layer.getParent()
+				.getLayers());
 	}
 
 	private String getFilename(String timestamp) {
-		return timestamp + "__" + animationExtent.getExtentAsWmsBBOXString() + "__" + getImageDimensionsAsWmsString();
+		String name = secureFilename(
+				timestamp + "__" + animationExtent.getExtentAsWmsBBOXString() + "__" + getImageDimensionsAsWmsString());
+		// add image extension
+		name += "." + imageExtension;
+		return name;
 	}
 
 	private String buildImageURL(String timestamp) {
@@ -212,7 +225,8 @@ public class AnimationsController {
 		}
 
 		// Parameters
-		url += "SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&CRS=EPSG:4326&STYLES=";
+		url += "SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2F" + imageExtension
+				+ "&TRANSPARENT=true&CRS=EPSG:4326&STYLES=";
 		url += "&LAYERS=" + layer.getParent()
 				.getLayers();
 		url += "&" + getImageDimensionsAsWmsString();
@@ -326,9 +340,9 @@ public class AnimationsController {
 			wwjSurfaceImage.setImageSource(bi, this.animationExtent.getSurfaceSector()
 					.getSector());
 		}
-		//send event. Used at least for slider update in UI
+		// send event. Used at least for slider update in UI
 		eventBroker.send(RiMaPEventConstants.ANIMATIONS_PLAYER_DATE_CHANGED, index);
-		
+
 		wwjLayer.setName(layer.getName() + "(animation)");
 
 		// Will actually update the layer, if it is already in the model:
@@ -389,7 +403,8 @@ public class AnimationsController {
 		int index = normalizeIndex(model.getCurrentDateIndex() + playStep);
 		showImage(index);
 		if (shell != null) {
-			//Used to check, at next iteration, we can continue on playing this loop
+			// Used to check, at next iteration, we can continue on playing this
+			// loop
 			int s = seqId;
 			shell.getDisplay()
 					.timerExec(sleepTime, new Runnable() {
@@ -399,7 +414,7 @@ public class AnimationsController {
 					});
 		}
 	}
-	
+
 	public void stop() {
 		this.playStep = 0;
 		this.playSeqId++;

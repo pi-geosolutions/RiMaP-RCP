@@ -74,7 +74,7 @@ public class LayerDetails {
 		btnZoomToExtent.setImage(
 				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/icon_zoomlayer.png"));
 		
-		timeChooserComposite = new Composite(grpDetails, SWT.BORDER | SWT.NO_BACKGROUND);
+		timeChooserComposite = new Composite(grpDetails, SWT.BORDER);
 		timeChooserComposite.setLayout(new FormLayout());
 		GridData gd_timeChooserComposite = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 		gd_timeChooserComposite.heightHint = 25;

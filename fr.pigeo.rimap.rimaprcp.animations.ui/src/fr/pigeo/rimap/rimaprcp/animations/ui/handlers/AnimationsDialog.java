@@ -388,7 +388,7 @@ public class AnimationsDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(messages.animations_dialog_title);
-		newShell.setAlpha(200);
+		//newShell.setAlpha(200);
 		newShell.setImage(this.getAnImage("clock_play.png", newShell));
 	}
 
@@ -399,7 +399,7 @@ public class AnimationsDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(499, 311);
+		return new Point(499, 380);
 	}
 
 	protected Image getAnImage(String file, Control owner) {

@@ -64,7 +64,8 @@ import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
 public class LayerDetailsImpl extends LayerDetails {
 	private SelectionAdapter btnMetadataSelectionAdapter, btnExtentSelectionAdapter, btnLegendSelectionAdapter,
-			btnAnimationsSelectionAdapter;
+			btnAnimationsSelectionAdapter, btnTimeReloadSelectionAdapter;
+	private ISelectionChangedListener timeComboSelectionChangeListener;
 
 	private WmsNode wmsNode;
 	private WwjInstance wwj;
@@ -291,7 +292,10 @@ public class LayerDetailsImpl extends LayerDetails {
 						return super.getText(element);
 					}
 				});
-				comboDateViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+				if (this.timeComboSelectionChangeListener != null) {
+					this.comboDateViewer.removeSelectionChangedListener(timeComboSelectionChangeListener);
+				}
+				this.timeComboSelectionChangeListener = new ISelectionChangedListener() {
 
 					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
@@ -304,26 +308,26 @@ public class LayerDetailsImpl extends LayerDetails {
 									.redrawNow();
 						}
 					}
-				});
+				};
+				comboDateViewer.addSelectionChangedListener(timeComboSelectionChangeListener);
 
-				this.btnReloadLayer.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event e) {
-						switch (e.type) {
-						case SWT.Selection:
-							BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
+				if (this.btnTimeReloadSelectionAdapter != null) {
+					this.btnReloadLayer.removeSelectionListener(this.btnTimeReloadSelectionAdapter);
+				}
+				this.btnTimeReloadSelectionAdapter = new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
 
-								public void run() {
-									RimapWMSTiledImageLayer newl = (RimapWMSTiledImageLayer) l.getParent()
-											.getLayer(true);
-									AVList newavl = (AVList) newl.getValue(AVKey.CONSTRUCTION_PARAMETERS);
-									updateComboViewer(newavl, true);
-								}
-							});
-
-							break;
-						}
+							public void run() {
+								RimapWMSTiledImageLayer newl = (RimapWMSTiledImageLayer) l.getParent()
+										.getLayer(true);
+								AVList newavl = (AVList) newl.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+								updateComboViewer(newavl, true);
+							}
+						});
 					}
-				});
+				};
+				this.btnReloadLayer.addSelectionListener(this.btnTimeReloadSelectionAdapter);
 
 				updateComboViewer(avl, false);
 

@@ -4,17 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="gdal.jar"/>
 	<classpathentry exported="true" kind="lib" path="gluegen-rt.jar"/>
-	<classpathentry exported="true" kind="lib" path="gluegen-rt-natives-linux-amd64.jar"/>
-	<classpathentry exported="true" kind="lib" path="gluegen-rt-natives-linux-i586.jar"/>
-	<classpathentry exported="true" kind="lib" path="gluegen-rt-natives-macosx-universal.jar"/>
-	<classpathentry exported="true" kind="lib" path="gluegen-rt-natives-windows-amd64.jar"/>
-	<classpathentry exported="true" kind="lib" path="gluegen-rt-natives-windows-i586.jar"/>
 	<classpathentry exported="true" kind="lib" path="jogl-all.jar"/>
-	<classpathentry exported="true" kind="lib" path="jogl-all-natives-linux-amd64.jar"/>
-	<classpathentry exported="true" kind="lib" path="jogl-all-natives-linux-i586.jar"/>
-	<classpathentry exported="true" kind="lib" path="jogl-all-natives-macosx-universal.jar"/>
-	<classpathentry exported="true" kind="lib" path="jogl-all-natives-windows-amd64.jar"/>
-	<classpathentry exported="true" kind="lib" path="jogl-all-natives-windows-i586.jar"/>
 	<classpathentry exported="true" kind="lib" path="junit-4.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="vpf-symbols.jar"/>
 	<classpathentry exported="true" kind="lib" path="worldwind.jar" sourcepath="/gov.nasa.worldwind"/>

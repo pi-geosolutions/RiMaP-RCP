@@ -365,7 +365,7 @@ public class AnimationsDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Animations");
-		newShell.setAlpha(200);
+		//newShell.setAlpha(200);
 		newShell.setImage(this.getAnImage("clock_play.png", newShell));
 
 		// newShell.setImage(ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui",
@@ -380,7 +380,7 @@ public class AnimationsDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(570, 380);
+		return new Point(570, 420);
 	}
 
 	protected Image getAnImage(String file, Control owner) {
