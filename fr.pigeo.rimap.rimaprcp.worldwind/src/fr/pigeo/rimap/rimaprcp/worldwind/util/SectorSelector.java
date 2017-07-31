@@ -191,7 +191,6 @@ public class SectorSelector extends WWObjectImpl
 		if (!layers.contains(this.getLayer()))
 			layers.add(this.getLayer());
 
-
 		this.getWwd()
 				.addRenderingListener(this);
 		this.getWwd()
@@ -235,6 +234,37 @@ public class SectorSelector extends WWObjectImpl
 				.clear();
 	}
 
+	/**
+	 * prevents edition but keeps it visible
+	 * 
+	 * @param freeze
+	 */
+	public void freeze(boolean freeze) {
+		if (freeze) {
+			this.getWwd()
+					.removeRenderingListener(this);
+			this.getWwd()
+					.removeSelectListener(this);
+			this.getWwd()
+					.getInputHandler()
+					.removeMouseListener(this);
+			this.getWwd()
+					.getInputHandler()
+					.removeMouseMotionListener(this);
+		} else {
+			this.getWwd()
+					.addRenderingListener(this);
+			this.getWwd()
+					.addSelectListener(this);
+			this.getWwd()
+					.getInputHandler()
+					.addMouseListener(this);
+			this.getWwd()
+					.getInputHandler()
+					.addMouseMotionListener(this);
+		}
+	}
+
 	public Sector getSector() {
 		return this.getShape()
 				.hasSelection()
@@ -243,6 +273,19 @@ public class SectorSelector extends WWObjectImpl
 						: null;
 		// TODO: Determine how to handle date-line spanning sectors.
 	}
+	
+	/**
+	 * SurfaceSector, from which inherit the RegionShape, keeps the sector information 
+	 * and also provides measurement facilities.
+	 * @return 
+	 */
+	public SurfaceSector getMeasurableSector() {
+		return this.getShape()
+				.hasSelection()
+						? this.getShape()
+						: null;
+	}
+
 
 	public Color getInteriorColor() {
 		return this.getShape()
@@ -694,8 +737,8 @@ public class SectorSelector extends WWObjectImpl
 
 			// Create the default border shape.
 			this.setBorder(new SurfaceSector(sector));
-			
-			if (sector!= Sector.EMPTY_SECTOR) {
+
+			if (sector != Sector.EMPTY_SECTOR) {
 				this.setStartPosition(new Position(sector.getCorners()[0], 0));
 				this.setEndPosition(new Position(sector.getCorners()[2], 0));
 			}

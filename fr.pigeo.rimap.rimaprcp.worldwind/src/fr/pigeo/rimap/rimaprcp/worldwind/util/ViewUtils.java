@@ -9,7 +9,12 @@ import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.Logging;
 
 public class ViewUtils {
-
+	/**
+	 * Converts viewport (Rectangle) extent, in pixel, to a geographic bounding box
+	 * @param viewport
+	 * @param epsilon
+	 * @return
+	 */
 	public static Sector getViewExtentAsSector(View view, int epsilon) {
 		try {
 			// view extent in screen coordinates

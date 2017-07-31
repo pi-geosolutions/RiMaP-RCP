@@ -1,7 +1,12 @@
 package fr.pigeo.rimap.rimaprcp.core.ui.animations;
 
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -19,6 +24,7 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.widgets.Shell;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapEventConstants;
+import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
 import fr.pigeo.rimap.rimaprcp.core.resource.WebUsageLevel;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
@@ -31,6 +37,9 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.SurfaceImage;
+import gov.nasa.worldwind.render.SurfaceSector;
 
 /**
  * @author jean.pommier@pi-geosolutions.fr
@@ -63,6 +72,11 @@ public class AnimationsController {
 	private String storagePath = "wmst/";
 	private Job preloadJob;
 	private boolean cancelPreloadJob = false;
+	private RenderableLayer wwjLayer;
+	private SurfaceImage wwjSurfaceImage;
+	// current* are used to freeze the values during preload, even if View
+	// changes
+	private double currentResolution;
 
 	@Inject
 	public AnimationsController(@Translation Messages i18n, WwjInstance wwj, IEventBroker eventBroker) {
@@ -95,6 +109,18 @@ public class AnimationsController {
 		return layer;
 	}
 
+	public void openDialog(Shell shell, Layer l) {
+		if (animationsDialog == null) {
+			animationsDialog = new AnimationsDialog(shell);
+			ContextInjectionFactory.inject(animationsDialog, context);
+		} else {
+			this.cancelPreloadJob();
+			animationsDialog.resetUI();
+		}
+		this.setLayer((RimapWMSTiledImageLayer) l);
+		animationsDialog.open();
+	}
+
 	public String getExtentType() {
 		if (model == null) {
 			return i18n.ANIM_EXTENT_UNDEFINED;
@@ -112,8 +138,11 @@ public class AnimationsController {
 	}
 
 	public boolean isExtentValid() {
-		return this.animationExtent.getSector() != null && this.animationExtent.getSector()
-				.isWithinLatLonLimits();
+		return this.animationExtent.getSurfaceSector() != null && this.animationExtent.getSurfaceSector()
+				.getSector() != null
+				&& this.animationExtent.getSurfaceSector()
+						.getSector()
+						.isWithinLatLonLimits();
 	}
 
 	public boolean preloadImages() {
@@ -122,9 +151,11 @@ public class AnimationsController {
 		// TODO : clean expired images
 
 		String[] timestamps = model.getTimestamps();
-		String category = this.storagePath + layer.getParent()
-				.getLayers();
+		String category = this.getFolderName();
 		cancelPreloadJob = false;
+		this.currentResolution = ViewUtils.getViewResolution(wwj.getWwd()
+				.getView());
+		this.animationExtent.freezeExtent(true);
 		preloadJob = new Job("[Animations] Preload Images job") {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -133,8 +164,7 @@ public class AnimationsController {
 					if (isPreloadJobCanceled()) {
 						return Status.CANCEL_STATUS;
 					}
-					String filename = timestamp + "__" + animationExtent.getExtentAsWmsBBOXString() + "__"
-							+ getImageDimensionsAsWmsString();
+					String filename = getFilename(timestamp);
 					// makes it suitable for a filename
 					filename = filename.replaceAll("[=.:]", "-");
 					filename = filename.replaceAll("[&,]", "_");
@@ -148,6 +178,8 @@ public class AnimationsController {
 					}
 				}
 				eventBroker.send(RimapEventConstants.ANIMATIONS_FILES_LOAD_COMPLETE, timestamps);
+
+				animationExtent.freezeExtent(false);
 				return Status.OK_STATUS;
 			}
 		};
@@ -156,10 +188,25 @@ public class AnimationsController {
 		return true;
 	}
 
+	private String getFolderName() {
+		return this.storagePath + layer.getParent()
+				.getLayers();
+	}
+
+	private String getFilename(String timestamp) {
+		return timestamp + "__" + animationExtent.getExtentAsWmsBBOXString() + "__" + getImageDimensionsAsWmsString();
+	}
+
 	private String buildImageURL(String timestamp) {
 		String url = "";
+		// base URL
 		url += layer.getParent()
 				.getUrl();
+		if (!url.endsWith("?")) {
+			url += "?";
+		}
+
+		// Parameters
 		url += "SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&CRS=EPSG:4326&STYLES=";
 		url += "&LAYERS=" + layer.getParent()
 				.getLayers();
@@ -175,11 +222,7 @@ public class AnimationsController {
 
 	public void cancelPreloadJob() {
 		this.cancelPreloadJob = true;
-	}
-
-	public void cleanup() {
-		this.cancelPreloadJob();
-		this.animationExtent.removeRenderables();
+		this.animationExtent.freezeExtent(false);
 	}
 
 	private String getImageDimensionsAsWmsString() {
@@ -197,18 +240,15 @@ public class AnimationsController {
 	 * @return
 	 */
 	private Rectangle estimateImageDimensions(double resolutionFactor) {
-		Rectangle viewport = wwj.getWwd()
-				.getView()
-				.getViewport();
-		Sector viewSector = ViewUtils.getViewExtentAsSector(wwj.getWwd()
-				.getView(), 0);
-		Sector imageSector = animationExtent.getSector();
+		SurfaceSector imageSector = animationExtent.getSurfaceSector();
 		if (imageSector == null) {
 			return null;
 		}
 		// width, in pixels, for the image at normal resolution
-		int x = (int) (imageSector.getDeltaLonDegrees() * viewport.getWidth() / viewSector.getDeltaLonDegrees());
-		int y = (int) (imageSector.getDeltaLatDegrees() * viewport.getHeight() / viewSector.getDeltaLatDegrees());
+		int x = (int) (imageSector.getWidth(wwj.getModel()
+				.getGlobe()) / this.currentResolution);
+		int y = (int) (imageSector.getHeight(wwj.getModel()
+				.getGlobe()) / this.currentResolution);
 
 		return new Rectangle((int) (x * resolutionFactor), (int) (y * resolutionFactor));
 	}
@@ -217,22 +257,106 @@ public class AnimationsController {
 		return estimateImageDimensions(1);
 	}
 
-	public void openDialog(Shell shell, Layer l) {
-		if (animationsDialog == null) {
-			animationsDialog = new AnimationsDialog(shell);
-			ContextInjectionFactory.inject(animationsDialog, context);
-		} else {
-			this.cancelPreloadJob();
-			animationsDialog.resetUI();
+	public void initPlayer() {
+		// hide the original layer
+		layer.setEnabled(false);
+
+		String[] ts = this.model.getTimestamps();
+		showImage(ts.length - 1);
+		eventBroker.send(RiMaPEventConstants.LAYERSLIST_REFRESH, "");
+	}
+
+	public BufferedImage getBufferedImage(String timestamp) {
+		BufferedImage bufferedImage = null;
+		byte[] file = resourceService.getResource(buildImageURL(timestamp), this.getFolderName(),
+				getFilename(timestamp), WebUsageLevel.PRIORITY_LOCAL);
+		InputStream in = new ByteArrayInputStream(file);
+		try {
+			bufferedImage = ImageIO.read(in);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		this.setLayer((RimapWMSTiledImageLayer) l);
-		animationsDialog.open();
+		return bufferedImage;
+	}
+
+	public void cleanup() {
+		this.cancelPreloadJob();
+		// remove extent box
+		this.animationExtent.removeRenderables();
+
+		// remove image layer and re-enable normal layer
+		if (this.wwjLayer!=null) {
+			wwj.removeLayer(this.wwjLayer);
+		}
+		layer.setEnabled(true);
+		wwj.getWwd()
+				.redraw();
+		eventBroker.send(RiMaPEventConstants.LAYERSLIST_REFRESH, "");
+
+		// cleanup model (because of data binding to UI)
+		model.setCurrentDate("");
 	}
 
 	@Inject
 	@Optional
 	void sectorChanged(@UIEventTopic(RimapEventConstants.ANIMATIONS_SECTORSELECTOR_SECTOR_CHANGED) Sector sector) {
 		this.model.setExtentType(i18n.ANIM_EXTENT_CUSTOM);
+	}
+
+	public void showImage(int index) {
+		System.out.println(index + "/" + model.getTimestamps().length);
+		model.setCurrentDateIndex(index);
+		BufferedImage bi = getBufferedImage(model.getCurrentDate());
+		if (bi == null) {
+			return;
+		}
+		if (wwjLayer == null) {
+			wwjLayer = new RenderableLayer();
+			wwjLayer.setPickEnabled(false);
+			wwjSurfaceImage = new SurfaceImage(bi, this.animationExtent.getSurfaceSector()
+					.getSector());
+			wwjLayer.addRenderable(wwjSurfaceImage);
+		} else {
+			// then wwjSurfaceImage should already exist and be part of wwjLayer
+			wwjSurfaceImage.setImageSource(bi, this.animationExtent.getSurfaceSector()
+					.getSector());
+		}
+		wwjLayer.setName(layer.getName() + "(animation)");
+
+		// Will actually update the layer, if it is already in the model:
+		wwj.addLayer(wwjLayer);
+		wwjLayer.setEnabled(true);
+		wwj.getWwd()
+				.redraw();
+	}
+
+	private int normalizeIndex(int index) {
+		int length = model.getTimestamps().length;
+		if (index < 0) {
+			index = length + index;
+		} else if (index > length - 1) {
+			index = index - length;
+		}
+		return index;
+
+	}
+
+	public void showPrevImage() {
+		int index = normalizeIndex(model.getCurrentDateIndex() - 1);
+		showImage(index);
+	}
+
+	public void showNextImage() {
+		int index = normalizeIndex(model.getCurrentDateIndex() + 1);
+		showImage(index);
+	}
+
+	public void showFirstImage() {
+		showImage(0);
+	}
+
+	public void showLastImage() {
+		showImage(-1);
 	}
 
 }

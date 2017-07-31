@@ -31,4 +31,6 @@ public interface RiMaPEventConstants {
 
 	//Perspective related
 	String LEAVING_PERSPECTIVE			="fr/pigeo/rimap/rimaprcp/perspective/leaving";
+	
+	String LAYERSLIST_REFRESH 			= "fr/pigeo/rimap/rimaprcp/layerlist/refresh" ;
 }

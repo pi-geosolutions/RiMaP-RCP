@@ -16,6 +16,9 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -81,13 +84,14 @@ public class AnimationsDialog extends Dialog {
 	protected ProgressBar progressBar;
 	protected Button btnX;
 	protected Label lblLoading;
-	protected Composite composite;
-	protected Scale scale;
-	protected Label lblDate;
-	protected Text text;
-	protected Composite compositeButtons;
-	protected Button buttonLast, btnFirst, btnPrev, btnBPlay, buttonPause, buttonFPlay, buttonNext;
+	protected Composite playerComposite;
+	protected Scale playerScale;
+	protected Label playerLblDate;
+	protected Text playerTxtDate;
+	protected Composite playerButtonsComposite;
+	protected Button playerBtnLast, playerBtnFirst, playerBtnPrev, playerBtnBPlay, playerBtnPause, playerBtnFPlay, playerBtnNext;
 	protected Composite composite_1;
+	protected ControlDecoration controlDecoration;
 
 	public AnimationsDialog(Shell parentShell) {
 		super(parentShell);
@@ -161,7 +165,13 @@ public class AnimationsDialog extends Dialog {
 		fd_lblSelectResolution.top = new FormAttachment(lblSelectExtent, 15);
 		fd_lblSelectResolution.left = new FormAttachment(lblSelectExtent, 0, SWT.LEFT);
 		lblSelectResolution.setLayoutData(fd_lblSelectResolution);
-		lblSelectResolution.setText("2. Select image resolution: ");
+		lblSelectResolution.setText(messages.animations_dialog_lbl_resolution);
+
+		controlDecoration = new ControlDecoration(lblSelectResolution, SWT.RIGHT | SWT.TOP);
+		controlDecoration.setDescriptionText(messages.animations_dialog_lbl_resolution_ttip);
+		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
+	            FieldDecorationRegistry.DEC_INFORMATION);
+		controlDecoration.setImage(fieldDecoration.getImage());
 
 		resolutionComboViewer = new ComboViewer(container, SWT.NONE);
 		resolutionCombo = resolutionComboViewer.getCombo();
@@ -218,73 +228,79 @@ public class AnimationsDialog extends Dialog {
 				.getTimestamps().length);
 
 		lblLoading = new Label(container, SWT.NONE);
+		lblLoading.setAlignment(SWT.CENTER);
 		lblLoading.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 		FormData fd_lblLoading = new FormData();
+		fd_lblLoading.right = new FormAttachment(progressBar, -10, SWT.RIGHT);
+		fd_lblLoading.left = new FormAttachment(progressBar, 10, SWT.LEFT);
 		fd_lblLoading.top = new FormAttachment(progressBar, 0, SWT.DEFAULT);
-		fd_lblLoading.left = new FormAttachment(btnLoadImages, 111);
 		lblLoading.setLayoutData(fd_lblLoading);
 
-		composite = new Composite(container, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
-		FormData fd_composite = new FormData();
-		fd_composite.top = new FormAttachment(lblLoading, 10);
-		fd_composite.right = new FormAttachment(btnView, 0, SWT.RIGHT);
-		fd_composite.bottom = new FormAttachment(100, -10);
-		fd_composite.left = new FormAttachment(0, 10);
-		composite.setLayoutData(fd_composite);
+		playerComposite = new Composite(container, SWT.NONE);
+		playerComposite.setEnabled(false);
+		playerComposite.setLayout(new GridLayout(2, false));
+		FormData fd_playerComposite = new FormData();
+		fd_playerComposite.top = new FormAttachment(lblLoading, 10);
+		fd_playerComposite.bottom = new FormAttachment(100, -10);
+		fd_playerComposite.right = new FormAttachment(btnView, 0, SWT.RIGHT);
+		fd_playerComposite.left = new FormAttachment(0, 10);
+		playerComposite.setLayoutData(fd_playerComposite);
 
-		scale = new Scale(composite, SWT.NONE);
-		scale.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-		scale.setSelection(100);
+		playerScale = new Scale(playerComposite, SWT.NONE);
+		playerScale.addSelectionListener(new PlayerScaleSelectionListener());
+		playerScale.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		playerScale.setSelection(100);
 
-		lblDate = new Label(composite, SWT.NONE);
-		GridData gd_lblDate = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		gd_lblDate.widthHint = 100;
-		lblDate.setLayoutData(gd_lblDate);
-		lblDate.setText("Date:");
+		playerLblDate = new Label(playerComposite, SWT.NONE);
+		GridData gd_playerLblDate = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_playerLblDate.widthHint = 100;
+		playerLblDate.setLayoutData(gd_playerLblDate);
+		playerLblDate.setText("Date:");
 
-		text = new Text(composite, SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		playerTxtDate = new Text(playerComposite, SWT.BORDER);
+		playerTxtDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		compositeButtons = new Composite(composite, SWT.NONE);
-		compositeButtons.setLayout(new FillLayout(SWT.HORIZONTAL));
-		compositeButtons.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		playerButtonsComposite = new Composite(playerComposite, SWT.NONE);
+		playerButtonsComposite.setLayout(new FillLayout(SWT.HORIZONTAL));
+		playerButtonsComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
-		btnFirst = new Button(compositeButtons, SWT.NONE);
-		btnFirst.setImage(
+		playerBtnFirst = new Button(playerButtonsComposite, SWT.NONE);
+		playerBtnFirst.setImage(
 				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-first.png"));
-		btnFirst.setToolTipText(messages.animations_dialog_btn_first_ttip);
+		playerBtnFirst.setToolTipText(messages.animations_dialog_btn_first_ttip);
 
-		btnPrev = new Button(compositeButtons, SWT.NONE);
-		btnPrev.setImage(
+		playerBtnPrev = new Button(playerButtonsComposite, SWT.NONE);
+		playerBtnPrev.addSelectionListener(new PlayerBtnPrevSelectionListener());
+		playerBtnPrev.setImage(
 				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-fb.png"));
-		btnPrev.setToolTipText(messages.animations_dialog_btn_prev_ttip);
+		playerBtnPrev.setToolTipText(messages.animations_dialog_btn_prev_ttip);
 
-		btnBPlay = new Button(compositeButtons, SWT.NONE);
-		btnBPlay.setImage(
+		playerBtnBPlay = new Button(playerButtonsComposite, SWT.NONE);
+		playerBtnBPlay.setImage(
 				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-b.png"));
-		btnBPlay.setToolTipText(messages.animations_dialog_btn_playbackward_ttip);
+		playerBtnBPlay.setToolTipText(messages.animations_dialog_btn_playbackward_ttip);
 
-		buttonPause = new Button(compositeButtons, SWT.NONE);
-		buttonPause.setToolTipText(messages.animations_dialog_btn_pause_ttip);
-		buttonPause.setImage(
+		playerBtnPause = new Button(playerButtonsComposite, SWT.NONE);
+		playerBtnPause.setToolTipText(messages.animations_dialog_btn_pause_ttip);
+		playerBtnPause.setImage(
 				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/stop.png"));
 
-		buttonFPlay = new Button(compositeButtons, SWT.NONE);
-		buttonFPlay.setSelection(true);
-		buttonFPlay.setImage(
+		playerBtnFPlay = new Button(playerButtonsComposite, SWT.NONE);
+		playerBtnFPlay.setSelection(true);
+		playerBtnFPlay.setImage(
 				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play.png"));
-		buttonFPlay.setToolTipText(messages.animations_dialog_btn_playforward_ttip);
+		playerBtnFPlay.setToolTipText(messages.animations_dialog_btn_playforward_ttip);
 
-		buttonNext = new Button(compositeButtons, SWT.NONE);
-		buttonNext.setImage(
+		playerBtnNext = new Button(playerButtonsComposite, SWT.NONE);
+		playerBtnNext.addSelectionListener(new PlayerBtnNextSelectionListener());
+		playerBtnNext.setImage(
 				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-ff.png"));
-		buttonNext.setToolTipText(messages.animations_dialog_btn_next_ttip);
+		playerBtnNext.setToolTipText(messages.animations_dialog_btn_next_ttip);
 
-		buttonLast = new Button(compositeButtons, SWT.NONE);
-		buttonLast.setImage(
+		playerBtnLast = new Button(playerButtonsComposite, SWT.NONE);
+		playerBtnLast.setImage(
 				ResourceManager.getPluginImage("fr.pigeo.rimap.rimaprcp.core.ui", "icons/animations/play-last.png"));
-		buttonLast.setToolTipText(messages.animations_dialog_btn_last_ttip);
+		playerBtnLast.setToolTipText(messages.animations_dialog_btn_last_ttip);
 
 		defineBindings();
 
@@ -320,6 +336,14 @@ public class AnimationsDialog extends Dialog {
 		// BeanProperties.value(AnimationsModel.FIELD_RESOLUTIONS)
 		// .observe(controller.getModel());
 		// ctx.bindValue(oComboWidgetResolutions, oAnimModelResolutions);
+		
+
+		// extent type
+		IObservableValue oWidgetCurrentdate = WidgetProperties.text()
+				.observe(playerTxtDate);
+		IObservableValue oAnimCurrentdate = BeanProperties.value(AnimationsModel.FIELD_CURRENTDATE)
+				.observe(controller.getModel());
+		ctx.bindValue(oWidgetCurrentdate, oAnimCurrentdate);
 
 	}
 
@@ -413,6 +437,26 @@ public class AnimationsDialog extends Dialog {
 			System.out.println("current resolution is " + res);
 		}
 	}
+	private class PlayerBtnPrevSelectionListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			controller.showPrevImage();
+			playerScale.setSelection(controller.getModel().getCurrentDateIndex());
+		}
+	}
+	private class PlayerBtnNextSelectionListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			controller.showNextImage();
+			playerScale.setSelection(controller.getModel().getCurrentDateIndex());
+		}
+	}
+	private class PlayerScaleSelectionListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			controller.showImage(playerScale.getSelection());
+		}
+	}
 
 	@Inject
 	@Optional
@@ -424,6 +468,12 @@ public class AnimationsDialog extends Dialog {
 	@Optional
 	void filesLoadComplete(@UIEventTopic(RimapEventConstants.ANIMATIONS_FILES_LOAD_COMPLETE) String[] ts) {
 		lblLoading.setText(messages.animations_dialog_progressbar_ttip_ready);
+		playerComposite.setEnabled(true);
+		controller.initPlayer();
+		playerScale.setMaximum(controller.getModel().getTimestamps().length-1);
+		playerScale.setSelection(controller.getModel().getCurrentDateIndex());
+		
+		
 		// compositeControls.setVisible(true);
 
 		// configure the scale bar
@@ -447,6 +497,7 @@ public class AnimationsDialog extends Dialog {
 			this.progressBar.setSelection(0);
 			this.progressBar.setMaximum(10);
 			this.lblLoading.setText("");
+			playerComposite.setEnabled(false);
 		} catch (Exception ex) {
 		}
 	}

@@ -74,6 +74,8 @@ public class Messages {
 	public String animations_dialog_extent_viewextent;
 	public String animations_dialog_extent_fullextent_ttip;
 	public String animations_dialog_extent_viewextent_ttip;
+	public String animations_dialog_lbl_resolution;
+	public String animations_dialog_lbl_resolution_ttip;
 	public String animations_dialog_load;
 	public String animations_dialog_update;
 	public String animations_dialog_date_label;

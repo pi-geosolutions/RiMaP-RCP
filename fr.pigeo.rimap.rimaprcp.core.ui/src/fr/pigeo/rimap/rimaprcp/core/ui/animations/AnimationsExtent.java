@@ -7,9 +7,9 @@ import java.util.Locale;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
 
-import fr.pigeo.rimap.rimaprcp.core.ui.core.Plugin;
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
+import fr.pigeo.rimap.rimaprcp.core.ui.core.Plugin;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import fr.pigeo.rimap.rimaprcp.worldwind.util.SectorSelector;
 import fr.pigeo.rimap.rimaprcp.worldwind.util.ViewUtils;
@@ -18,13 +18,15 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.SurfaceSector;
 
 public class AnimationsExtent {
 	private WwjInstance wwj;
 	private IEventBroker eventBroker;
 	private RenderableLayer renderable = new RenderableLayer();
 	private SectorSelector selector;
-	private Sector currentSector = null;
+	private SurfaceSector currentSector = null;
+	private boolean frozen=false;
 
 	public AnimationsExtent(WwjInstance wwj, IEventBroker eventBroker) {
 		this.wwj = wwj;
@@ -32,14 +34,17 @@ public class AnimationsExtent {
 	}
 
 	public void setFullExtent(RimapWMSTiledImageLayer layer) throws InvalidExtentException {
+		//no extent changes if frozen (e.g. while loading images, thus needing a reliable and constant extent)
+		if (frozen) {
+			return;
+		}
 		Sector sector = (Sector) layer.getValue(AVKey.SECTOR);
 		if (sector==null) {
 			throw new InvalidExtentException(Plugin.translate("animations.extent.exception.unknown"));
 		}
-		currentSector = new Sector(sector); // clone sector, so that it won't be
+		currentSector = new SurfaceSector(sector); // clone sector, so that it won't be
 											// edited
 		drawSector(sector);
-		
 	}
 
 	/**
@@ -48,13 +53,17 @@ public class AnimationsExtent {
 	 * the box
 	 */
 	public void setViewExtent() throws InvalidExtentException {
+		//no extent changes if frozen (e.g. while loading images, thus needing a reliable and constant extent)
+		if (frozen) {
+			return;
+		}
 		View view = this.wwj.getWwd()
 				.getView();
 		if (view != null) {
 			int epsilon = 10;
 			Sector sector = ViewUtils.getViewExtentAsSector(view, epsilon);
 			if (sector !=null && sector.isWithinLatLonLimits()) {
-				currentSector = new Sector(sector); // clone sector, so that it
+				currentSector = new SurfaceSector(sector); // clone sector, so that it
 													// won't be edited
 				drawSector(sector);
 			} else {
@@ -63,16 +72,17 @@ public class AnimationsExtent {
 		}
 	}
 
-	public Sector getSector() {
+	public SurfaceSector getSurfaceSector() {
 		return this.currentSector;
 	}
+	
 
 	/**
 	 * Draw the current sector if it exists
 	 */
 	public void drawSector() {
 		if (currentSector != null) {
-			drawSector(this.currentSector);
+			drawSector(this.currentSector.getSector());
 		}
 	}
 
@@ -93,7 +103,7 @@ public class AnimationsExtent {
 					// means mouse released, means finished drawing
 					eventBroker.post(RimapEventConstants.ANIMATIONS_SECTORSELECTOR_SECTOR_CHANGED,
 							selector.getSector());
-					currentSector = selector.getSector();
+					currentSector = selector.getMeasurableSector();
 				} else {
 					// means still drawing (mouse not released)
 					// evtBroker.post(CacheManagerEventConstants.SECTORSELECTOR_DRAWING,
@@ -138,16 +148,17 @@ public class AnimationsExtent {
 		// Sector sector = this.selector.getSector();
 		int degreesApprox = 2;
 		String bbox = "";
+		Sector s = currentSector.getSector();
 		if (wmsversion.equals("1.1.1")) {
-			bbox += formatAngle(currentSector.getMinLongitude(), degreesApprox) + ",";
-			bbox += formatAngle(currentSector.getMinLatitude(), degreesApprox) + ",";
-			bbox += formatAngle(currentSector.getMaxLongitude(), degreesApprox) + ",";
-			bbox += formatAngle(currentSector.getMaxLatitude(), degreesApprox);
+			bbox += formatAngle(s.getMinLongitude(), degreesApprox) + ",";
+			bbox += formatAngle(s.getMinLatitude(), degreesApprox) + ",";
+			bbox += formatAngle(s.getMaxLongitude(), degreesApprox) + ",";
+			bbox += formatAngle(s.getMaxLatitude(), degreesApprox);
 		} else { // WMS 1.3.0
-			bbox += formatAngle(currentSector.getMinLatitude(), degreesApprox) + ",";
-			bbox += formatAngle(currentSector.getMinLongitude(), degreesApprox) + ",";
-			bbox += formatAngle(currentSector.getMaxLatitude(), degreesApprox) + ",";
-			bbox += formatAngle(currentSector.getMaxLongitude(), degreesApprox);
+			bbox += formatAngle(s.getMinLatitude(), degreesApprox) + ",";
+			bbox += formatAngle(s.getMinLongitude(), degreesApprox) + ",";
+			bbox += formatAngle(s.getMaxLatitude(), degreesApprox) + ",";
+			bbox += formatAngle(s.getMaxLongitude(), degreesApprox);
 		}
 		return bbox;
 	}
@@ -162,6 +173,13 @@ public class AnimationsExtent {
 		}
 		public InvalidExtentException(String message) {
 			super(message);
+		}
+	}
+
+	public void freezeExtent(boolean b) {
+		this.frozen=b;
+		if (selector!=null) {
+			selector.freeze(b);
 		}
 	}
 

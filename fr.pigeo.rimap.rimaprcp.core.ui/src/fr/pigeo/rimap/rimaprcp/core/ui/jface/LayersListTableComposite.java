@@ -340,5 +340,11 @@ public class LayersListTableComposite extends Composite {
 	void checkHandler(@UIEventTopic(RiMaPEventConstants.CHECKABLENODE_CHECKCHANGE) ICheckableNode node) {
 		viewer.setInput(wwj.getLayersList());
 		viewer.refresh();
+	}	
+	@Inject
+	@Optional
+	void refreshLayersList(@UIEventTopic(RiMaPEventConstants.LAYERSLIST_REFRESH) String msg) { 
+		viewer.setInput(wwj.getLayersList());
+		viewer.refresh();
 	}
 }

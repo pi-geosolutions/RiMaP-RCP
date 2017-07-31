@@ -116,9 +116,9 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 					params.setValue(RimapAVKey.LAYER_TIME_DIMENSION_DEFAULT_VALUE, timeDimension.getDefaultValue());
 					params.setValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES,
 							timeDimension.getField("CharactersContent"));
-					System.out.format("Layer %s has time dimension. Its avalable values are %s",
-							params.getStringValue(AVKey.LAYER_NAMES),
-							params.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES));
+//					System.out.format("Layer %s has time dimension. Its avalable values are %s",
+//							params.getStringValue(AVKey.LAYER_NAMES),
+//							params.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES));
 				}
 			} catch (IllegalArgumentException e) {
 				String message = Logging.getMessage("WMS.MissingLayerParameters");

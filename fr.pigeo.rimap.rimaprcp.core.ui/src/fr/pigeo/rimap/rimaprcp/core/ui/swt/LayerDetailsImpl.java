@@ -46,7 +46,6 @@ import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
 import fr.pigeo.rimap.rimaprcp.core.ui.animations.AnimationsController;
-import fr.pigeo.rimap.rimaprcp.core.ui.animations.AnimationsDialog;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.LayerOpacityChangeListener;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.OpacityToScaleConverter;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.ScaleToOpacityConverter;
@@ -64,7 +63,8 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
 public class LayerDetailsImpl extends LayerDetails {
-	private SelectionAdapter btnMetadataSelectionAdapter, btnExtentSelectionAdapter, btnLegendSelectionAdapter, btnAnimationsSelectionAdapter;
+	private SelectionAdapter btnMetadataSelectionAdapter, btnExtentSelectionAdapter, btnLegendSelectionAdapter,
+			btnAnimationsSelectionAdapter;
 
 	private WmsNode wmsNode;
 	private WwjInstance wwj;
@@ -83,7 +83,7 @@ public class LayerDetailsImpl extends LayerDetails {
 
 	@Inject
 	GeocatMetadataToolBox metadataToolBox;
-	
+
 	@Inject
 	AnimationsController animationsController;
 
@@ -316,7 +316,7 @@ public class LayerDetailsImpl extends LayerDetails {
 									RimapWMSTiledImageLayer newl = (RimapWMSTiledImageLayer) l.getParent()
 											.getLayer(true);
 									AVList newavl = (AVList) newl.getValue(AVKey.CONSTRUCTION_PARAMETERS);
-									updateComboViewer(newavl);
+									updateComboViewer(newavl, true);
 								}
 							});
 
@@ -325,8 +325,8 @@ public class LayerDetailsImpl extends LayerDetails {
 					}
 				});
 
-				updateComboViewer(avl);
-				
+				updateComboViewer(avl, false);
+
 				// Open Animation widget button events
 				if (this.btnAnimationsSelectionAdapter != null)
 					this.btnAnimate.removeSelectionListener(this.btnAnimationsSelectionAdapter);
@@ -342,8 +342,14 @@ public class LayerDetailsImpl extends LayerDetails {
 
 	}
 
-	private void updateComboViewer(AVList avl) {
-		List<ZonedDateTime> dates = stringToDatesList(avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES));
+	private void updateComboViewer(AVList avl, boolean reloadDates) {
+		List<ZonedDateTime> dates;
+		if (avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_ZONEDATETIMELIST) && !reloadDates) {
+			dates = (List<ZonedDateTime>) avl.getValue(RimapAVKey.LAYER_TIME_DIMENSION_ZONEDATETIMELIST);
+		} else {
+			dates = stringToDatesList(avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_VALUES));
+			avl.setValue(RimapAVKey.LAYER_TIME_DIMENSION_ZONEDATETIMELIST, dates);
+		}
 		comboDateViewer.setInput(dates);
 		String current = avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE)
 				? avl.getStringValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE)
@@ -364,7 +370,7 @@ public class LayerDetailsImpl extends LayerDetails {
 		return ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME);
 	}
 
-	private String formatDateTime(ZonedDateTime date) {
+	private static String formatDateTime(ZonedDateTime date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL, FormatStyle.FULL)
 				.withLocale(Locale.FRENCH);
 		// System.out.println(formatter.getLocale()); // fr

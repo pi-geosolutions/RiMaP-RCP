@@ -17,11 +17,14 @@ public class AnimationsModel {
 	public static final String FIELD_EXTENTTYPE = "extentType";
 	public static final String FIELD_RESOLUTION = "resolution";
 	public static final String FIELD_RESOLUTIONS = "resolutionsList";
+	public static final String FIELD_CURRENTDATE = "currentDate";
 
 	private Messages i18n;
 	private String name, extentType, resolution;
 	private IObservableList resolutionsList;
 	private String[] timestamps;
+	private String currentDate;
+	private int currentDateIndex;
 
 	public AnimationsModel(Messages messages) {
 		this.i18n = messages;
@@ -88,6 +91,34 @@ public class AnimationsModel {
 	}
 	public String [] getTimestamps() {
 		return this.timestamps;
+	}
+
+	public String getCurrentDate() {
+		return currentDate;
+	}
+	//we can set the date either by date string of by index
+	public void setCurrentDate(String date) {
+		changes.firePropertyChange(FIELD_CURRENTDATE, this.currentDate, this.currentDate = date);
+		this.currentDateIndex = getIndexOfDate(date);
+	}
+
+	public int getCurrentDateIndex() {
+		return currentDateIndex;
+	}
+
+	public void setCurrentDateIndex(int currentDateIndex) {
+		this.currentDateIndex = currentDateIndex;
+		changes.firePropertyChange(FIELD_CURRENTDATE, this.currentDate, this.currentDate = timestamps[currentDateIndex]);
+	}
+	
+	private int getIndexOfDate(String date) {
+		for (int i = this.timestamps.length-1 ; i >=0; i--) {
+			if (timestamps[i].equals(date)) {
+				return i;
+			}
+		}
+	
+		return 0;//shouldn't happen
 	}
 
 }

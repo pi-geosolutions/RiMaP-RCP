@@ -13,4 +13,5 @@ public interface RimapAVKey extends AVKey {
     final String LAYER_TIME_DIMENSION_DEFAULT_VALUE = "fr.pigeo.rimap.worldwind.avkey.layer.time.defaultvalue";
     final String LAYER_TIME_DIMENSION_CURRENT_VALUE = "fr.pigeo.rimap.worldwind.avkey.layer.time.currentvalue";
     final String LAYER_TIME_DIMENSION_VALUES = "fr.pigeo.rimap.worldwind.avkey.layer.time.values";
+    final String LAYER_TIME_DIMENSION_ZONEDATETIMELIST = "fr.pigeo.rimap.worldwind.avkey.layer.time.zonedatetime.list";
 }
