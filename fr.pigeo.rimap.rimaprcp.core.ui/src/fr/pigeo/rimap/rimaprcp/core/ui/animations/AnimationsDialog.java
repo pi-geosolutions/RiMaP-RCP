@@ -205,7 +205,7 @@ public class AnimationsDialog extends Dialog {
 		fd_btnLoadImages.left = new FormAttachment(lblLoadImages);
 		fd_btnLoadImages.top = new FormAttachment(lblLoadImages, -5, SWT.TOP);
 		btnLoadImages.setLayoutData(fd_btnLoadImages);
-		btnLoadImages.setText("Load images");
+		btnLoadImages.setText(messages.animations_dialog_load);
 
 		btnX = new Button(container, SWT.NONE);
 		btnX.setFont(SWTResourceManager.getFont("Sans", 10, SWT.BOLD));
