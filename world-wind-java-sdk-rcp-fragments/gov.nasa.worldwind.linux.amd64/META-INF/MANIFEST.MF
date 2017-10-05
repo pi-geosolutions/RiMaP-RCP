@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: World Wind RCP for Linux (x64)
+Bundle-SymbolicName: gov.nasa.worldwind.linux.amd64
+Bundle-Version: 2.0.0.1841
+Fragment-Host: gov.nasa.worldwind;bundle-version="2.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: National Aeronautics and Space Administration (NASA)
+Eclipse-PlatformFilter: (& (osgi.ws=gtk) (osgi.os=linux) (osgi.arch=x86_64))
+Bundle-NativeCode: 
+ libgluegen-rt.so;libjogl_desktop.so;libjogl_mobile.so;libnativewindow_awt.so;libnativewindow_x11.so;libnewt.so;osname=linux;processor=x86_64
