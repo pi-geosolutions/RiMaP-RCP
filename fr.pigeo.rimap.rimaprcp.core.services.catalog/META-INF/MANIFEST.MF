@@ -20,8 +20,8 @@ Require-Bundle: org.eclipse.e4.core.contexts,
  fr.pigeo.rimap.rimaprcp.core.services.session;bundle-version="1.0.0",
  fr.pigeo.externals.org.apache.commons,
  org.eclipse.jface,
- gov.nasa.official.worldwind;visibility:=reexport,
- fr.pigeo.rimap.rimaprcp.worldwind
+ fr.pigeo.rimap.rimaprcp.worldwind,
+ gov.nasa.worldwind;bundle-version="2.1.0"
 Service-Component: OSGI-INF/catalog-service.xml
 Bundle-ActivationPolicy: lazy
 Export-Package: fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs,

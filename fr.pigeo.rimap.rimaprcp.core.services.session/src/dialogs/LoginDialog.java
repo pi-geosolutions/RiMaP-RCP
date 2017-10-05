@@ -47,6 +47,7 @@ public class LoginDialog extends Dialog {
 
 	public LoginDialog(Shell parentShell) {
 		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE); 
 	}
 
 	@Override
@@ -177,5 +178,8 @@ public class LoginDialog extends Dialog {
 		bgImage.dispose();
 
 		this.close();
+	}
+	protected boolean isResizable() {
+		return true;
 	}
 }

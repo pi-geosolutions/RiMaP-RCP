@@ -24,4 +24,4 @@ Require-Bundle: fr.pigeo.externals.com.fasterxml.jackson.core,
  org.eclipse.e4.ui.workbench,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.di,
- gov.nasa.official.worldwind
+ gov.nasa.worldwind;bundle-version="2.1.0"

@@ -6,12 +6,12 @@
   -->
 
 <!-- Open Street Map imagery -->
-<!--$Id$-->
+<!--$Id: OpenStreetMap.xml 1171 2013-02-11 21:45:02Z dcollins $-->
 <Layer version="1" layerType="TiledImageLayer">
     <DisplayName>Open Street Map</DisplayName>
     <Service serviceName="OGC:WMS" version="1.1.1">
-        <GetCapabilitiesURL>https://data.worldwind.arc.nasa.gov/mapcache</GetCapabilitiesURL>
-        <GetMapURL>https://data.worldwind.arc.nasa.gov/mapcache</GetMapURL>
+        <GetCapabilitiesURL>https://worldwind20.arc.nasa.gov/mapcache</GetCapabilitiesURL>
+        <GetMapURL>https://worldwind20.arc.nasa.gov/mapcache</GetMapURL>
         <LayerNames>osm</LayerNames>
     </Service>
     <DataDetailHint>0.40</DataDetailHint>

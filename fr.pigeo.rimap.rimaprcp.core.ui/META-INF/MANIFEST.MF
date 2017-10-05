@@ -10,7 +10,6 @@ Export-Package: fr.pigeo.rimap.rimaprcp.core.ui.core,
  fr.pigeo.rimap.rimaprcp.core.ui.views,
  org.eclipse.wb.swt
 Require-Bundle: org.eclipse.swt;bundle-version="3.104.1",
- gov.nasa.official.worldwind,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.ui.model.workbench,
  org.eclipse.e4.core.di,
@@ -38,7 +37,8 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.104.1",
  org.eclipse.core.jobs,
  fr.pigeo.rimap.rimaprcp.core.services.catalog,
  org.eclipse.core.expressions,
- org.eclipse.nebula.widgets.pshelf
+ org.eclipse.nebula.widgets.pshelf,
+ gov.nasa.worldwind;bundle-version="2.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0",

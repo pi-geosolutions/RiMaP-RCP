@@ -5,11 +5,11 @@
   ~ All Rights Reserved.
   -->
 
-<!--$Id$-->
+<!--$Id: MSVirtualEarthAerialLayer.xml 1171 2013-02-11 21:45:02Z dcollins $-->
 <Layer version="1" layerType="TiledImageLayer">
     <DisplayName>MS Virtual Earth Aerial</DisplayName>
     <Service serviceName="WWTileService">
-        <URL>https://data.worldwind.arc.nasa.gov/vewms/vewms.aspx</URL>
+        <URL>https://worldwind28.arc.nasa.gov/vewms/vewms.aspx</URL>
     </Service>
     <!-- day month year hours:minutes:seconds timezone -->
     <LastUpdate>19 09 2009 04:10:00 GMT</LastUpdate>

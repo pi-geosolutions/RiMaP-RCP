@@ -2,7 +2,6 @@
 package fr.pigeo.rimap.rimaprcp.core.ui.swt;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -28,7 +27,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import fr.pigeo.rimap.rimaprcp.core.ui.animations.AnimationsController;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.OpacityToScaleConverter;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.ScaleToOpacityConverter;
 import gov.nasa.worldwind.layers.Layer;

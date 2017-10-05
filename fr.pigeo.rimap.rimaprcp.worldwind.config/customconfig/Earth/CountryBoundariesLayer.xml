@@ -5,22 +5,24 @@
   ~ All Rights Reserved.
   -->
 
-<!--$Id: MSVirtualEarthHybridLayer.xml 1171 2013-02-11 21:45:02Z dcollins $-->
+<!--$Id: CountryBoundariesLayer.xml 1171 2013-02-11 21:45:02Z dcollins $-->
 <Layer version="1" layerType="TiledImageLayer">
-    <DisplayName>MS Virtual Earth Hybrid</DisplayName>
-    <Service serviceName="WWTileService">
-        <URL>https://worldwind28.arc.nasa.gov/vewms/vewms.aspx</URL>
+    <DisplayName>Political Boundaries</DisplayName>
+    <Service serviceName="OGC:WMS" version="1.3">
+        <GetCapabilitiesURL>https://worldwind22.arc.nasa.gov/geoserver/wms</GetCapabilitiesURL>
+        <GetMapURL>https://worldwind22.arc.nasa.gov/geoserver/wms</GetMapURL>
+        <LayerNames>topp:cia</LayerNames>
+        <StyleNames>countryboundaries</StyleNames>
     </Service>
     <!-- day month year hours:minutes:seconds timezone -->
-    <LastUpdate>19 09 2009 04:10:00 GMT</LastUpdate>
-    <DatasetName>h</DatasetName>
-    <DataCacheName>Earth/MS Virtual Earth h</DataCacheName>
-    <ImageFormat>image/jpg</ImageFormat>
+    <LastUpdate>25 11 2009 22:21:47 GMT</LastUpdate>
+    <DataCacheName>Earth/PoliticalBoundaries</DataCacheName>
+    <ImageFormat>image/png</ImageFormat>
     <AvailableImageFormats>
-        <ImageFormat>image/jpg</ImageFormat>
+        <ImageFormat>image/png</ImageFormat>
     </AvailableImageFormats>
     <FormatSuffix>.dds</FormatSuffix>
-    <NumLevels count="16" numEmpty="4"/>
+    <NumLevels count="13" numEmpty="0"/>
     <TileOrigin>
         <LatLon units="degrees" latitude="-90" longitude="-180"/>
     </TileOrigin>
@@ -38,6 +40,5 @@
             <LatLon units="degrees" latitude="90" longitude="180"/>
         </NorthEast>
     </Sector>
-    <ActiveAltitudes max="1000e3"/>
     <UseTransparentTextures>true</UseTransparentTextures>
 </Layer>

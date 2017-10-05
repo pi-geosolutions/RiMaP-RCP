@@ -6,7 +6,7 @@
   -->
 
 <!-- Bing imagery -->
-<!--$Id$-->
+<!--$Id: BingImagery.xml 1713 2013-11-11 20:34:56Z tgaskins $-->
 <Layer version="1" layerType="TiledImageLayer">
     <DisplayName>Bing Imagery</DisplayName>
     <Service serviceName="OGC:WMS" version="1.1.1">
