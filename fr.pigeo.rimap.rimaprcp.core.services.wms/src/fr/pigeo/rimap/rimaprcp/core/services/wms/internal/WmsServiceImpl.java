@@ -165,4 +165,10 @@ public class WmsServiceImpl implements IWmsService {
 			t.start();
 		}
 	}
+	
+	public void reset() {
+		serverCapabilitiesList.clear();
+		threadsList.forEach((key, thread) -> thread.interrupt());
+		threadsList.clear();
+	}
 }

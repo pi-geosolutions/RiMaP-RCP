@@ -50,10 +50,12 @@ public class CatalogTabPart {
 
 	@Inject
 	Display disp;
-	
+
 	@Inject
 	@Translation
 	Messages messages;
+
+	private UISynchronize uisynch;
 
 	private TreeViewer viewer;
 	private Tree tree;
@@ -67,6 +69,7 @@ public class CatalogTabPart {
 			ICatalogService catalogService, ISessionService sessionService, Display display,
 			final UISynchronize synch) {
 		this.disp = display;
+		this.uisynch = synch;
 
 		final ICatalog mainCatalog = catalogService.getMainCatalog();
 
@@ -96,18 +99,20 @@ public class CatalogTabPart {
 						ICheckableNode node = (ICheckableNode) item.getData();
 						if (node.isAvailable()) {
 							if (item.getImage() != null) {
-								if ((e.x > item.getImageBounds(0).x) && (e.x < (item.getImageBounds(0).x + item.getImage()
-										.getBounds().width))) {
-									if ((e.y > item.getImageBounds(0).y) && (e.y < (item.getImageBounds(0).y + item.getImage()
-											.getBounds().height))) {
-											node.toggleChecked();
-											item.setImage(node.getImage());
+								if ((e.x > item.getImageBounds(0).x)
+										&& (e.x < (item.getImageBounds(0).x + item.getImage()
+												.getBounds().width))) {
+									if ((e.y > item.getImageBounds(0).y)
+											&& (e.y < (item.getImageBounds(0).y + item.getImage()
+													.getBounds().height))) {
+										node.toggleChecked();
+										item.setImage(node.getImage());
 									}
 								}
 							}
 						}
 					}
-					
+
 				}
 
 			}
@@ -135,7 +140,7 @@ public class CatalogTabPart {
 			}
 		});
 
-		// To reserve max space to first columne. See
+		// To reserve max space to first column. See
 		// http://www.vogella.com/tutorials/EclipseJFaceTree/article.html,
 		// chapter 2.3
 		Listener packListener = new Listener() {
@@ -188,10 +193,12 @@ public class CatalogTabPart {
 						} else {
 							loading = null;
 							root.clear();
-							MessageNode msgNode = new MessageNode(messages.catalog_load_error_title, "icons/warning.png");
+							MessageNode msgNode = new MessageNode(messages.catalog_load_error_title,
+									"icons/warning.png");
 							root.addLeaf(msgNode);
 							viewer.refresh();
-							MessageDialog.openWarning(disp.getActiveShell(), messages.catalog_load_error_title, messages.catalog_load_error_msg); 
+							MessageDialog.openWarning(disp.getActiveShell(), messages.catalog_load_error_title,
+									messages.catalog_load_error_msg);
 						}
 					}
 				});
@@ -201,5 +208,44 @@ public class CatalogTabPart {
 
 		// Start the Job
 		job.schedule();
+	}
+
+	public void load(ICatalog catalog, boolean reload) {
+		root = new RootNode();
+		loading = new MessageNode();
+		root.addLeaf(loading);
+		viewer.setInput(root);
+		disp.timerExec(500, new Runnable() {
+			public void run() {
+				if (loading != null) {
+					loading.setName(loading.getName() + ".");
+					viewer.refresh();
+					disp.timerExec(500, this);
+				}
+			}
+		});
+		success = reload ? catalog.reload() : catalog.load();
+
+		if (success) {
+			loading = null;
+			root.clear();
+			root.addLeaf(catalog.getRootNode());
+			viewer.refresh();
+			viewer.setExpandedElements(catalog.getExpandedNodes()
+					.toArray());
+		} else {
+			loading = null;
+			root.clear();
+			MessageNode msgNode = new MessageNode(messages.catalog_load_error_title, "icons/warning.png");
+			root.addLeaf(msgNode);
+			viewer.refresh();
+			MessageDialog.openWarning(disp.getActiveShell(), messages.catalog_load_error_title,
+					messages.catalog_load_error_msg);
+		}
+
+	}
+
+	public TreeViewer getViewer() {
+		return viewer;
 	}
 }

@@ -12,3 +12,9 @@
   swt-minimize-visible: false;
   swt-maximize-visible: false;
 }
+
+CTabFolder
+{
+    swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+    swt-tab-height: 24px;
+}

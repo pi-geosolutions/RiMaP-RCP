@@ -21,10 +21,13 @@ import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalog;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.IExpandableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
+import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
+import fr.pigeo.rimap.rimaprcp.core.resource.WebUsageLevel;
 import fr.pigeo.rimap.rimaprcp.core.security.ISecureResourceService;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.core.security.Session;
+import fr.pigeo.rimap.rimaprcp.core.wms.IWmsService;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.layers.Layer;
 
@@ -41,6 +44,9 @@ public class PadreCatalog implements ICatalog {
 
 	@Inject
 	IResourceService resourceService;
+	
+	@Inject
+	IWmsService wmsService;
 
 	@Inject
 	WwjInstance wwj;
@@ -85,15 +91,22 @@ public class PadreCatalog implements ICatalog {
 
 	@Override
 	public boolean load() {
+		return this.load(false);
+	}
+
+	public boolean load(boolean reload) {
 		if (sessionService == null) {
 			// we abort
 			logger.info("Aborting catalog " + params.getName() + " loading : session is not set yet");
 			return false;
 		}
+		if (reload) {
+			wmsService.reset();
+		}
 		Session session = sessionService.getSession();
 		logger.info("[PadreCatalog] Session service instanciated. Session username is " + sessionService.getSession()
 				.getUsername());
-		this.layertreeAsJsonNode = getLayertree();
+		this.layertreeAsJsonNode = getLayertree(reload);
 
 		// if null, then it failed. We exit the function.
 		if (this.layertreeAsJsonNode == null) {
@@ -121,10 +134,11 @@ public class PadreCatalog implements ICatalog {
 		return true;
 	}
 
-	protected JsonNode getLayertree() {
+	protected JsonNode getLayertree(boolean fromWeb) {
 		JsonNode node = null;
 
-		byte[] b = resourceService.getResource(params.getUrl(), params.getWeb_usage_level());
+		int sourceCode = fromWeb ? WebUsageLevel.PRIORITY_WEB: params.getWeb_usage_level();
+		byte[] b = resourceService.getResource(params.getUrl(), sourceCode);
 		if (b != null) {
 			String lt = new String(b, StandardCharsets.UTF_8);
 			node = this.stringToJson(lt);
@@ -151,8 +165,8 @@ public class PadreCatalog implements ICatalog {
 	}
 
 	@Override
-	public void reload() {
-		this.load();
+	public boolean reload() {
+		return this.load(true);
 	}
 
 	@Override

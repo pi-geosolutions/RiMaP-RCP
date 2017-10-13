@@ -5,7 +5,7 @@ import java.util.List;
 public interface ICatalog {
 	public INode getRootNode();
 	public boolean load();
-	public void reload();
+	public boolean reload();
 	public INode getNodeById(String id);
 	public INode getNodeByName(String id);
 	public List<ICheckableNode> getCheckedNodes();
