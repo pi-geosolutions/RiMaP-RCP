@@ -120,13 +120,19 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 		Iterator<JsonNode> itr = list.iterator();
 		while (itr.hasNext()) {
 			JsonNode child = itr.next();
-			LayerType type = LayerType.valueOf(child.get("type")
+			LayerType type = null;
+			try {
+				type = LayerType.valueOf(child.get("type")
 					.asText()
 					.toUpperCase()); // convert
 										// e.g.
 										// 'folder'
 										// to
 										// LayerType.FOLDER
+			} catch (java.lang.IllegalArgumentException ex) {
+				logger.error("Found unknown type "+child.get("type").asText()+" while parsing the layertree");
+				break;
+			}
 			switch (type) {
 			case FOLDER:
 				layer = ContextInjectionFactory.make(FolderNode.class, context);
@@ -136,6 +142,12 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 				break;
 			case WMS:
 				layer = ContextInjectionFactory.make(WmsNode.class, context);
+				layer.setParent(this);
+				layer.loadFromJson(child);
+				layers.add(layer);
+				break;
+			case WMSDEM:
+				layer = ContextInjectionFactory.make(WmsDemNode.class, context);
 				layer.setParent(this);
 				layer.loadFromJson(child);
 				layers.add(layer);

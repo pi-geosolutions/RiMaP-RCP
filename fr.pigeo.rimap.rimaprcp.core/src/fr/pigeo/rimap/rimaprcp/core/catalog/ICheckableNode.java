@@ -1,6 +1,6 @@
 package fr.pigeo.rimap.rimaprcp.core.catalog;
 
-import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.WWObject;
 
 /**
  * Interface for checkable nodes
@@ -19,5 +19,5 @@ public interface ICheckableNode extends INode {
 	 * getLayer() : gets WWJ Layer instanciated by this node
 	 * @return gov.nasa.worldwind.layers.Layer
 	 */
-	public Layer getLayer();
+	public WWObject getLayer();
 }

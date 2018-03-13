@@ -187,7 +187,7 @@ public class LayerDetailsImpl extends LayerDetails {
 		this.btnShowMetadata.setVisible(isRimapLayer);
 		this.btnShowLegend.setVisible(isRimapLayer);
 
-		if (isRimapLayer) {
+		if (isRimapLayer && layer instanceof RimapWMSTiledImageLayer) {
 			final RimapWMSTiledImageLayer l = (RimapWMSTiledImageLayer) layer;
 			wmsNode = (WmsNode) l.getValue(RimapAVKey.LAYER_PARENTNODE);
 			this.txtLayerDescription.setText(wmsNode.getComments());

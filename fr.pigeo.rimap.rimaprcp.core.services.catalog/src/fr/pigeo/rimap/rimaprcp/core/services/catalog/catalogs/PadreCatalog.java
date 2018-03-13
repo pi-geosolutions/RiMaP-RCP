@@ -21,7 +21,6 @@ import fr.pigeo.rimap.rimaprcp.core.catalog.ICatalog;
 import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.IExpandableNode;
 import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
-import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
 import fr.pigeo.rimap.rimaprcp.core.resource.WebUsageLevel;
 import fr.pigeo.rimap.rimaprcp.core.security.ISecureResourceService;
@@ -29,7 +28,7 @@ import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.core.security.Session;
 import fr.pigeo.rimap.rimaprcp.core.wms.IWmsService;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
-import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.WWObject;
 
 public class PadreCatalog implements ICatalog {
 
@@ -208,7 +207,7 @@ public class PadreCatalog implements ICatalog {
 				.iterator();
 		while (itr.hasNext()) {
 			ICheckableNode node = itr.next();
-			Layer l = node.getLayer();
+			WWObject l = node.getLayer();
 			if (l != null) {
 				wwj.addLayer(node.getLayer());
 			}

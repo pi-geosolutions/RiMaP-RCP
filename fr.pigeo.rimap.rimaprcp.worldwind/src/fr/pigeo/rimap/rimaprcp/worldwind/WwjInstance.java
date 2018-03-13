@@ -17,18 +17,22 @@ import fr.pigeo.rimap.rimaprcp.core.catalog.ICheckableNode;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.Model;
+import gov.nasa.worldwind.WWObject;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.CompassLayer;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwind.terrain.CompoundElevationModel;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
+import gov.nasa.worldwindx.examples.dataimport.InstallElevations.AppFrame;
 
 /**
  * @author jean.pommier@pi-geosolutions.fr
@@ -66,9 +70,11 @@ public class WwjInstance {
 		this.wwd = new WorldWindowGLCanvas();
 		model = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
 		System.out.println(WorldWind.getValue(AVKey.INITIAL_LATITUDE));
-		Iterator it = model.getValues().iterator();
+		Iterator it = model.getValues()
+				.iterator();
 		while (it.hasNext()) {
-			System.out.println(it.next().toString());
+			System.out.println(it.next()
+					.toString());
 		}
 		wwd.setModel(model);
 
@@ -76,8 +82,10 @@ public class WwjInstance {
 		this.wwd.addSelectListener(new ClickAndGoSelectListener(this.getWwd(), WorldMapLayer.class));
 		this.addViewControls();
 
-		this.getCompassLayer(this.wwd).setIconFilePath("customconfig/img/Rose_des_vents.png");
-		this.getCompassLayer(this.wwd).setIconScale(1);
+		this.getCompassLayer(this.wwd)
+				.setIconFilePath("customconfig/img/Rose_des_vents.png");
+		this.getCompassLayer(this.wwd)
+				.setIconScale(1);
 		/*
 		 * double minlat =
 		 * prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind",
@@ -110,7 +118,8 @@ public class WwjInstance {
 		// viewControlsLayer.setName(viewControlsLayer.getName()+"Widget");
 		viewControlsLayer.setName("ViewControlsWidget");
 		ApplicationTemplate.insertBeforeCompass(getWwd(), viewControlsLayer);
-		this.getWwd().addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
+		this.getWwd()
+				.addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
 	}
 
 	/**
@@ -118,16 +127,25 @@ public class WwjInstance {
 	 * @return the position (index) of a Layer in the WWJ LayersList
 	 */
 	public int getPositionInLayerlist(Object dropTarget) {
-		LayerList list = this.getModel().getLayers();
+		LayerList list = this.getModel()
+				.getLayers();
 		return list.indexOf(dropTarget);
 	}
 
 	public Layer[] getLayersList() {
-		return this.getModel().getLayers().toArray(new Layer[0]);
+		return this.getModel()
+				.getLayers()
+				.toArray(new Layer[0]);
+	}
+
+	public List<ElevationModel> getElevationModelsList() {
+		CompoundElevationModel model = (CompoundElevationModel) this.getModel().getGlobe().getElevationModel();
+		return model.getElevationModels();
 	}
 
 	public void showWidget(boolean show, String widgetRef) {
-		LayerList ll = this.getModel().getLayers();
+		LayerList ll = this.getModel()
+				.getLayers();
 		try {
 			List<Layer> layers = ll.getLayersByClass(Class.forName(widgetRef));
 			Iterator<Layer> layersIterator = layers.iterator();
@@ -151,7 +169,8 @@ public class WwjInstance {
 	 *            TODO : generate the menu entries from there
 	 */
 	private void initializeWidgets(IEclipsePreferences prefs) {
-		LayerList ll = this.getModel().getLayers();
+		LayerList ll = this.getModel()
+				.getLayers();
 		Iterator<Layer> layersIterator = ll.iterator();
 		while (layersIterator.hasNext()) {
 			Layer l = layersIterator.next();
@@ -165,7 +184,8 @@ public class WwjInstance {
 	}
 
 	private CompassLayer getCompassLayer(WorldWindow wwd) {
-		LayerList layers = wwd.getModel().getLayers();
+		LayerList layers = wwd.getModel()
+				.getLayers();
 		for (Layer l : layers) {
 			if (l instanceof CompassLayer)
 				return (CompassLayer) l;
@@ -191,10 +211,10 @@ public class WwjInstance {
 	@Inject
 	@Optional
 	void checkHandler(@UIEventTopic(RiMaPEventConstants.CHECKABLENODE_CHECKCHANGE) ICheckableNode node) {
-		if (node==null) {
+		if (node == null) {
 			return;
 		}
-		Layer layer = node.getLayer();
+		WWObject layer = node.getLayer();
 		if (layer != null) {
 			updateLayer(layer, true);
 		}
@@ -208,31 +228,43 @@ public class WwjInstance {
 	public void moveLayer(int oldPos, int destPos) {
 		if (destPos < 0)
 			return;
-		LayerList list = this.getModel().getLayers();
+		LayerList list = this.getModel()
+				.getLayers();
 		Layer dndedLayer = list.get(oldPos);
 		list.remove(dndedLayer);
 		list.add(destPos, dndedLayer);
-		this.getWwd().redraw();
+		this.getWwd()
+				.redraw();
 	}
 
-	public void addLayer(Layer layer) {
-		updateLayer(layer, true);
+	public void addLayer(WWObject layer) {
+			updateLayer(layer, true);
 	}
 
-	private void updateLayer(Layer layer, boolean removeIfDisabled) {
-		LayerList layers = wwd.getModel().getLayers();
-		if (layer.isEnabled()) {
-			if (!layers.contains(layer)) {
-				ApplicationTemplate.insertBeforePlacenames(wwd, layer);
+	private void updateLayer(WWObject obj, boolean removeIfDisabled) {
+		if (obj instanceof Layer) {
+			Layer layer = (Layer) obj;
+			LayerList layers = wwd.getModel()
+					.getLayers();
+			if (layer.isEnabled()) {
+				if (!layers.contains(layer)) {
+					ApplicationTemplate.insertBeforePlacenames(wwd, layer);
+				}
+			} else if (removeIfDisabled) {
+				layers.remove(layer);
 			}
-		} else if (removeIfDisabled) {
-			layers.remove(layer);
+			this.getWwd()
+					.redraw();
+		} else if (obj instanceof ElevationModel) {
+			ElevationModel em = (ElevationModel) obj;
+			CompoundElevationModel model = (CompoundElevationModel) this.getModel().getGlobe().getElevationModel();
+			model.addElevationModel(em);
 		}
-		this.getWwd().redraw();
 	}
-	
+
 	public void removeLayer(Layer layer) {
-		LayerList layers = wwd.getModel().getLayers();
+		LayerList layers = wwd.getModel()
+				.getLayers();
 		layers.remove(layer);
 	}
 }
