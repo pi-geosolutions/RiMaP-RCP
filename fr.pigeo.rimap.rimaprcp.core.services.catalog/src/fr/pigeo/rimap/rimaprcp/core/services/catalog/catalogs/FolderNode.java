@@ -258,4 +258,16 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 		return null;
 	}
 
+	@Override
+	public String getComments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getMetadata_uuid() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -36,13 +36,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.geocatalog.GeocatMetadataToolBox;
+import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.AbstractNode;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.WmsNode;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
 import fr.pigeo.rimap.rimaprcp.core.ui.animations.AnimationsController;
@@ -52,6 +51,7 @@ import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.ScaleToOpacityConverter;
 import fr.pigeo.rimap.rimaprcp.core.ui.translation.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import gov.nasa.worldwind.WWObject;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
@@ -59,7 +59,9 @@ import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Extent;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.terrain.WMSBasicElevationModel;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
 public class LayerDetailsImpl extends LayerDetails {
@@ -67,7 +69,7 @@ public class LayerDetailsImpl extends LayerDetails {
 			btnAnimationsSelectionAdapter, btnTimeReloadSelectionAdapter;
 	private ISelectionChangedListener timeComboSelectionChangeListener;
 
-	private WmsNode wmsNode;
+	private AbstractNode node;
 	private WwjInstance wwj;
 	private Composite parent;
 	LayerLegendDialog legendDialog;
@@ -155,8 +157,21 @@ public class LayerDetailsImpl extends LayerDetails {
 		// this.updateLegendShell(layer);
 		m_bindingContext = initDataBindings();
 	}
+	@Inject
+	@Optional
+	private void subscribeLayerSelected(@UIEventTopic(RiMaPEventConstants.ELEVATIONMODEL_SELECTED) ElevationModel layer) {
+		// System.out.println("Selected layer "+layer.getName());
+		// System.out.println(" Opacity "+layer.getOpacity());
+		this.layer = layer;
+		if (this.m_bindingContext != null)
+			this.m_bindingContext.dispose();
+		this.initComponents();
+		// this.updateLegendShell(layer);
+		m_bindingContext = initDataBindings();
+	}
 
 	private void initComponents() {
+		boolean isElevationModel = (layer instanceof WMSBasicElevationModel);
 		boolean isLayer = (layer instanceof Layer);
 		boolean isRimapLayer;
 		if (layer != null && layer.hasKey(RimapAVKey.HAS_RIMAP_EXTENSIONS)) {
@@ -165,7 +180,7 @@ public class LayerDetailsImpl extends LayerDetails {
 			isRimapLayer = false;
 		}
 
-		if (!isLayer) {
+		if (!(isLayer||isElevationModel)) {
 			this.lblLayerName.setText(messages.parts_layerdetails_isnolayer);
 			this.lblLayerName.setFont(SWTResourceManager.getFont("Sans", 10, SWT.ITALIC));
 		} else {
@@ -178,49 +193,31 @@ public class LayerDetailsImpl extends LayerDetails {
 		this.timeChooserComposite.getParent()
 				.layout(true);
 
-		this.btnZoomToExtent.setVisible(isLayer);
+		this.btnZoomToExtent.setVisible(isLayer || (isElevationModel && isRimapLayer));
 		this.lblOpacity.setVisible(isLayer);
 		this.scaleOpacity.setVisible(isLayer);
 
 		this.lblDescription.setVisible(isRimapLayer);
 		this.txtLayerDescription.setVisible(isRimapLayer);
 		this.btnShowMetadata.setVisible(isRimapLayer);
-		this.btnShowLegend.setVisible(isRimapLayer);
+		this.btnShowLegend.setVisible(isRimapLayer && isLayer);
 
-		if (isRimapLayer && layer instanceof RimapWMSTiledImageLayer) {
-			final RimapWMSTiledImageLayer l = (RimapWMSTiledImageLayer) layer;
-			wmsNode = (WmsNode) l.getValue(RimapAVKey.LAYER_PARENTNODE);
-			this.txtLayerDescription.setText(wmsNode.getComments());
+		if (isRimapLayer) {
+			final WWObject l = (WWObject) layer;
+			node = (AbstractNode) l.getValue(RimapAVKey.LAYER_PARENTNODE);
+			this.txtLayerDescription.setText(node.getComments());
 
-			this.btnShowMetadata.setEnabled(wmsNode.getMetadata_uuid() != "");
+			this.btnShowMetadata.setEnabled(node.getMetadata_uuid() != "");
 			// this.btnShowLegend.setEnabled(wms.getLegendurl() != "");
 
 			// Show more button events
 			if (this.btnMetadataSelectionAdapter != null)
 				this.btnShowMetadata.removeSelectionListener(this.btnMetadataSelectionAdapter);
-			if (wmsNode.getMetadata_uuid() != "") {
+			if (node.getMetadata_uuid() != "") {
 				this.btnMetadataSelectionAdapter = new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						/*
-						 * String baseurl =
-						 * prefService.getString(RimapConstants.
-						 * RIMAP_DEFAULT_PREFERENCE_NODE,
-						 * RimapConstants.PROJECT_BASEURL_PREF_TAG,
-						 * RimapConstants.PROJECT_BASEURL_PREF_DEFAULT,
-						 * null);
-						 * // TODO : use constants
-						 * String mtdService =
-						 * prefService.getString(RimapConstants.
-						 * RIMAP_DEFAULT_PREFERENCE_NODE,
-						 * RimapConstants.
-						 * CATALOG_METADATA_BY_UUID_RELPATH_PREF_TAG,
-						 * RimapConstants.CATALOG_METADATA_BY_UUID_PREF_DEFAULT,
-						 * null);
-						 * String link = baseurl + mtdService +
-						 * wmsNode.getMetadata_uuid();
-						 */
-						String link = metadataToolBox.getFullMetadataViewPath(wmsNode.getMetadata_uuid());
+						String link = metadataToolBox.getFullMetadataViewPath(node.getMetadata_uuid());
 						Program.launch(link);
 					}
 				};
@@ -266,7 +263,7 @@ public class LayerDetailsImpl extends LayerDetails {
 							null);
 					LayerLegendDialog dialog = new LayerLegendDialog(parent.getShell(), legend_path);
 					ContextInjectionFactory.inject(dialog, context);
-					dialog.setLayer(wmsNode);
+					dialog.setLayer(node);
 					dialog.open();
 				}
 			};
@@ -275,6 +272,7 @@ public class LayerDetailsImpl extends LayerDetails {
 			// WMS-Time support
 			AVList avl = (AVList) l.getValue(AVKey.CONSTRUCTION_PARAMETERS);
 			if (avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_ENABLED)) {
+				RimapWMSTiledImageLayer layer = (RimapWMSTiledImageLayer) l;
 				// make it visible
 				this.timeChooserComposite.setVisible(true);
 				((GridData) this.timeChooserComposite.getLayoutData()).exclude = false;
@@ -303,7 +301,7 @@ public class LayerDetailsImpl extends LayerDetails {
 						if (selection.size() > 0) {
 							ZonedDateTime selected = (ZonedDateTime) selection.getFirstElement();
 							avl.setValue(RimapAVKey.LAYER_TIME_DIMENSION_CURRENT_VALUE, selected.toString());
-							l.refresh(true);
+							layer.refresh(true);
 							wwj.getWwd()
 									.redrawNow();
 						}
@@ -319,7 +317,7 @@ public class LayerDetailsImpl extends LayerDetails {
 						BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
 
 							public void run() {
-								RimapWMSTiledImageLayer newl = (RimapWMSTiledImageLayer) l.getParent()
+								RimapWMSTiledImageLayer newl = (RimapWMSTiledImageLayer) layer.getParent()
 										.getLayer(true);
 								AVList newavl = (AVList) newl.getValue(AVKey.CONSTRUCTION_PARAMETERS);
 								updateComboViewer(newavl, true);
@@ -337,7 +335,7 @@ public class LayerDetailsImpl extends LayerDetails {
 				this.btnAnimationsSelectionAdapter = new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						animationsController.openDialog(parent.getShell(), l);
+						animationsController.openDialog(parent.getShell(), layer);
 					}
 				};
 				this.btnAnimate.addSelectionListener(this.btnAnimationsSelectionAdapter);

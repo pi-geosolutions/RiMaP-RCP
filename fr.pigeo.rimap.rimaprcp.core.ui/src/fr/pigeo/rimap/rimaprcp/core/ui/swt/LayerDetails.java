@@ -29,11 +29,11 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.OpacityToScaleConverter;
 import fr.pigeo.rimap.rimaprcp.core.ui.swt.bindings.ScaleToOpacityConverter;
-import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.WWObject;
 
 public class LayerDetails {
 	protected DataBindingContext m_bindingContext;
-	protected Layer layer;
+	protected WWObject layer;
 
 	protected Label lblLayerName, lblOpacity, lblDescription;
 	protected Scale scaleOpacity;
