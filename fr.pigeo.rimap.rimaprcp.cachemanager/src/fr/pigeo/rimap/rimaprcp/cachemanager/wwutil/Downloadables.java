@@ -12,6 +12,7 @@ import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.services.events.IEventBroker;
 
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import gov.nasa.worldwind.WWObject;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.retrieve.BulkRetrievable;
@@ -25,7 +26,7 @@ import gov.nasa.worldwind.retrieve.BulkRetrievable;
 @Singleton
 public class Downloadables {
 	protected List<Downloadable> downloadables = null;
-	private Layer[] layers = null;
+	private WWObject[] layers = null;
 
 	@Inject
 	WwjInstance wwj;
@@ -39,13 +40,13 @@ public class Downloadables {
 	}
 
 	public List<Downloadable> getList() {
-		layers = wwj.getLayersList();
+		layers = wwj.getLayersListAsArray();
 		if (downloadables == null || downloadables.isEmpty()) {
 			downloadables = new ArrayList<Downloadable>();
-			for (Layer l : layers) {
-				if (l instanceof BulkRetrievable) {// filter-out layers that
+			for (WWObject l : layers) {
+				if (l instanceof BulkRetrievable && l instanceof Layer) {// filter-out layers that
 													// will not be downloadable
-					Downloadable d = new Downloadable(l, wwj, evtBroker);
+					Downloadable d = new Downloadable((Layer)l, wwj, evtBroker);
 					downloadables.add(d);
 				}
 			}

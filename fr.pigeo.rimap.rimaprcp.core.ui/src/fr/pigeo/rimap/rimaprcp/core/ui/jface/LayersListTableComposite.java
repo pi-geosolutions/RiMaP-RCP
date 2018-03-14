@@ -44,6 +44,7 @@ import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
@@ -62,8 +63,9 @@ public class LayersListTableComposite extends Composite {
 
 	@Inject
 	IEclipseContext context;
-	
-	@Inject MApplication application;
+
+	@Inject
+	MApplication application;
 
 	@Inject
 	IEventBroker eventBroker;
@@ -73,7 +75,8 @@ public class LayersListTableComposite extends Composite {
 	protected final Image FEATUREINFO = getImage("icon_featureinfo_16px.png");
 	protected final Image METADATA = getImage("icon_metadata_16px.png");
 	protected final Image PQUERY = getImage("polygon_query_16px.png");
-	protected final Image WMSICON = getImage("wms.png");
+	protected final Image WMS_ICON = getImage("wms.png");
+	protected final Image WMSDEM_ICON = getImage("wmsdem.png");
 	protected final Image WMST = getImage("clock.png");
 
 	public LayersListTableComposite(Composite parent, int style, WwjInstance wwjInst) {
@@ -90,7 +93,7 @@ public class LayersListTableComposite extends Composite {
 
 		// set the content provider
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
-		viewer.setInput(wwj.getLayersList());
+		viewer.setInput(wwj.getLayersListAsArray());
 
 	}
 
@@ -111,10 +114,19 @@ public class LayersListTableComposite extends Composite {
 
 			@Override
 			public Image getImage(Object element) {
-				if (((Layer) element).isEnabled()) {
-					return CHECKED;
+				Image status = UNCHECKED;
+				if (element instanceof Layer) {
+					if (((Layer) element).isEnabled()) {
+						status = CHECKED;
+					}
 				}
-				return UNCHECKED;
+				if (element instanceof ElevationModel) {
+					if (((ElevationModel) element).isEnabled()) {
+						status = CHECKED;
+					}
+				}
+				// fallback
+				return status;
 			}
 		});
 
@@ -125,8 +137,16 @@ public class LayersListTableComposite extends Composite {
 		nameCol.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				Layer l = (Layer) element;
-				return l.getName();
+				String name = "unknown";
+				if (element instanceof Layer) {
+					Layer l = (Layer) element;
+					name = l.getName();
+				}
+				if (element instanceof ElevationModel) {
+					ElevationModel l = (ElevationModel) element;
+					name = l.getName();
+				}
+				return name;
 			}
 
 			@Override
@@ -134,8 +154,11 @@ public class LayersListTableComposite extends Composite {
 				if (element instanceof WMSTiledImageLayer) {
 					WMSTiledImageLayer l = (WMSTiledImageLayer) element;
 					if (l.hasKey(RimapAVKey.LAYER_PARENTNODE)) {
-						return WMSICON;
+						return WMS_ICON;
 					}
+				}
+				if (element instanceof ElevationModel) {
+					return WMSDEM_ICON;
 				}
 				return null;
 			}
@@ -213,7 +236,7 @@ public class LayersListTableComposite extends Composite {
 					WMSTiledImageLayer l = (WMSTiledImageLayer) element;
 					AVList avl = (AVList) l.getValue(AVKey.CONSTRUCTION_PARAMETERS);
 					if (avl.hasKey(RimapAVKey.LAYER_TIME_DIMENSION_ENABLED)) {
-							return WMST;
+						return WMST;
 					}
 				}
 				return null;
@@ -295,7 +318,7 @@ public class LayersListTableComposite extends Composite {
 	}
 
 	public void refresh() {
-		this.viewer.setInput(this.wwj.getLayersList());
+		this.viewer.setInput(this.wwj.getLayersListAsArray());
 		this.viewer.refresh();
 
 	}
@@ -320,12 +343,18 @@ public class LayersListTableComposite extends Composite {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = viewer.getStructuredSelection();
-				//context.set(RimapConstants.RIMAP_SELECTEDLAYERS_CONTEXT_NAME, selection);
-				application.getContext().set(RimapConstants.RIMAP_SELECTEDLAYERS_CONTEXT_NAME, selection);
+				// context.set(RimapConstants.RIMAP_SELECTEDLAYERS_CONTEXT_NAME,
+				// selection);
+				application.getContext()
+						.set(RimapConstants.RIMAP_SELECTEDLAYERS_CONTEXT_NAME, selection);
 				eventBroker.post(RiMaPEventConstants.LAYER_SELECTED_LAYERS, selection);
 				Object item = selection.getFirstElement();
 				if (item instanceof Layer) {
 					eventBroker.post(RiMaPEventConstants.LAYER_SELECTED, (Layer) item);
+				}
+
+				if (item instanceof ElevationModel) {
+					eventBroker.post(RiMaPEventConstants.ELEVATIONMODEL_SELECTED, (ElevationModel) item);
 				}
 			}
 		});
@@ -338,13 +367,14 @@ public class LayersListTableComposite extends Composite {
 	@Inject
 	@Optional
 	void checkHandler(@UIEventTopic(RiMaPEventConstants.CHECKABLENODE_CHECKCHANGE) ICheckableNode node) {
-		viewer.setInput(wwj.getLayersList());
+		viewer.setInput(wwj.getLayersListAsArray());
 		viewer.refresh();
-	}	
+	}
+
 	@Inject
 	@Optional
-	void refreshLayersList(@UIEventTopic(RiMaPEventConstants.LAYERSLIST_REFRESH) String msg) { 
-		viewer.setInput(wwj.getLayersList());
+	void refreshLayersList(@UIEventTopic(RiMaPEventConstants.LAYERSLIST_REFRESH) String msg) {
+		viewer.setInput(wwj.getLayersListAsArray());
 		viewer.refresh();
 	}
 }

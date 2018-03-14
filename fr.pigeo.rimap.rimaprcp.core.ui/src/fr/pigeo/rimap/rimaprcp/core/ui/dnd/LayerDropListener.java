@@ -38,7 +38,7 @@ public class LayerDropListener extends ViewerDropAdapter {
 				return false;
 
 			this.wwj.moveLayer(dragPos, destPos);
-			this.getViewer().setInput(this.wwj.getLayersList());
+			this.getViewer().setInput(this.wwj.getLayersListAsArray());
 			this.getViewer().refresh();
 		}
 		return false;

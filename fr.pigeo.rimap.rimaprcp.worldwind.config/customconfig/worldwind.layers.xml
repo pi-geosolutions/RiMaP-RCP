@@ -26,7 +26,7 @@
     <!-- <Layer href="customconfig/Earth/MSVirtualEarthAerialLayer.xml" actuate="onRequest"/>-->
     <Layer href="customconfig/Earth/BingImagery.xml" actuate="onLoad"/>
     <!-- <Layer className="gov.nasa.worldwind.layers.Earth.CountryBoundariesLayer" actuate="onRequest"/>-->
-    <!-- <Layer href="customconfig/Earth/OpenStreetMap.xml" actuate="onRequest"/>-->
+    <Layer href="customconfig/Earth/OpenStreetMap.xml" actuate="onRequest"/>
     <Layer href="customconfig/Earth/EarthAtNightLayer.xml" actuate="onRequest"/>
     <Layer className="gov.nasa.worldwind.layers.Earth.NASAWFSPlaceNameLayer"/>
     <Layer className="gov.nasa.worldwind.layers.WorldMapLayer">

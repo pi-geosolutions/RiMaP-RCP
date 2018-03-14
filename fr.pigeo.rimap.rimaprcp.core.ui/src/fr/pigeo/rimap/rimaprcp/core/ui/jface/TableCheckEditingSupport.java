@@ -5,40 +5,54 @@ import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 
+import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.layers.TiledImageLayer;
 
 public class TableCheckEditingSupport extends EditingSupport {
 
-	  private final TableViewer viewer;
-	  private final CellEditor editor;
+	private final TableViewer viewer;
+	private final CellEditor editor;
 
 	public TableCheckEditingSupport(TableViewer viewer) {
 		super(viewer);
-	    this.viewer = viewer;
-	    this.editor = new CheckboxCellEditor(viewer.getTable());
+		this.viewer = viewer;
+		this.editor = new CheckboxCellEditor(viewer.getTable());
 	}
 
 	@Override
 	protected CellEditor getCellEditor(Object element) {
-	    return editor;
+		return editor;
 	}
 
 	@Override
 	protected boolean canEdit(Object element) {
-	    return true;
+		return true;
 	}
 
 	@Override
 	protected Object getValue(Object element) {
-		return ((Layer) element).isEnabled();
+		boolean enabled = false;
+		if (element instanceof Layer) {
+			enabled = ((Layer) element).isEnabled();
+		}
+		if (element instanceof ElevationModel) {
+			enabled = ((ElevationModel) element).isEnabled();
+		}
+		return enabled;
 	}
 
 	@Override
 	protected void setValue(Object element, Object value) {
-	    ((Layer) element).setEnabled((boolean) value);
-	    viewer.update(element, null);
-	    //System.out.println("is rimap layer : "+((Layer) element).getStringValue("isRimapLayer"));
+
+		if (element instanceof Layer) {
+			((Layer) element).setEnabled((boolean) value);
+		}
+		if (element instanceof ElevationModel) {
+			((ElevationModel) element).setEnabled((boolean) value);
+		}
+		viewer.update(element, null);
+		// System.out.println("is rimap layer : "+((Layer)
+		// element).getStringValue("isRimapLayer"));
 	}
 
 }

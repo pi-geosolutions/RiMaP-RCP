@@ -1,6 +1,8 @@
 package fr.pigeo.rimap.rimaprcp.worldwind;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,7 +34,6 @@ import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwind.terrain.CompoundElevationModel;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
-import gov.nasa.worldwindx.examples.dataimport.InstallElevations.AppFrame;
 
 /**
  * @author jean.pommier@pi-geosolutions.fr
@@ -132,15 +133,39 @@ public class WwjInstance {
 		return list.indexOf(dropTarget);
 	}
 
-	public Layer[] getLayersList() {
+	/*
+	 * Use this method to get all inputs for a JFace widget
+	 * To get only layers, just change the method called internally to getLayersOnlyListAsArray
+	 */
+	public WWObject[] getLayersListAsArray() {
+		return getLayersAndDemListAsArray();
+	}
+	
+	public Layer[] getLayersOnlyListAsArray() {
 		return this.getModel()
 				.getLayers()
 				.toArray(new Layer[0]);
 	}
 
+	public ElevationModel[] getElevationModelsListAsArray() {
+		return getElevationModelsList().toArray(new ElevationModel[0]);
+	}
+	
 	public List<ElevationModel> getElevationModelsList() {
 		CompoundElevationModel model = (CompoundElevationModel) this.getModel().getGlobe().getElevationModel();
 		return model.getElevationModels();
+	}
+	
+	/*
+	 * Produces an array concatenating the layers and the DEMs
+	 */
+	public WWObject[] getLayersAndDemListAsArray() {
+		WWObject[] ll = getLayersOnlyListAsArray();
+		ArrayList<WWObject> layerslist = new ArrayList<>(Arrays.asList(ll));
+		List<ElevationModel> eml = getElevationModelsList();
+		Collections.reverse(eml);
+		layerslist.addAll(eml);
+		return layerslist.toArray(new WWObject[0]);
 	}
 
 	public void showWidget(boolean show, String widgetRef) {

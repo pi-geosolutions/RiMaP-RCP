@@ -28,8 +28,8 @@ import fr.pigeo.rimap.rimaprcp.core.ui.core.Central;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n.Messages;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import fr.pigeo.rimap.rimaprcp.worldwind.layers.IQueryableLayer;
+import gov.nasa.worldwind.WWObject;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.layers.Layer;
 
 @Creatable
 @Singleton
@@ -125,8 +125,8 @@ public class FeatureInfo {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					ArrayList<FeatureInfoTarget> targets = new ArrayList<FeatureInfoTarget>();
-					Layer[] wwjlayers = wwj.getLayersList();
-					for (Layer layer : wwjlayers) {
+					WWObject[] wwjlayers = wwj.getLayersListAsArray();
+					for (WWObject layer : wwjlayers) {
 						//System.out.println(layer.getClass());
 						if (layer instanceof IQueryableLayer) {
 							IQueryableLayer qlayer = (IQueryableLayer) layer;
