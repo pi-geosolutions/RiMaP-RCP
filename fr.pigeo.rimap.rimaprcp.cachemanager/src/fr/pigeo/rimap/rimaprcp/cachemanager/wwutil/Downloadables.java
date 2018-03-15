@@ -14,7 +14,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
 import gov.nasa.worldwind.WWObject;
 import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.retrieve.BulkRetrievable;
 
 /**
@@ -44,18 +43,20 @@ public class Downloadables {
 		if (downloadables == null || downloadables.isEmpty()) {
 			downloadables = new ArrayList<Downloadable>();
 			for (WWObject l : layers) {
-				if (l instanceof BulkRetrievable && l instanceof Layer) {// filter-out layers that
+				if (l instanceof BulkRetrievable) {// filter-out layers that
 													// will not be downloadable
-					Downloadable d = new Downloadable((Layer)l, wwj, evtBroker);
-					downloadables.add(d);
+					Downloadable d = new Downloadable((WWObject) l, wwj, evtBroker);
+					if (d.isSupported()) {
+						downloadables.add(d);
+					}
 				}
 			}
-		} 
+		}
 		return downloadables;
 	}
-	
+
 	public List<Downloadable> getList(boolean reset) {
-		if(reset) {
+		if (reset) {
 			for (Downloadable d : downloadables) {
 				d.stopThread();
 			}
@@ -64,10 +65,11 @@ public class Downloadables {
 		return this.getList();
 	}
 
-	
 	public List<Downloadable> getDownloadList() {
-		//not sure it will work with java < 1.8
-		List<Downloadable> list = downloadables.stream().filter(d -> d.doDownload()).collect(Collectors.toList());
+		// not sure it will work with java < 1.8
+		List<Downloadable> list = downloadables.stream()
+				.filter(d -> d.doDownload())
+				.collect(Collectors.toList());
 		return list;
 	}
 
@@ -75,7 +77,7 @@ public class Downloadables {
 		Iterator<Downloadable> it = downloadables.iterator();
 		while (it.hasNext()) {
 			Downloadable d = it.next();
-				d.updateSector(s);
+			d.updateSector(s);
 		}
 	}
 

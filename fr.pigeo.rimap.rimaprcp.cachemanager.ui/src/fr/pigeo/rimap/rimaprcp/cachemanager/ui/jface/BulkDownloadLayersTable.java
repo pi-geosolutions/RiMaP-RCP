@@ -44,8 +44,9 @@ import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.ui.views.OrganizeTabPart;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import gov.nasa.worldwind.WWObject;
 import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
 /**
@@ -80,6 +81,7 @@ public class BulkDownloadLayersTable extends Composite {
 	protected final Image CHECKED = getImage("checked.png", OrganizeTabPart.class);
 	protected final Image UNCHECKED = getImage("unchecked.png", OrganizeTabPart.class);
 	protected final Image WMSICON = getImage("wms.png", OrganizeTabPart.class);
+	protected final Image WMSDEM_ICON = getImage("wmsdem.png", OrganizeTabPart.class);
 	protected final Image ZIP = getImage("package_go.png");
 
 	public BulkDownloadLayersTable(Composite parent, int style, BulkDownloadManager bulkManager) {
@@ -123,8 +125,7 @@ public class BulkDownloadLayersTable extends Composite {
 
 			@Override
 			public Image getImage(Object element) {
-				if (((Downloadable) element).getLayer()
-						.isEnabled()) {
+				if (((Downloadable) element).layer_isEnabled()) {
 					return CHECKED;
 				}
 				return UNCHECKED;
@@ -138,18 +139,20 @@ public class BulkDownloadLayersTable extends Composite {
 		nameCol.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				Layer l = ((Downloadable) element).getLayer();
-				return l.getName();
+				return ((Downloadable) element).getLayername();
 			}
 
 			@Override
 			public Image getImage(Object element) {
-				Layer l = ((Downloadable) element).getLayer();
+				WWObject l = ((Downloadable) element).getLayer();
 				if (l instanceof WMSTiledImageLayer) {
 					WMSTiledImageLayer tl = (WMSTiledImageLayer) l;
 					if (tl.hasKey(RimapAVKey.LAYER_PARENTNODE)) {
 						return WMSICON;
 					}
+				}
+				if (l instanceof ElevationModel) {
+					return WMSDEM_ICON;
 				}
 				return null;
 			}
@@ -324,14 +327,16 @@ public class BulkDownloadLayersTable extends Composite {
 		col = new TableViewerColumn(tv, SWT.NONE);
 		col.getColumn()
 				.setAlignment(SWT.CENTER);
-		col.getColumn().setImage(ZIP);
+		col.getColumn()
+				.setImage(ZIP);
 		col.setEditingSupport(new LayerExportPackageEditingSupport(tv));
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
 				return null;
-				//Downloadable d = ((Downloadable) element);
-				//return d.getDownloadProgress().equalsIgnoreCase("completed") ? "ZIP" : " ";
+				// Downloadable d = ((Downloadable) element);
+				// return d.getDownloadProgress().equalsIgnoreCase("completed")
+				// ? "ZIP" : " ";
 			}
 
 			@Override
@@ -341,7 +346,6 @@ public class BulkDownloadLayersTable extends Composite {
 			}
 		});
 		tcl.setColumnData(col.getColumn(), new ColumnPixelData(30));
-
 
 	}
 
@@ -359,13 +363,13 @@ public class BulkDownloadLayersTable extends Composite {
 	protected static Image getImage(String file) {
 		return getImage(file, null);
 	}
-	
+
 	// helper method to load the images
 	// ensure to dispose the images in your @PreDestroy method
-	protected static Image getImage(String file, Class refclass ) {
-		if (refclass==null) {
-			//we assume we are using this bundle
-			refclass= BulkDownloadLayersTable.class;
+	protected static Image getImage(String file, Class refclass) {
+		if (refclass == null) {
+			// we assume we are using this bundle
+			refclass = BulkDownloadLayersTable.class;
 		}
 		// assume that the current class is called View.java
 		Bundle bundle = FrameworkUtil.getBundle(refclass);
@@ -388,6 +392,7 @@ public class BulkDownloadLayersTable extends Composite {
 		CHECKED.dispose();
 		UNCHECKED.dispose();
 		WMSICON.dispose();
+		WMSDEM_ICON.dispose();
 		ZIP.dispose();
 		super.dispose();
 	}

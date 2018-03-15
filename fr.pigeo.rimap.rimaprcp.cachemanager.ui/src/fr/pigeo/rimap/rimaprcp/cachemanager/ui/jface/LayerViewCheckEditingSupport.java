@@ -31,13 +31,12 @@ public class LayerViewCheckEditingSupport extends EditingSupport {
 
 	@Override
 	protected Object getValue(Object element) {
-		return ((Downloadable) element).getLayer().isEnabled();
+		return ((Downloadable) element).layer_isEnabled();
 	}
 
 	@Override
 	protected void setValue(Object element, Object value) {
-		((Downloadable) element).getLayer()
-				.setEnabled((boolean) value);
+		((Downloadable) element).layer_SetEnabled((boolean) value);
 		viewer.update(element, null);
 	}
 

@@ -12,10 +12,8 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,29 +24,31 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 
 import fr.pigeo.rimap.rimaprcp.cachemanager.events.CacheManagerEventConstants;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
+import gov.nasa.worldwind.WWObject;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.event.BulkRetrievalEvent;
 import gov.nasa.worldwind.event.BulkRetrievalListener;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.layers.BasicTiledImageLayer;
+import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.layers.TiledImageLayer;
 import gov.nasa.worldwind.retrieve.BulkRetrievable;
 import gov.nasa.worldwind.retrieve.BulkRetrievalThread;
 import gov.nasa.worldwind.retrieve.Progress;
+import gov.nasa.worldwind.terrain.BasicElevationModel;
 import gov.nasa.worldwind.util.Level;
 import gov.nasa.worldwind.util.LevelSet;
 import gov.nasa.worldwind.util.Tile;
 
 public class Downloadable {
-	private Layer layer;
+	private WWObject layer;
 	private WwjInstance wwj;
 	private IEventBroker evtBroker;
 	private Sector currentSector;
 	private boolean download = false;
 	private long estimatedSize = -1;
-	private double downloadprogress = -1;
 	private double maxResolution = 0;
 	private int maxLevel = 19;
 	private double[] resolutions = null;
@@ -56,20 +56,36 @@ public class Downloadable {
 	protected String packageDestination = "";
 	protected Job zipJob;
 	protected boolean cancelZipJob = false;
+	private LevelSet levels = null;
+	private FileStore datafilestore = null;
+	private String layername = "unnamed";
+	private boolean isSupported = false;
 
-
-	public Downloadable(Layer layer, WwjInstance wwj, IEventBroker evtBroker) {
+	public Downloadable(WWObject layer, WwjInstance wwj, IEventBroker evtBroker) {
 		super();
 		this.layer = layer;
 		this.wwj = wwj;
 		this.evtBroker = evtBroker;
+		if (layer instanceof TiledImageLayer) {
+			TiledImageLayer til = (TiledImageLayer) layer;
+			this.levels = til.getLevels();
+			this.datafilestore = til.getDataFileStore();
+			this.layername = til.getName();
+			this.isSupported = true;
+		} else if (layer instanceof ElevationModel) {
+			BasicElevationModel bem = (BasicElevationModel) layer;
+			this.levels = bem.getLevels();
+			this.datafilestore = bem.getDataFileStore();
+			this.layername = bem.getName();
+			this.isSupported = true;
+		}
 	}
 
-	public Layer getLayer() {
+	public WWObject getLayer() {
 		return layer;
 	}
 
-	public void setLayer(Layer layer) {
+	public void setLayer(WWObject layer) {
 		this.layer = layer;
 	}
 
@@ -101,10 +117,8 @@ public class Downloadable {
 
 	public double getMaxResolution() {
 		if (maxResolution == 0) {
-			if (layer instanceof TiledImageLayer) {
-				TiledImageLayer l = (TiledImageLayer) layer;
-				maxResolution = l.getLevels()
-						.getLastLevel()
+			if (this.levels != null) {
+				maxResolution = this.levels.getLastLevel()
 						.getTexelSize()
 						* wwj.getModel()
 								.getGlobe()
@@ -127,9 +141,7 @@ public class Downloadable {
 
 	public double[] getResolutions() {
 		if (resolutions == null) {
-			if (layer instanceof TiledImageLayer) {
-				TiledImageLayer l = (TiledImageLayer) layer;
-				LevelSet levels = l.getLevels();
+			if (this.levels != null) {
 				resolutions = new double[levels.getNumLevels()];
 				for (int i = 0; i < levels.getNumLevels(); i++) {
 					Level lev = levels.getLevel(i);
@@ -178,6 +190,21 @@ public class Downloadable {
 		}
 	}
 
+	public boolean intersectsCurrentSector() {
+		boolean intersects = true;
+		// deal with the case where the layer doesn't intersect the currently
+		// selected sector
+		try {
+			Sector sector = (Sector) layer.getValue(AVKey.SECTOR);
+			if (!currentSector.intersects(sector)) {
+				intersects = false;
+			}
+		} catch (Exception ex) {
+			// do nothing
+		}
+		return intersects;
+	}
+
 	public BulkRetrievalThread startDownloadThread() {
 		this.thread = ((BulkRetrievable) layer).makeLocal(this.currentSector, getMaxResolutionInRadians(),
 				new BulkRetrievalListener() {
@@ -200,7 +227,7 @@ public class Downloadable {
 						// event.getItem());
 					}
 				});
-		thread.setName("Bulk retrieval thread (" + layer.getName() + ")");
+		thread.setName("Bulk retrieval thread (" + this.layername + ")");
 		return thread;
 	}
 
@@ -212,6 +239,9 @@ public class Downloadable {
 	}
 
 	public String getDownloadProgress() {
+		if (download && !intersectsCurrentSector()) {
+			return "off sector";
+		}
 		if (this.thread == null) {
 			return "-";
 		}
@@ -251,16 +281,12 @@ public class Downloadable {
 	}
 
 	public Path getCacheLocation(boolean fullpath) {
-		BasicTiledImageLayer l = (BasicTiledImageLayer) this.layer;
-		Path full = Paths.get(l.getDataFileStore()
-				.getWriteLocation()
+		Path full = Paths.get(this.datafilestore.getWriteLocation()
 				.getAbsolutePath(),
-				l.getLevels()
-						.getFirstLevel()
+				this.levels.getFirstLevel()
 						.getPath())
 				.getParent();
-		Path relative = Paths.get(l.getLevels()
-				.getFirstLevel()
+		Path relative = Paths.get(this.levels.getFirstLevel()
 				.getPath())
 				.getParent();
 		// System.out.println("full cache location path:" + full.toString());
@@ -272,29 +298,29 @@ public class Downloadable {
 	/*
 	 * Too memory consuming, don't use this on large sectors
 	 */
-	public List<Path> getFilesInCurrentSector() {
-		if (this.currentSector == null) {
-			return null;
-		}
-		List<Path> paths = new ArrayList<Path>();
-		BasicTiledImageLayer l = (BasicTiledImageLayer) this.layer;
-		for (Level lev : l.getLevels()
-				.getLevels()) {
-			if (lev.getLevelNumber() > this.getMaxLevel()) {
-				continue;
-			}
-			TextureTile[][] tiles = l.getTilesInSector(this.currentSector, lev.getLevelNumber());
-			for (TextureTile[] row : tiles) {
-				for (TextureTile tile : row) {
-					Path tilepath = Paths.get(l.getDataFileStore()
-							.getWriteLocation()
-							.getAbsolutePath(), tile.getPath());
-					paths.add(tilepath);
-				}
-			}
-		}
-		return paths;
-	}
+	// public List<Path> getFilesInCurrentSector() {
+	// if (this.currentSector == null) {
+	// return null;
+	// }
+	// List<Path> paths = new ArrayList<Path>();
+	// for (Level lev : this.levels
+	// .getLevels()) {
+	// if (lev.getLevelNumber() > this.getMaxLevel()) {
+	// continue;
+	// }
+	// TextureTile[][] tiles = l.getTilesInSector(this.currentSector,
+	// lev.getLevelNumber());
+	// for (TextureTile[] row : tiles) {
+	// for (TextureTile tile : row) {
+	// Path tilepath = Paths.get(l.getDataFileStore()
+	// .getWriteLocation()
+	// .getAbsolutePath(), tile.getPath());
+	// paths.add(tilepath);
+	// }
+	// }
+	// }
+	// return paths;
+	// }
 
 	public boolean putThisTileInThePacket(Path tileRelativePath) {
 		if (tileRelativePath.toString()
@@ -320,24 +346,19 @@ public class Downloadable {
 			String srow = tilename.split("_")[1].split("\\.")[0];
 			int col = Integer.parseInt(srow);
 
-			TiledImageLayer l = (TiledImageLayer) layer;
 			// taken from BasicElevationModel.createTile combined with
 			// Level.computeSectorForPosition
 			// Compute the tile's SW lat/lon based on its row/col in the level's
 			// data set.
-			Angle dLat = l.getLevels()
-					.getLevel(level)
+			Angle dLat = this.levels.getLevel(level)
 					.getTileDelta()
 					.getLatitude();
-			Angle dLon = l.getLevels()
-					.getLevel(level)
+			Angle dLon = this.levels.getLevel(level)
 					.getTileDelta()
 					.getLongitude();
-			Angle latOrigin = l.getLevels()
-					.getTileOrigin()
+			Angle latOrigin = this.levels.getTileOrigin()
 					.getLatitude();
-			Angle lonOrigin = l.getLevels()
-					.getTileOrigin()
+			Angle lonOrigin = this.levels.getTileOrigin()
 					.getLongitude();
 			Angle minLatitude = Tile.computeRowLatitude(row, dLat, latOrigin);
 			Angle minLongitude = Tile.computeColumnLongitude(col, dLon, lonOrigin);
@@ -355,17 +376,17 @@ public class Downloadable {
 	public void zip() {
 		Downloadable d = this;
 		this.cancelZipJob = false;
-		zipJob = new Job("Zip " + d.getLayer()
-				.getName()) {
+		zipJob = new Job("Zip " + d.layername) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				Map<String, String> attributes = new HashMap<>();
 				attributes.put("create", "true");
 				try {
 					String pd = d.getPackageDestination();
-					
-					//URI zipFile = URI.create("jar:file:" + d.getPackageDestination());
-					//hack to make Windows accept the path
+
+					// URI zipFile = URI.create("jar:file:" +
+					// d.getPackageDestination());
+					// hack to make Windows accept the path
 					URI zipFile = CacheUtil.makeURI(Paths.get(d.getPackageDestination()));
 					try (FileSystem zipFileSys = FileSystems.newFileSystem(zipFile, attributes);) {
 						Path src = d.getCacheLocation(true);
@@ -493,4 +514,30 @@ public class Downloadable {
 		this.cancelZipJob = true;
 	}
 
+	public String getLayername() {
+		return layername;
+	}
+
+	public void layer_SetEnabled(boolean enabled) {
+		if (this.layer instanceof Layer) {
+			((Layer) layer).setEnabled(enabled);
+		}
+		if (this.layer instanceof BasicElevationModel) {
+			((BasicElevationModel) layer).setEnabled(enabled);
+		}
+	}
+
+	public boolean layer_isEnabled() {
+		if (this.layer instanceof Layer) {
+			return ((Layer) layer).isEnabled();
+		}
+		if (this.layer instanceof BasicElevationModel) {
+			return ((BasicElevationModel) layer).isEnabled();
+		}
+		return false;
+	}
+
+	public boolean isSupported() {
+		return isSupported;
+	}
 }

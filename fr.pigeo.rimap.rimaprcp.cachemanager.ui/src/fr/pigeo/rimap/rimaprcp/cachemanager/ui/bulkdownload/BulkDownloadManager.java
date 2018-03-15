@@ -145,7 +145,9 @@ public class BulkDownloadManager {
 				.iterator();
 		while (it.hasNext()) {
 			Downloadable d = it.next();
-			BulkRetrievalThread brthread = d.startDownloadThread();
+			if (d.intersectsCurrentSector()) {
+				BulkRetrievalThread brthread = d.startDownloadThread();
+			}
 			// System.out.println("Bulk retrieval thread (" + d.getLayer()
 			// .getName() + ") status : " + brthread.getState());
 		}
@@ -200,13 +202,13 @@ public class BulkDownloadManager {
 		wizardCtx.set(Downloadable.class, d);
 		// create WizardPages via CIF
 		ExportPackageWizardPage1 page1 = ContextInjectionFactory.make(ExportPackageWizardPage1.class, wizardCtx);
-	    wizardCtx.set(ExportPackageWizardPage1.class, page1);
-	    // no context needed for the creation
-	    ExportPackageWizardPage2 page2 = ContextInjectionFactory.make(ExportPackageWizardPage2.class, wizardCtx);
-	    wizardCtx.set(ExportPackageWizardPage2.class, page2);
-	    
-	    ExportPackageWizard wizard = ContextInjectionFactory.make(ExportPackageWizard.class, wizardCtx);
-		
+		wizardCtx.set(ExportPackageWizardPage1.class, page1);
+		// no context needed for the creation
+		ExportPackageWizardPage2 page2 = ContextInjectionFactory.make(ExportPackageWizardPage2.class, wizardCtx);
+		wizardCtx.set(ExportPackageWizardPage2.class, page2);
+
+		ExportPackageWizard wizard = ContextInjectionFactory.make(ExportPackageWizard.class, wizardCtx);
+
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		if (dialog.open() == WizardDialog.OK) {
 		}
