@@ -157,7 +157,7 @@ public class BulkDownloadManager {
 			protected IStatus run(IProgressMonitor monitor) {
 				while (hasActiveDownloadThreads()) {
 					try {
-						evtBroker.post(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE, null);
+						evtBroker.post(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE, "");
 						TimeUnit.SECONDS.sleep(1);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -166,7 +166,7 @@ public class BulkDownloadManager {
 					}
 				}
 				// Last update
-				evtBroker.post(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE, null);
+				evtBroker.post(CacheManagerEventConstants.DOWNLOAD_PROGRESS_UPDATE, "");
 				/*
 				 * // set total number of work units
 				 * monitor.beginTask("Doing something time consuming here",

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_o0Uz4JzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.application">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_qDDQ0JzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.trimmedwindow.rimap3d" label="%trimmedwindow.label.1">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_qDDQ0JzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.trimmedwindow.rimap3d" label="%trimmedwindow.label.1" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.core.ui/icons/app/P2.png">
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_59ebQJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspectivestack.main">
       <children xsi:type="advanced:Perspective" xmi:id="_--feEJzHEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.perspective.main" label="%perspective.label.1">
         <children xsi:type="basic:PartSashContainer" xmi:id="_q4OlUJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.partsashcontainer.0" horizontal="true">

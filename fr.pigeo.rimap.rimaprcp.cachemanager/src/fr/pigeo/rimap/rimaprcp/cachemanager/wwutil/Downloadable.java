@@ -216,15 +216,11 @@ public class Downloadable {
 						// with AWT or Swing must be within a
 						// SwingUtilities.invokeLater() runnable.
 
-						// System.out.printf("%s: item %s\n",
-						// event.getEventType()
-						// .equals(BulkRetrievalEvent.RETRIEVAL_SUCCEEDED) ?
-						// "Succeeded"
-						// : event.getEventType()
-						// .equals(BulkRetrievalEvent.RETRIEVAL_FAILED) ?
-						// "Failed"
-						// : "Unknown event type",
-						// event.getItem());
+//						System.out.printf("%s: item %s\n",
+//								event.getEventType().equals(BulkRetrievalEvent.RETRIEVAL_SUCCEEDED) ? "Succeeded"
+//										: event.getEventType().equals(BulkRetrievalEvent.RETRIEVAL_FAILED) ? "Failed"
+//												: "Unknown event type",
+//								event.getItem());
 					}
 				});
 		thread.setName("Bulk retrieval thread (" + this.layername + ")");

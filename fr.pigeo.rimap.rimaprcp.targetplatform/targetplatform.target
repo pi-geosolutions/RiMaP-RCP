@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="RiMap RCP Eclipse 4 target platform" sequenceNumber="50">
+<?pde version="3.8"?><target name="RiMap RCP Eclipse 4 target platform" sequenceNumber="51">
 <locations>
 <location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.11.2.v20160208-0841"/>
@@ -18,8 +18,8 @@
 <repository location="http://download.eclipse.org/eclipse/updates/4.5"/>
 </location>
 <location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.nebula.widgets.pshelf.css.feature.feature.group" version="1.0.0.201701041652"/>
-<unit id="org.eclipse.nebula.widgets.pshelf.feature.feature.group" version="1.0.0.201701041652"/>
+<unit id="org.eclipse.nebula.widgets.pshelf.css.feature.feature.group" version="1.0.0.201803151220"/>
+<unit id="org.eclipse.nebula.widgets.pshelf.feature.feature.group" version="1.0.0.201803151220"/>
 <repository location="http://download.eclipse.org/nebula/snapshot"/>
 </location>
 </locations>
