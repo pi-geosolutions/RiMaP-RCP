@@ -42,24 +42,19 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 	private Integer weight = 1;
 
 	@Inject
-	@Optional
 	IPreferencesService prefsService;
 
 	@Inject
-	@Optional
 	IEclipseContext context;
 
 	@Inject
-	@Optional
 	IEventBroker eventBroker;
 
 	@Inject
-	@Optional
 	Logger logger;
 
 	// Custom injected resource
 	@Inject
-	@Optional
 	PadreCatalogState catalogState;
 
 	private String childrentag = "children";
@@ -129,8 +124,9 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 										// 'folder'
 										// to
 										// LayerType.FOLDER
-			} catch (java.lang.IllegalArgumentException ex) {
+			} catch (Exception ex) {
 				logger.error("Found unknown type "+child.get("type").asText()+" while parsing the layertree");
+				logger.error(ex.getLocalizedMessage());
 				break;
 			}
 			switch (type) {
@@ -153,7 +149,6 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 				layers.add(layer);
 				break;
 			case CHART:
-
 				System.out.println("TODO : load chart layers");
 				break;
 			default:

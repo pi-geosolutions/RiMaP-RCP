@@ -18,8 +18,8 @@
 <repository location="http://download.eclipse.org/eclipse/updates/4.5"/>
 </location>
 <location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.nebula.widgets.pshelf.css.feature.feature.group" version="1.0.0.201803151220"/>
-<unit id="org.eclipse.nebula.widgets.pshelf.feature.feature.group" version="1.0.0.201803151220"/>
+<unit id="org.eclipse.nebula.widgets.pshelf.css.feature.feature.group" version="1.0.0.201803191315"/>
+<unit id="org.eclipse.nebula.widgets.pshelf.feature.feature.group" version="1.0.0.201803191315"/>
 <repository location="http://download.eclipse.org/nebula/snapshot"/>
 </location>
 </locations>
