@@ -4,13 +4,15 @@ import java.util.List;
 
 public class PolygonQueryableParams {
 	private String layernames, headers;
+	private PQType type;
 	private int bandNumber, roundValue;
 	private List<String> fields;
 
-	public PolygonQueryableParams(String layernames, String headers, int bandNumber, int roundValue,
+	public PolygonQueryableParams(String layernames, PQType type, String headers, int bandNumber, int roundValue,
 			List<String> fields) {
 		super();
 		this.layernames = layernames;
+		this.type = type;
 		this.headers = headers;
 		this.bandNumber = bandNumber;
 		this.roundValue = roundValue;
@@ -59,6 +61,14 @@ public class PolygonQueryableParams {
 
 	public boolean isValid() {
 		return layernames!=null && layernames.length()>0;
+	}
+
+	public PQType getType() {
+		return type;
+	}
+
+	public void setType(PQType type) {
+		this.type = type;
 	}
 
 }

@@ -43,6 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants.QueryEventConstants;
+import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.contactsapp.ContActs;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n.Messages;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.wwj.PolygonBuilder;
 import fr.pigeo.rimap.rimaprcp.worldwind.WwjInstance;
@@ -152,10 +153,97 @@ public class PolygonQuery {
 			p.setArmed(true);
 			((Component) wwj.getWwd()).setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		} else {
+			p.setArmed(false);
 			((Component) wwj.getWwd()).setCursor(Cursor.getDefaultCursor());
 		}
 	}
 
+	/* Get Contacts object for MobileService (alerting tool)*/
+	public ContActs getContActs(IPolygonQueryableLayer clayer) {
+		if (this.httpClient == null) {
+			logger.error("HttpClient not set");
+			return null;
+		}
+		ContActs ct=null;
+		String layername = clayer.getParams()
+				.getLayernames();
+		PolygonQueryableParams params = clayer.getParams();
+		String request = buildContActsWFSRequest(clayer, this.polygon);
+
+		//System.out.println(request);
+		String url = clayer.getWFSUrl();
+		// perform the WFS query
+		StringEntity entity = new StringEntity(request, ContentType.create("text/xml", Consts.UTF_8));
+		HttpPost post = new HttpPost(url);
+		post.setEntity(entity);
+
+		RequestConfig requestConfig = RequestConfig.custom()
+				.setSocketTimeout(this.socketTimeout * 1000)
+				.setConnectTimeout(this.connectTimeout * 1000)
+				.setConnectionRequestTimeout(this.requestTimeout * 1000)
+				.build();
+
+		post.setConfig(requestConfig);
+
+		InputStream in;
+
+		try {
+			((Component) wwj.getWwd()).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			HttpResponse response = httpClient.execute(post);
+
+			//System.out.println(response.toString());
+			in = response.getEntity()
+					.getContent();
+			ct = new ContActs(in);
+
+			// EntityUtils.consumeQuietly(response.getEntity());
+		} catch (ClientProtocolException e) {
+			logger.error(e.toString());
+		} catch (SocketTimeoutException e) {
+			logger.error(e.toString());
+		} catch (IOException e) {
+			logger.error(e.toString());
+		} finally {
+			post.releaseConnection();
+		}
+
+		((Component) wwj.getWwd()).setCursor(Cursor.getDefaultCursor());
+		return ct;
+	}
+	
+	private String buildContActsWFSRequest(IPolygonQueryableLayer clayer, SurfacePolygon poly) {
+		String xml = "";
+		String layername = clayer.getParams().getLayernames();
+		BoundingBox bb = computeEnclosingBounds(poly);
+		xml = "<?xml version='1.0' encoding='UTF-8'?> \n" + 
+				"<wfs:GetFeature service='WFS' version='2.0.0'\n" + 
+				"    xmlns:wfs='http://www.opengis.net/wfs/2.0' xmlns:fes='http://www.opengis.net/fes/2.0'\n" + 
+				"    xmlns:gml='http://www.opengis.net/gml/3.2' xmlns:sf='http://www.openplans.org/spearfish'\n" + 
+				"    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'\n" + 
+				"    xsi:schemaLocation='http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd\n" + 
+				"        http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd' outputFormat='application/json'>\n" + 
+				"    <wfs:Query typeNames='"+layername+"'>\n" + 
+				"        <fes:Filter>\n" + 
+				"            <fes:Intersects>\n" + 
+				"                    <fes:ValueReference>the_geom</fes:ValueReference>\n" + 
+				"                    <gml:Polygon gml:id='polygon.1'\n" + 
+				"                        srsName='http://www.opengis.net/gml/srs/epsg.xml#4326'>\n" + 
+				"                        <gml:exterior>\n" + 
+				"                            <gml:LinearRing>\n" + 
+				"                                <!-- pairs must form a closed ring -->\n" + 
+				"                                <gml:posList>"+polygonToCoordinatesList(poly, " ", " ", " ")+"</gml:posList>\n" + 
+				"                            </gml:LinearRing>\n" + 
+				"                        </gml:exterior>\n" + 
+				"                    </gml:Polygon>\n" + 
+				"            </fes:Intersects>\n" + 
+				"        </fes:Filter>\n" + 
+				"    </wfs:Query>\n" + 
+				"</wfs:GetFeature>\n";
+		logger.debug(xml);
+		return xml;
+	}
+
+	/* Get stats as HTML in case we want rasterstats */
 	public String getStats(IPolygonQueryableLayer layer) {
 		//manages some caching, to avoid re-querying a result already retrieved once
 		if (wpsResultsCache.containsKey(layer)) {
@@ -393,7 +481,7 @@ public class PolygonQuery {
 				+ "</wps:LiteralData></wps:Data></wps:Input>" + "    <wps:Input>"
 				+ "      <ows:Identifier>zones</ows:Identifier>" + "      <wps:Data>"
 				+ "        <wps:ComplexData mimeType=\"application/json\">" + "			<![CDATA["
-				+ this.polygonToStringRep(poly) + "]]>" + "		 </wps:ComplexData>" + "      </wps:Data>"
+				+ this.polygonToGeoJSONStringRep(poly) + "]]>" + "		 </wps:ComplexData>" + "      </wps:Data>"
 				+ "    </wps:Input>" + "  </wps:DataInputs>" + "  <wps:ResponseForm>"
 				+ "    <wps:RawDataOutput mimeType=\"application/json\">"
 				+ "      <ows:Identifier>statistics</ows:Identifier>" + "    </wps:RawDataOutput>"
@@ -401,25 +489,34 @@ public class PolygonQuery {
 		return xml;
 	}
 
-	private String polygonToStringRep(SurfacePolygon p) {
+	private String polygonToGeoJSONStringRep(SurfacePolygon p) {
 		String json = "	{\"type\":\"FeatureCollection\", " + "\"crs\":{\"type\":\"EPSG\",\"properties\":{\"code\":\""
 				+ EPSGcode + "\"}},"
 				+ "\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[";
+		
+		json += polygonToCoordinatesList(p, "[", ",", "]");
+		json += "]]}}]}";
+
+		return json;
+	}
+	
+	private String polygonToCoordinatesList(SurfacePolygon p, String Open, String sep, String Close) {
+		String list = "";
 		Iterator it = p.getOuterBoundary()
 				.iterator();
 		while (it.hasNext()) {
 			LatLon l = (LatLon) it.next();
-			json += "[" + a2s(l.getLongitude()) + "," + a2s(l.getLatitude()) + "],";
+			list += Open + a2s(l.getLongitude()) + sep + a2s(l.getLatitude()) + Close;
 		}
 		// close the polygon by returning on the first node
 		LatLon l = (LatLon) p.getOuterBoundary()
 				.iterator()
 				.next();
-		json += "[" + a2s(l.getLongitude()) + "," + a2s(l.getLatitude()) + "]";
-		json += "]]}}]}";
+		list += Open + a2s(l.getLongitude()) + sep + a2s(l.getLatitude()) + Close;
 
-		return json;
+		return list;
 	}
+
 
 	/**
 	 * Computes the enclosing bounding rectangle for a given SurfacePolygon
@@ -463,6 +560,10 @@ public class PolygonQuery {
 	private String a2s(Angle angle) {
 		return Double.toString(angle.getDegrees());
 	}
+	
+	public void hidePolygon() {
+		//this.getPolygonBuilder().clear();
+	}
 
 	/**
 	 * Just a basic container for bounding box Angle values
@@ -473,5 +574,6 @@ public class PolygonQuery {
 	private class BoundingBox {
 		public Angle minLat = null, maxLat = null, minLon = null, maxLon = null;
 	}
+	
 
 }

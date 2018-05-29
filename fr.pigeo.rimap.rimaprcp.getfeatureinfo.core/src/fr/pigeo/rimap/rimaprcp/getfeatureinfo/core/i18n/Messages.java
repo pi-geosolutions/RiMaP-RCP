@@ -24,6 +24,13 @@ public class Messages {
 	public String polygonquery_template;
 	public String polygonquery_presentation;
 	public String polygonquery_layers;
+	// Mobile Service Strings
+	public String polygonquery_ms_mode;
+	public String polygonquery_ms_count;
+	public String polygonquery_ms_habcount;
+	public String polygonquery_ms_perc;
+	public String polygonquery_ms_habperc;
+	public String polygonquery_ms_view_title;
 	//Error messages
 	public String polygonquery_result_error;
 	public String polygonquery_result_timeout_error;

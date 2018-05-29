@@ -25,5 +25,8 @@
     <elements xsi:type="basic:PartDescriptor" xmi:id="_NIaXQEHpEeaNDrNqtJio1w" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.partdescriptor.pq" label="%partdescriptor.label.pq" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/icons/polygon_query_16px.png" tooltip="%partdescriptor.tooltip.pq" allowMultiple="true" closeable="true" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views.PolygonQueryResultsPart">
       <tags>PolygonQuery</tags>
     </elements>
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_QmHNUGNBEeiG8Pd_o-lCcQ" elementId="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.partdescriptor.contactsview" label="%partdescriptor.label.contactsview" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/icons/eye.png" tooltip="%partdescriptor.tooltip.contactsview" allowMultiple="true" closeable="true" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui/fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views.ContActsViewPart">
+      <tags>ContActsView</tags>
+    </elements>
   </fragments>
 </fragment:ModelFragments>

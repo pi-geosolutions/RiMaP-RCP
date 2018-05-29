@@ -25,6 +25,7 @@ import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.worldwind.layers.RimapWMSTiledImageLayer;
 import fr.pigeo.rimap.rimaprcp.core.wms.IWmsService;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
+import fr.pigeo.rimap.rimaprcp.worldwind.layers.PQType;
 import fr.pigeo.rimap.rimaprcp.worldwind.layers.PolygonQueryableParams;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
@@ -111,6 +112,7 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 		// polygon query params
 		String pq_layer = NodeUtils.parseString(node, "pq_layer", null);
 		if (pq_layer != null) {
+			boolean btype = NodeUtils.parseBool(node, "mobile_process", false);
 			int pq_bandnb = NodeUtils.parseInt(node, "pq_bandnb", 0);
 			String pq_header = NodeUtils.parseString(node, "pq_header", "");
 			int pq_round = NodeUtils.parseInt(node, "pq_round", 0);
@@ -126,7 +128,8 @@ public class WmsNode extends AbstractNode implements ICheckableNode {
 					//System.out.println("        - "+entry.getKey());
 				}
 			}
-			this.polygonQueryParams = new PolygonQueryableParams(pq_layer, pq_header, pq_bandnb, pq_round, pq_fields);
+			PQType pqtype = btype ? PQType.MobileService : PQType.RasterSTATS;
+			this.polygonQueryParams = new PolygonQueryableParams(pq_layer, pqtype, pq_header, pq_bandnb, pq_round, pq_fields);
 			
 		}
 

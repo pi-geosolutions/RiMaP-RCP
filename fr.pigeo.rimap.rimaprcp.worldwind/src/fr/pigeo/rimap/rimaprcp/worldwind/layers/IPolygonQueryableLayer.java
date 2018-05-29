@@ -7,4 +7,5 @@ public interface IPolygonQueryableLayer {
 	public void setParams(PolygonQueryableParams params);
 	public String getName();
 	public String getWPSUrl();
+	public String getWFSUrl();
 }

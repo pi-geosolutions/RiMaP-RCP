@@ -278,13 +278,19 @@ public class WwjInstance {
 			} else if (removeIfDisabled) {
 				layers.remove(layer);
 			}
-			this.getWwd()
-					.redraw();
+			
 		} else if (obj instanceof ElevationModel) {
 			ElevationModel em = (ElevationModel) obj;
 			CompoundElevationModel model = (CompoundElevationModel) this.getModel().getGlobe().getElevationModel();
-			model.addElevationModel(em);
+			if (em.isEnabled()) {
+				if (!model.containsElevationModel(em)) {
+					model.addElevationModel(em);
+				}
+			} else if (removeIfDisabled) {
+				model.removeElevationModel(em);
+			}
 		}
+		this.getWwd().redraw();
 	}
 
 	public void removeLayer(Layer layer) {

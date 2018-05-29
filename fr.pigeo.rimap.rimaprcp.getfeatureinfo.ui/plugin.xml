@@ -8,5 +8,13 @@
             uri="fragment.e4xmi">
       </fragment>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views.fdg"
+            id="fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.views.fdg"
+            name="dfg">
+      </view>
+   </extension>
 
 </plugin>

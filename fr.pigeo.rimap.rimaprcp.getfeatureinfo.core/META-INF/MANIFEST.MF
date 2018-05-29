@@ -20,8 +20,10 @@ Require-Bundle: javax.inject,
  fr.pigeo.rimap.rimaprcp.core,
  fr.pigeo.externals.org.apache.commons,
  fr.pigeo.externals.com.fasterxml.jackson.core,
- gov.nasa.worldwind;bundle-version="2.1.0"
+ gov.nasa.worldwind;bundle-version="2.1.0",
+ fr.pigeo.rimap.rimaprcp.core.services.catalog
 Export-Package: fr.pigeo.rimap.rimaprcp.getfeatureinfo.core,
  fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants,
+ fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.contactsapp,
  fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n
 Import-Package: gov.nasa.worldwind.geom

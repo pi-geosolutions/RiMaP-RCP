@@ -416,6 +416,15 @@ public class RimapWMSTiledImageLayer extends WMSTiledImageLayer implements IQuer
 		return url;
 	}
 
+	@Override
+	public String getWFSUrl() {
+		// Assumes a GeoServer WMS Url pattern
+		String pattern = "(?i)(/wms)(\\?)?$";
+		String url = this.parent.getUrl()
+				.replaceAll(pattern, "/wfs");
+		return url;
+	}
+
 	protected static String chooseImageFormat(Object[] formats, String[] formatOrderPreference) {
 		if (formats == null || formats.length == 0) {
 			return null;
