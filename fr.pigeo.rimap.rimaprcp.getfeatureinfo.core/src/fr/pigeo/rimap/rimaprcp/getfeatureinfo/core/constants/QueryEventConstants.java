@@ -10,6 +10,6 @@ public interface QueryEventConstants {
 
 	String TOOLITEM_SELECTED = "fr/pigeo/rimap/rimaprcp/query/toolitem/selected";
 
-	String POLYGONQUERY_MS_SHOW_SMS_CONTACTS_LIST = "fr/pigeo/rimap/rimaprcp/query/mobileservice/contactslist/sms/show";
-	String POLYGONQUERY_MS_SHOW_EMAIL_CONTACTS_LIST = "fr/pigeo/rimap/rimaprcp/query/mobileservice/contactslist/email/show";
+	String POLYGONQUERY_MS_SHOW_CONTACTS_LIST = "fr/pigeo/rimap/rimaprcp/query/mobileservice/contactslist/show";
+	String POLYGONQUERY_MS_SEND = "fr/pigeo/rimap/rimaprcp/query/mobileservice/contactslist/send";
 }

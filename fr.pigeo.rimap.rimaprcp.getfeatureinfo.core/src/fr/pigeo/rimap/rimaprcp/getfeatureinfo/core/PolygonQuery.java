@@ -194,8 +194,7 @@ public class PolygonQuery {
 			//System.out.println(response.toString());
 			in = response.getEntity()
 					.getContent();
-			ct = new ContActs(in);
-
+			ct = new ContActs(in, httpClient);
 			// EntityUtils.consumeQuietly(response.getEntity());
 		} catch (ClientProtocolException e) {
 			logger.error(e.toString());
@@ -240,6 +239,7 @@ public class PolygonQuery {
 				"    </wfs:Query>\n" + 
 				"</wfs:GetFeature>\n";
 		logger.debug(xml);
+		//System.out.println(xml);
 		return xml;
 	}
 

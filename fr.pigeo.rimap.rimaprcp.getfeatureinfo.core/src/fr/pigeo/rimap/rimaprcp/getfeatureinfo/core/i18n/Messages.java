@@ -30,7 +30,12 @@ public class Messages {
 	public String polygonquery_ms_habcount;
 	public String polygonquery_ms_perc;
 	public String polygonquery_ms_habperc;
+	public String polygonquery_ms_view_label;
+	public String polygonquery_ms_send_label;
 	public String polygonquery_ms_view_title;
+	public String polygonquery_ms_view_columnlabel_phone;
+	public String polygonquery_ms_view_columnlabel_hab;
+	
 	//Error messages
 	public String polygonquery_result_error;
 	public String polygonquery_result_timeout_error;

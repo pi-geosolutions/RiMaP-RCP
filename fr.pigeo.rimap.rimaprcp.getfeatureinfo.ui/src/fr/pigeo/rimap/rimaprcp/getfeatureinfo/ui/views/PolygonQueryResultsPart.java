@@ -295,7 +295,7 @@ public class PolygonQueryResultsPart {
 			public String getText(Object element) {
 				int count = ((CounterEntry) element).getCount();
 				float perc = 100.0f * ((float) count) / ((float) c.getTotalCount());
-				return String.valueOf(Math.round(perc));
+				return String.valueOf(Math.round(perc)) + " % ";
 			}
 		});
 
@@ -306,51 +306,18 @@ public class PolygonQueryResultsPart {
 			public String getText(Object element) {
 				int count = ((CounterEntry) element).getInhabitants();
 				float perc = 100.0f * ((float) count) / ((float) c.getTotalInhabitantsCount());
-				return String.valueOf(Math.round(perc));
+				return String.valueOf(Math.round(perc)) + " % ";
 			}
 		});
 
 		// view action
 		TableViewerColumn colView = createTableViewerColumn(tv, "", 50);
-		colView.setLabelProvider(new ContactButtonColumnLabelProvider(c, eventBroker));
+		colView.setLabelProvider(new ContactButtonColumnLabelProvider(messages.polygonquery_ms_view_label, c, eventBroker, QueryEventConstants.POLYGONQUERY_MS_SHOW_CONTACTS_LIST));
 		
 		// send action
-		TableViewerColumn colSend = createTableViewerColumn(tv, "", 50);
-		colSend.setLabelProvider(new ColumnLabelProvider() {
-			// TODO: make sure you dispose these buttons when viewer input
-			// changes
-			Map<Object, Button> buttons = new HashMap<Object, Button>();
-
-			@Override
-			public void update(ViewerCell cell) {
-				CounterEntry elt = ((CounterEntry) cell.getElement());
-				if (elt.canSendMessage()) {
-					TableItem item = (TableItem) cell.getItem();
-					Button button;
-					if (buttons.containsKey(cell.getElement())) {
-						button = buttons.get(cell.getElement());
-					} else {
-						button = new Button((Composite) cell.getViewerRow()
-								.getControl(), SWT.NONE);
-						button.setText(elt.getSendLabel());
-						buttons.put(cell.getElement(), button);
-						button.addSelectionListener(new SelectionAdapter() {
-
-							@Override
-							public void widgetSelected(SelectionEvent e) {
-								System.out.println("Send this dataset");
-							}
-
-						});
-						TableEditor editor = new TableEditor(item.getParent());
-						editor.grabHorizontal = true;
-						editor.grabVertical = true;
-						editor.setEditor(button, item, cell.getColumnIndex());
-						editor.layout();
-					}
-				}
-			}
-		});
+		TableViewerColumn colSend = createTableViewerColumn(tv, "", 80);
+		colSend.setLabelProvider(new ContactButtonColumnLabelProvider(messages.polygonquery_ms_send_label, c, eventBroker, QueryEventConstants.POLYGONQUERY_MS_SEND));
+	
 		tv.setInput(c.getCounter());
 		composite.layout(true);
 	}
@@ -395,16 +362,20 @@ public class PolygonQueryResultsPart {
 		Map<Object, Button> buttons = new HashMap<Object, Button>();
 		ContActs c;
 		IEventBroker eventBroker;
+		String eventID;
+		String buttonLabel;
 
-		public ContactButtonColumnLabelProvider(ContActs contacts, IEventBroker evt) {
-			c = contacts;
-			eventBroker = evt;
+		public ContactButtonColumnLabelProvider(String buttonLabel, ContActs contacts, IEventBroker evt, String eventID) {
+			this.c = contacts;
+			this.eventBroker = evt;
+			this.buttonLabel = buttonLabel;
+			this.eventID = eventID;
 		}
 
 		@Override
 		public void update(ViewerCell cell) {
 			CounterEntry elt = ((CounterEntry) cell.getElement());
-			if (elt.canSendMessage()) {
+			if (elt.canSendMessage() && elt.getCount() > 0) {
 				TableItem item = (TableItem) cell.getItem();
 				Button button;
 				if (buttons.containsKey(cell.getElement())) {
@@ -412,7 +383,7 @@ public class PolygonQueryResultsPart {
 				} else {
 					button = new Button((Composite) cell.getViewerRow()
 							.getControl(), SWT.NONE);
-					button.setText("View");
+					button.setText(buttonLabel);
 					buttons.put(cell.getElement(), button);
 					button.addSelectionListener(new SelectionAdapter() {
 						@Override
@@ -424,10 +395,8 @@ public class PolygonQueryResultsPart {
 								Map<String, Object> eventMap = new HashMap<String, Object>();
 								// Data map goes under the `IEventBroker.DATA` key, cf. https://stackoverflow.com/questions/34039914/eclipse-e4-eventbroker-mapstring-string-nullpointer
 								eventMap.put(IEventBroker.DATA, h);
-								eventBroker.send(QueryEventConstants.POLYGONQUERY_MS_SHOW_SMS_CONTACTS_LIST, eventMap);
-								System.out.println("Should have sent the event");
+								eventBroker.send(eventID, eventMap);
 							}
-							System.out.println("View this dataset");
 						}
 
 					});

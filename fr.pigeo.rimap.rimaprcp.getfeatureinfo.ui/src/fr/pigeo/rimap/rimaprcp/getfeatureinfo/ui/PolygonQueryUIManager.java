@@ -7,38 +7,49 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
 
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.PolygonQuery;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants.QueryEventConstants;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.contactsapp.ContActs;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n.Messages;
+import fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.dialogs.SendMessageDialog;
 
 @Creatable
 @Singleton
 public class PolygonQueryUIManager {
 	@Inject
 	EPartService partService;
+	
 	@Inject
 	EModelService modelService;
+	
 	@Inject
 	MApplication application;
+	
 	@Inject
 	@Translation
 	Messages messages;
+	
+	@Inject
+	@Named(IServiceConstants.ACTIVE_SHELL)
+	Shell shell;
 
 	@Inject
 	PolygonQuery pq;
@@ -91,12 +102,11 @@ public class PolygonQueryUIManager {
 
 	@Inject
 	@Optional
-	void onViewContact(
-			@UIEventTopic(QueryEventConstants.POLYGONQUERY_MS_SHOW_SMS_CONTACTS_LIST) Map<String, Object> h) {
+	void contactOnView(
+			@UIEventTopic(QueryEventConstants.POLYGONQUERY_MS_SHOW_CONTACTS_LIST) Map<String, Object> h) {
 
 		String mode = (String) h.get("mode");
-		ContActs ct = (ContActs) h.get("contacts");
-		System.out.println("View this dataset ");
+		ContActs ct = (ContActs) h.get("contacts");	
 		
 		// Create a PolygonQueryResultsPart
 		MPart part = partService.createPart(contactViewPartDescriptorID);
@@ -115,6 +125,22 @@ public class PolygonQueryUIManager {
 		}
 		partService.showPart(part, EPartService.PartState.ACTIVATE);
 
+	}
+	
+	@Inject
+	@Optional
+	void contactsOnSend(
+			@UIEventTopic(QueryEventConstants.POLYGONQUERY_MS_SEND) Map<String, Object> h) {
+
+		String mode = (String) h.get("mode");
+		ContActs ct = (ContActs) h.get("contacts");
+		
+		SendMessageDialog dialog = new SendMessageDialog(shell);
+		if (dialog.open() == Window.OK) {
+			String title = dialog.getMessageTitle();
+			String content = dialog.getMessageContent();
+			ct.sendMessage(mode, title, content);
+		}
 	}
 
 	private int countSiblings(MPartStack stack) {
