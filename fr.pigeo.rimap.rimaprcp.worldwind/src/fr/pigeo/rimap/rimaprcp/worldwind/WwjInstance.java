@@ -24,6 +24,7 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.CompassLayer;
 import gov.nasa.worldwind.layers.Layer;
@@ -34,6 +35,8 @@ import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwind.terrain.CompoundElevationModel;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
+import gov.nasa.worldwindx.examples.util.HighlightController;
+import gov.nasa.worldwindx.examples.util.ToolTipController;
 
 /**
  * @author jean.pommier@pi-geosolutions.fr
@@ -50,6 +53,9 @@ public class WwjInstance {
 	private WorldWindowGLCanvas wwd;
 	private Model model;
 	private List<Widget> widgetList = new ArrayList<Widget>();
+
+    protected ToolTipController toolTipController;
+    protected HighlightController highlightController;
 
 	@Inject
 	public WwjInstance(IPreferencesService prefs) {
@@ -87,6 +93,11 @@ public class WwjInstance {
 				.setIconFilePath("customconfig/img/Rose_des_vents.png");
 		this.getCompassLayer(this.wwd)
 				.setIconScale(1);
+		
+
+        // Add controllers to manage highlighting and tool tips.
+        this.toolTipController = new ToolTipController(this.getWwd(), AVKey.DISPLAY_NAME, null);
+        this.highlightController = new HighlightController(this.getWwd(), SelectEvent.ROLLOVER);
 		/*
 		 * double minlat =
 		 * prefService.getDouble("fr.pigeo.rimap.rimaprcp.worldwind",
