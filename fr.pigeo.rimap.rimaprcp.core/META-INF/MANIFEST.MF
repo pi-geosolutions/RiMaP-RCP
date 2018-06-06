@@ -12,6 +12,7 @@ Export-Package: fr.pigeo.rimap.rimaprcp.core,
  fr.pigeo.rimap.rimaprcp.core.geocatalog.jsonparsingobjects,
  fr.pigeo.rimap.rimaprcp.core.resource,
  fr.pigeo.rimap.rimaprcp.core.security,
+ fr.pigeo.rimap.rimaprcp.core.utils,
  fr.pigeo.rimap.rimaprcp.core.wms
 Service-Component: OSGI-INF/session-component.xml
 Require-Bundle: fr.pigeo.externals.com.fasterxml.jackson.core,

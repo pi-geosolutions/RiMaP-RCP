@@ -20,6 +20,7 @@ import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
+import fr.pigeo.rimap.rimaprcp.core.utils.JsonUtils;
 import fr.pigeo.rimap.rimaprcp.core.wms.IWmsService;
 import fr.pigeo.rimap.rimaprcp.worldwind.RimapAVKey;
 import gov.nasa.worldwind.Factory;
@@ -87,18 +88,18 @@ public class WmsDemNode extends AbstractNode implements ICheckableNode {
 					.getName());
 			return;
 		}
-		this.id = NodeUtils.parseString(node, "id", null);
-		this.name = NodeUtils.parseString(node, "text", this.name);
-		this.style = NodeUtils.parseString(node, "cls", LayerType.WMSDEM.toString());
-		this.comments = NodeUtils.parseString(node, "qtip", this.comments);
-		this.lastchanged = NodeUtils.parseDate(node, "lastchanged");
-		this.weight = NodeUtils.parseInt(node, "weight", this.weight);
-		this.url = NodeUtils.parseString(node, "url", this.url);
-		this.layers = NodeUtils.parseString(node, "layers", "");
-		this.metadata_uuid = NodeUtils.parseString(node, "uuid", "");
-		this.format = NodeUtils.parseString(node, "format", this.format);
-		//this.tiled = NodeUtils.parseBool(node, "TILED", this.tiled);//should be true
-		this.checked = NodeUtils.parseBool(node, "checked", this.checked);
+		this.id = JsonUtils.parseString(node, "id", null);
+		this.name = JsonUtils.parseString(node, "text", this.name);
+		this.style = JsonUtils.parseString(node, "cls", LayerType.WMSDEM.toString());
+		this.comments = JsonUtils.parseString(node, "qtip", this.comments);
+		this.lastchanged = JsonUtils.parseDate(node, "lastchanged");
+		this.weight = JsonUtils.parseInt(node, "weight", this.weight);
+		this.url = JsonUtils.parseString(node, "url", this.url);
+		this.layers = JsonUtils.parseString(node, "layers", "");
+		this.metadata_uuid = JsonUtils.parseString(node, "uuid", "");
+		this.format = JsonUtils.parseString(node, "format", this.format);
+		//this.tiled = JsonUtils.parseBool(node, "TILED", this.tiled);//should be true
+		this.checked = JsonUtils.parseBool(node, "checked", this.checked);
 
 		wmsService.registerServerCapability(this.url);
 

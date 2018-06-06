@@ -11,11 +11,23 @@
    <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
-            id="fr.pigeo.rimap.rimaprcp.admintools.core.ui.show.layertree.editor">
+            id="fr.pigeo.rimap.rimaprcp.admintools.core.ui.profile.is.admin">
          <with
                variable="sessionProfile">
             <equals
                   value="Administrator">
+            </equals>
+         </with>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="fr.pigeo.rimap.rimaprcp.admintools.core.ui.user.is.me">
+         <with
+               variable="userName">
+            <equals
+                  value="admin">
             </equals>
          </with>
       </definition>

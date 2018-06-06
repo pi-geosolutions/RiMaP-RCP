@@ -4,7 +4,8 @@ import java.util.Date;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.NodeUtils;
+import fr.pigeo.rimap.rimaprcp.core.utils.JsonUtils;
+
 
 public class ContactEntry {
 	int inhabitants;
@@ -25,12 +26,12 @@ public class ContactEntry {
 	}
 	
 	public ContactEntry(JsonNode node) {
-		this.inhabitants = NodeUtils.parseInt(node, "total_inhabitants", 0);
-		this.contact_mode = NodeUtils.parseString( node, "contact_mode", "unspecified");
-		this.tel = NodeUtils.parseString( node, "tel", "");
-		this.mail = NodeUtils.parseString( node, "mail", "");
-		this.contact_mode_other = NodeUtils.parseString( node, "contact_mode_other", "");
-		this.date = NodeUtils.parseDate(node, "date");
+		this.inhabitants = JsonUtils.parseInt(node, "total_inhabitants", 0);
+		this.contact_mode = JsonUtils.parseString( node, "contact_mode", "unspecified");
+		this.tel = JsonUtils.parseString( node, "tel", "");
+		this.mail = JsonUtils.parseString( node, "mail", "");
+		this.contact_mode_other = JsonUtils.parseString( node, "contact_mode_other", "");
+		this.date = JsonUtils.parseDate(node, "date");
 	}
 	
 	public int getInhabitants() {

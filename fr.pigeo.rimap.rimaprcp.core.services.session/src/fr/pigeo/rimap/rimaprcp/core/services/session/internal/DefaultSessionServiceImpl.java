@@ -1,15 +1,18 @@
 package fr.pigeo.rimap.rimaprcp.core.services.session.internal;
 
 import java.io.IOException;
+import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
+import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
@@ -24,6 +27,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -34,17 +38,18 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dialogs.LoginDialog;
 import fr.pigeo.rimap.rimaprcp.core.constants.RimapConstants;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
+import fr.pigeo.rimap.rimaprcp.core.resource.IResourceService;
 import fr.pigeo.rimap.rimaprcp.core.security.ISessionService;
 import fr.pigeo.rimap.rimaprcp.core.security.Session;
 import fr.pigeo.rimap.rimaprcp.core.security.SessionConstants;
+import fr.pigeo.rimap.rimaprcp.core.utils.JsonUtils;
 
 public class DefaultSessionServiceImpl implements ISessionService {
 	private Session session;
@@ -54,7 +59,7 @@ public class DefaultSessionServiceImpl implements ISessionService {
 
 	@Inject
 	IPreferencesService prefService;
-
+	
 	@Inject
 	@Named(IServiceConstants.ACTIVE_SHELL)
 	Shell shell;
@@ -176,6 +181,7 @@ public class DefaultSessionServiceImpl implements ISessionService {
 			getProfile(session);
 			//set variable in context to use for core expression (menu entries visibility)
 			context.set("sessionProfile", session.getProfile());
+			context.set("userName", session.getUsername());
 			eventBroker.send(RiMaPEventConstants.SESSION_SERVER_VALIDATED, session);
 		}
 	}
@@ -187,45 +193,98 @@ public class DefaultSessionServiceImpl implements ISessionService {
 	 */
 	private boolean getProfile(Session s) {
 		String url = s.getProfileURL();
-		CloseableHttpClient httpclient = this.getHttpClient();
-		CloseableHttpResponse response;
-		Document doc = null;
+		CloseableHttpClient httpClient = this.getHttpClient();
 		try {
-			response = httpclient.execute(new HttpGet(url));
-			if (response.getStatusLine()
-					.getStatusCode() == HttpStatus.SC_OK) {
-				
-				HttpEntity entity = response.getEntity();
-				
-				SAXBuilder sxb = new SAXBuilder();
+			URL _url = new URL(url);
+			if (httpClient != null) {
+				HttpGet httpget = new HttpGet(url);
+				httpget.setHeader(HttpHeaders.ACCEPT, "application/json");
+				httpget.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate, br");
+				CloseableHttpResponse response = httpClient.execute(httpget);
 				try {
-					doc = sxb.build(entity.getContent());
-					Element root = doc.getRootElement();
-					Element me = root.getChild("me");
-					if (me==null) {return false; }
-					s.setProfile(me.getChildText("profile"));
-					s.setProfile_name(me.getChildText("name"));
-					s.setProfile_surname(me.getChildText("surname"));
-					s.setProfile_email(me.getChildText("email"));
-				} catch (UnsupportedOperationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return false;
-				} catch (JDOMException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return false;
-				} 
-				finally {
+					HttpEntity entity = response.getEntity();
+					if (entity != null) {
+						String resp = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+						JsonNode me = null;
+						// We create the JsonParser using Jackson
+						ObjectMapper objectMapper = new ObjectMapper();
+						try {
+							me = objectMapper.readValue(resp, JsonNode.class);
+							String profile = JsonUtils.parseString(me, "profile", "");
+							String username = JsonUtils.parseString(me, "username", "");
+							String name = JsonUtils.parseString(me, "name", "");
+							String surname = JsonUtils.parseString(me, "surname", "");
+							String email = JsonUtils.parseString(me, "email", "");
+							String organisation = JsonUtils.parseString(me, "organisation", "");
+							String hash = JsonUtils.parseString(me, "hash", "");
+							int id = JsonUtils.parseInt(me, "id", -1);
+							s.setProfile(profile);
+							s.setProfile_name(name);
+							s.setProfile_surname(surname);
+							s.setProfile_email(email);
+							
+						} catch (IOException e) {
+							e.printStackTrace();
+							return false;
+						}
+					}
+				} finally {
+					response.close();
 				}
+			} else {
+				// Other method. No authentification is taken into account
+				logger.warn("HttpClient is null. This shouldn't occur."
+						+ "The application will not be able to access restricted resources."
+						+ "Trying to load the resource another way...");
+				return false;
 			}
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = e.getClass()
+					.toString() + ": Couldn't load " + url + " from server.";
+			return false;
 		}
+		
+//		String url = s.getProfileURL();
+//		CloseableHttpClient httpclient = this.getHttpClient();
+//		CloseableHttpResponse response;
+//		Document doc = null;
+//		try {
+//			response = httpclient.execute(new HttpGet(url));
+//			if (response.getStatusLine()
+//					.getStatusCode() == HttpStatus.SC_OK) {
+//				
+//				HttpEntity entity = response.getEntity();
+//				
+//				SAXBuilder sxb = new SAXBuilder();
+//				try {
+//					InputStream ct = entity.getContent();
+//					doc = sxb.build(ct);
+//					Element root = doc.getRootElement();
+//					Element me = root.getChild("me");
+//					if (me==null) {return false; }
+//					s.setProfile(me.getChildText("profile"));
+//					s.setProfile_name(me.getChildText("name"));
+//					s.setProfile_surname(me.getChildText("surname"));
+//					s.setProfile_email(me.getChildText("email"));
+//				} catch (UnsupportedOperationException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					return false;
+//				} catch (JDOMException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					return false;
+//				} 
+//				finally {
+//				}
+//			}
+//		} catch (ClientProtocolException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		return true;
 	}
 

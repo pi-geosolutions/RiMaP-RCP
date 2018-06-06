@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_ShToEDJSEeaFT6iUohRRCQ">
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmlns:ui="http://www.eclipse.org/ui/2010/UIModel/application/ui" xmi:id="_ShToEDJSEeaFT6iUohRRCQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_nVZsojJTEeaFT6iUohRRCQ" featurename="handlers" parentElementId="fr.pigeo.rimap.rimaprcp.application">
     <elements xsi:type="commands:Handler" xmi:id="_IU-PkDJVEeaFT6iUohRRCQ" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handler.0" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.admintools.core.ui/fr.pigeo.rimap.rimaprcp.admintools.core.ui.handlers.ShowLayertreeSourceHandler" command="_Ew_LcDJVEeaFT6iUohRRCQ"/>
     <elements xsi:type="commands:Handler" xmi:id="_QoZNUDMQEean_-vY9k6c3w" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handler.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.admintools.core.ui/fr.pigeo.rimap.rimaprcp.admintools.core.ui.handlers.FixDataHandler" command="_KKU9sDMQEean_-vY9k6c3w"/>
@@ -23,6 +23,11 @@
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_cxX80DPKEea4hpsAeB2m5A" featurename="children" parentElementId="fr.pigeo.rimap.rimaprcp.menu.display">
-    <elements xsi:type="menu:HandledMenuItem" xmi:id="_vMmiADPKEea4hpsAeB2m5A" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handledmenuitem.show.layertreeeditor" label="Show Layertree Editor" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.admintools.core.ui/icons/page_white_edit.png" command="_KmZksDPLEea4hpsAeB2m5A"/>
+    <elements xsi:type="menu:HandledMenuItem" xmi:id="_vMmiADPKEea4hpsAeB2m5A" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handledmenuitem.show.layertreeeditor" label="Show Layertree Editor" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.admintools.core.ui/icons/page_white_edit.png" command="_KmZksDPLEea4hpsAeB2m5A">
+      <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_3MLCsGlYEeirzbDDuqMeCQ" coreExpressionId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.profile.is.admin"/>
+    </elements>
+    <elements xsi:type="menu:DirectMenuItem" xmi:id="_ZFLq8GidEeiwBvrYx1KKzA" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.directmenuitem.logconsole" label="View Log Console" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.admintools.core.ui/fr.pigeo.rimap.rimaprcp.admintools.core.ui.handlers.ViewLogConsole">
+      <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_KcYLQGldEeiRH8qnBrCxXA" coreExpressionId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.user.is.me"/>
+    </elements>
   </fragments>
 </fragment:ModelFragments>

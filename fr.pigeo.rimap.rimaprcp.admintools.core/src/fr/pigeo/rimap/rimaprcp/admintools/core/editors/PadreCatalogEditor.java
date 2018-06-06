@@ -26,6 +26,7 @@ import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.NodeUtils;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.catalogs.PadreCatalog;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.CatalogConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
+import fr.pigeo.rimap.rimaprcp.core.utils.JsonUtils;
 
 public class PadreCatalogEditor {
 	@Inject
@@ -167,9 +168,9 @@ public class PadreCatalogEditor {
 		// http://afo.pigeo.fr/geoserver-prod/wms? && afo:afolayer uses global
 		// WMS service.
 		// we prefer http://afo.pigeo.fr/geoserver-prod/afo/wms? && afolayer
-		String url = NodeUtils.parseString(node, "url", "");
-		String layer = NodeUtils.parseString(node, "layers", "");
-		String name = NodeUtils.parseString(node, "text", "no name");
+		String url = JsonUtils.parseString(node, "url", "");
+		String layer = JsonUtils.parseString(node, "layers", "");
+		String name = JsonUtils.parseString(node, "text", "no name");
 		String[] layerparts = layer.split(":");
 
 		//fixing URL

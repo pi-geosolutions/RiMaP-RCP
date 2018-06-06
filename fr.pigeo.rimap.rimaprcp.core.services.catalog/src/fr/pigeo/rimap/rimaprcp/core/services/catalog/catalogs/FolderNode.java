@@ -22,6 +22,7 @@ import fr.pigeo.rimap.rimaprcp.core.catalog.INode;
 import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.CatalogConstants;
 import fr.pigeo.rimap.rimaprcp.core.services.catalog.internal.LayerType;
+import fr.pigeo.rimap.rimaprcp.core.utils.JsonUtils;
 
 public class FolderNode extends AbstractNode implements IExpandableNode {
 	private static String IMAGE_FOLDERICON = "icons/folder.gif";
@@ -82,10 +83,10 @@ public class FolderNode extends AbstractNode implements IExpandableNode {
 			return;
 		}
 		if (!this.isRootNode()) {
-			this.id = NodeUtils.parseString(node, "id", null);
-			this.name = NodeUtils.parseString(node, "text", "unnamed folder");
-			this.expanded = NodeUtils.parseBool(node, "expanded", false);
-			this.lastchanged = NodeUtils.parseDate(node, "lastchanged");
+			this.id = JsonUtils.parseString(node, "id", null);
+			this.name = JsonUtils.parseString(node, "text", "unnamed folder");
+			this.expanded = JsonUtils.parseBool(node, "expanded", false);
+			this.lastchanged = JsonUtils.parseDate(node, "lastchanged");
 			// System.out.println("Loaded node "+this.name);
 		}
 		if (node.has(this.childrentag)) {

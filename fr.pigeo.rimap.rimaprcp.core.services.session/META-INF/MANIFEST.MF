@@ -15,6 +15,7 @@ Require-Bundle: fr.pigeo.rimap.rimaprcp.core;bundle-version="1.0.0",
  org.eclipse.e4.ui.services,
  fr.pigeo.externals.org.apache.commons;bundle-version="1.0.0",
  fr.pigeo.externals.org.jdom;bundle-version="2.0.2",
- org.eclipse.swt
+ org.eclipse.swt,
+ fr.pigeo.externals.com.fasterxml.jackson.core
 Service-Component: OSGI-INF/session-service.xml
 Bundle-ActivationPolicy: lazy
