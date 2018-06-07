@@ -49,6 +49,17 @@ public class Messages {
 	//Extent combo box values
 	public String extent_intersection;
 	public String extent_within;
+
+	/*-----------------------------------------*/
+	/*------  Flood tool labels     -----------*/
+	/*-----------------------------------------*/
+
+	public String flood_dialog_close_label;
+	public String flood_dialog_btn_drawsector_label;
+	public String flood_dialog_btn_flood_label;
+	public String flood_dialog_lbl_waterheight_label;
+	public String flood_dialog_txt_waterheight_label;
+	public String flood_dialog_spinner_height_tooltip;
 	
 	/*-----------------------------------------*/
 	/*------  Animations labels     -----------*/

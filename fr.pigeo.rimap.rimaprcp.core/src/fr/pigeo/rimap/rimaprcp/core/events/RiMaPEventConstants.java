@@ -47,4 +47,12 @@ public interface RiMaPEventConstants {
 	
 	//Globe view related
 	String GLOBE_TOOLITEM_SELECTED = "fr/pigeo/rimap/rimaprcp/globe/toolitem/selected";
+	
+
+	// Water flood related
+	String WATER_SECTORSELECTOR_DRAW = "fr/pigeo/rimap/rimaprcp/water/sectorselector/draw";
+	String WATER_SECTORSELECTOR_DRAWN = "fr/pigeo/rimap/rimaprcp/water/sectorselector/drawn";
+	String WATER_DIALOG_CLOSED = "fr/pigeo/rimap/rimaprcp/water/dialog/closed";
+	String WATER_DIALOG_FLOOD = "fr/pigeo/rimap/rimaprcp/water/dialog/flood";
+	String WATER_HEIGHT_CHANGED = "fr/pigeo/rimap/rimaprcp/water/height/changed";
 }
