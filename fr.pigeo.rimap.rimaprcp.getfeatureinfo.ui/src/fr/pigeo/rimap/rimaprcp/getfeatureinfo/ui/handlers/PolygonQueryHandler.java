@@ -30,7 +30,7 @@ public class PolygonQueryHandler {
 	@Execute
 	public void execute(final MToolItem item, IEventBroker broker, PolygonQueryUIManager pquim, IEventBroker eventBroker) {
 		//disable all other toolItems by telling them this item is selected
-		eventBroker.send(QueryEventConstants.TOOLITEM_SELECTED, item);
+		eventBroker.send(RiMaPEventConstants.GLOBE_TOOLITEM_SELECTED, item);
 		
 		pquim.enable(item.isSelected());
 		this.pqm = pquim;
@@ -58,7 +58,7 @@ public class PolygonQueryHandler {
 	
 	@Inject
 	@Optional
-	void onToolItemChange(@UIEventTopic(QueryEventConstants.TOOLITEM_SELECTED) MToolItem item) {
+	void onToolItemChange(@UIEventTopic(RiMaPEventConstants.GLOBE_TOOLITEM_SELECTED) MToolItem item) {
 		if (item==this.toolItem) {
 			//do nothing, we probably issued the event
 			return;

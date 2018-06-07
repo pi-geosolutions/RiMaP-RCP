@@ -31,6 +31,7 @@
     <mainMenu xmi:id="_qcxpQKADEeWixbndLxrgBw" elementId="fr.pigeo.rimap.rimaprcp.menu.0">
       <children xsi:type="menu:Menu" xmi:id="_v8rWUGl9EeiRH8qnBrCxXA" elementId="fr.pigeo.rimap.rimaprcp.core.ui.menu.file" label="%menu.file">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_0JMaEGl9EeiRH8qnBrCxXA" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handledmenuitem.file.import.shapefile" label="%menu.file.import.shapefile" command="_eSFj4Gl9EeiRH8qnBrCxXA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_2X6H0GmSEeiRH8qnBrCxXA" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handledmenuitem.file.import.geotiff" label="%menu.file.import.raster" command="_-D6xQGmSEeiRH8qnBrCxXA"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_CrNVsMZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.menu.display" label="%menu.display.label">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_qwPYEMZ0EeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.handledmenuitem.show.compass" toBeRendered="false" visible="false" label="%handledmenuitem.label.1" tooltip="%handledmenuitem.tooltip.1" enabled="false" selected="true" type="Check" command="_NRVm4MZwEeWTGLqWyfJYDw">
@@ -61,7 +62,9 @@
       </children>
     </mainMenu>
     <sharedElements xsi:type="basic:Part" xmi:id="_uAcTcJzFEeW3eM-i01vfSQ" elementId="fr.pigeo.rimap.rimaprcp.part.wwjview" containerData="700" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.views.WWJView" label="%part.label.5">
-      <toolbar xmi:id="_tezsEAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar"/>
+      <toolbar xmi:id="_tezsEAJJEeaqnpp0Mlm3BA" elementId="fr.pigeo.rimap.rimaprcp.toolbar.wwjtoolbar">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_OlKXMGmtEeiRH8qnBrCxXA" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handledtoolitem.waterlevel" label="Water level" command="_Kqe04GmuEeiRH8qnBrCxXA"/>
+      </toolbar>
     </sharedElements>
     <trimBars xmi:id="_wA6wAKpcEeatzY3qVeLpgg" elementId="fr.pigeo.rimap.rimaprcp.core.ui.trimbar.main" toBeRendered="false" visible="false">
       <children xsi:type="menu:ToolBar" xmi:id="_jFi7YKqAEeatzY3qVeLpgg" elementId="fr.pigeo.rimap.rimaprcp.core.ui.toolbar.0">
@@ -71,6 +74,8 @@
   </children>
   <handlers xmi:id="_IfKW4CNuEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handler.0" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.handlers.PerspectiveSwitchHandler" command="_38TBgCNtEeaurtXB4vEzfw"/>
   <handlers xmi:id="_fniecGl-EeiRH8qnBrCxXA" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handler.1" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.handlers.ImportShapefile" command="_eSFj4Gl9EeiRH8qnBrCxXA"/>
+  <handlers xmi:id="_BtSrsGmTEeiRH8qnBrCxXA" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handler.2" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.handlers.ImportGeotiff" command="_-D6xQGmSEeiRH8qnBrCxXA"/>
+  <handlers xmi:id="_TOQMwGmuEeiRH8qnBrCxXA" elementId="fr.pigeo.rimap.rimaprcp.core.ui.handler.3" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.core.ui/fr.pigeo.rimap.rimaprcp.core.ui.handlers.WaterLevel" command="_Kqe04GmuEeiRH8qnBrCxXA"/>
   <commands xmi:id="_NRVm4MZwEeWTGLqWyfJYDw" elementId="fr.pigeo.rimap.rimaprcp.command.showWidget" commandName="%command.commandname.1" description="%command.description.1">
     <parameters xmi:id="_SKPgoMaeEeWhs9jbqkh9kg" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.show_wwj_widget_ref" name="Reference to the WWJ widget to show/hide" typeId="" optional="false"/>
   </commands>
@@ -78,6 +83,8 @@
     <parameters xmi:id="_8Az_0CNtEeaurtXB4vEzfw" elementId="fr.pigeo.rimap.rimaprcp.commandparameter.perspectiveid" name="Perspective ID (destination)" optional="false"/>
   </commands>
   <commands xmi:id="_eSFj4Gl9EeiRH8qnBrCxXA" elementId="fr.pigeo.rimap.rimaprcp.core.ui.command.file.import.shapefile" commandName="Import Shapefile"/>
+  <commands xmi:id="_-D6xQGmSEeiRH8qnBrCxXA" elementId="fr.pigeo.rimap.rimaprcp.core.ui.command.file.import.geotiff" commandName="Import Geotiff"/>
+  <commands xmi:id="_Kqe04GmuEeiRH8qnBrCxXA" elementId="fr.pigeo.rimap.rimaprcp.core.ui.command.globe.tools.waterlevel" commandName="Water level" description="Simulate water level rise (flood)"/>
   <addons xmi:id="_o0Uz4ZzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_o0Uz4pzFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_o0Uz45zFEeW3eM-i01vfSQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

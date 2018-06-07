@@ -46,6 +46,8 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
 /**
@@ -77,6 +79,8 @@ public class LayersListTableComposite extends Composite {
 	protected final Image PQUERY = getImage("polygon_query_16px.png");
 	protected final Image WMS_ICON = getImage("wms.png");
 	protected final Image WMSDEM_ICON = getImage("wmsdem.png");
+	protected final Image VECTOR_ICON = getImage("vector.png");
+	protected final Image SURFACEIMAGE_ICON = getImage("surfaceimage.png");
 	protected final Image WMST = getImage("clock.png");
 
 	public LayersListTableComposite(Composite parent, int style, WwjInstance wwjInst) {
@@ -159,6 +163,16 @@ public class LayersListTableComposite extends Composite {
 				}
 				if (element instanceof ElevationModel) {
 					return WMSDEM_ICON;
+				}
+				if (element instanceof SurfaceImageLayer) {
+					return SURFACEIMAGE_ICON;
+				}
+				if (element instanceof RenderableLayer ) {
+					RenderableLayer l = (RenderableLayer) element;
+					String type = (String) l.getValue(RimapAVKey.LAYER_TYPE);
+					if (type!=null && type.equalsIgnoreCase("shapefile")) {
+						return VECTOR_ICON;
+					}
 				}
 				return null;
 			}

@@ -202,6 +202,40 @@ public class LayerDetailsImpl extends LayerDetails {
 		this.btnShowMetadata.setVisible(isRimapLayer);
 		this.btnShowLegend.setVisible(isRimapLayer && isLayer);
 
+		if (this.btnZoomToExtent.isVisible()) {
+			// Show extent button events
+			if (this.btnExtentSelectionAdapter != null)
+				this.btnZoomToExtent.removeSelectionListener(this.btnExtentSelectionAdapter);
+			this.btnExtentSelectionAdapter = new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					final WWObject l = (WWObject) layer;
+					if (wwj != null) {
+						// System.out.println("Zooming to extent");
+						Sector sector = (Sector) l.getValue(AVKey.SECTOR);
+						if (sector==null) {
+							return;
+						}
+						WorldWindowGLCanvas wwd = wwj.getWwd();
+						Extent extent = Sector.computeBoundingCylinder(wwd.getModel()
+								.getGlobe(),
+								wwd.getSceneController()
+										.getVerticalExaggeration(),
+								sector);
+
+						Angle fov = wwd.getView()
+								.getFieldOfView();
+						Position centerPos = new Position(sector.getCentroid(), 0d);
+						double zoom = extent.getRadius() / fov.cosHalfAngle() / fov.tanHalfAngle();
+
+						wwd.getView()
+								.goTo(centerPos, zoom);
+					}
+				}
+			};
+			this.btnZoomToExtent.addSelectionListener(this.btnExtentSelectionAdapter);
+		}
+		
 		if (isRimapLayer) {
 			final WWObject l = (WWObject) layer;
 			node = (AbstractNode) l.getValue(RimapAVKey.LAYER_PARENTNODE);
@@ -224,33 +258,7 @@ public class LayerDetailsImpl extends LayerDetails {
 				this.btnShowMetadata.addSelectionListener(this.btnMetadataSelectionAdapter);
 			}
 
-			// Show extent button events
-			if (this.btnExtentSelectionAdapter != null)
-				this.btnZoomToExtent.removeSelectionListener(this.btnExtentSelectionAdapter);
-			this.btnExtentSelectionAdapter = new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (wwj != null) {
-						// System.out.println("Zooming to extent");
-						Sector sector = (Sector) l.getValue(AVKey.SECTOR);
-						WorldWindowGLCanvas wwd = wwj.getWwd();
-						Extent extent = Sector.computeBoundingCylinder(wwd.getModel()
-								.getGlobe(),
-								wwd.getSceneController()
-										.getVerticalExaggeration(),
-								sector);
 
-						Angle fov = wwd.getView()
-								.getFieldOfView();
-						Position centerPos = new Position(sector.getCentroid(), 0d);
-						double zoom = extent.getRadius() / fov.cosHalfAngle() / fov.tanHalfAngle();
-
-						wwd.getView()
-								.goTo(centerPos, zoom);
-					}
-				}
-			};
-			this.btnZoomToExtent.addSelectionListener(this.btnExtentSelectionAdapter);
 
 			// Show legend button events
 			if (this.btnLegendSelectionAdapter != null)

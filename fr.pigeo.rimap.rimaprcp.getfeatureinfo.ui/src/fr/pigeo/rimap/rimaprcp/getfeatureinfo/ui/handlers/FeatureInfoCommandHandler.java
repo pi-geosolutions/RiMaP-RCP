@@ -9,6 +9,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 
+import fr.pigeo.rimap.rimaprcp.core.events.RiMaPEventConstants;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.FeatureInfo;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants.QueryEventConstants;
 
@@ -19,7 +20,7 @@ public class FeatureInfoCommandHandler {
 	@Execute
 	public void execute(final MToolItem item, IEventBroker broker, FeatureInfo fi, IEventBroker eventBroker) {
 		//disable all other toolItems by telling them this item is selected
-		eventBroker.send(QueryEventConstants.TOOLITEM_SELECTED, item);
+		eventBroker.send(RiMaPEventConstants.GLOBE_TOOLITEM_SELECTED, item);
 		
 		fi.setEnabled(item.isSelected());
 		this.featureinfo = fi;
@@ -28,7 +29,7 @@ public class FeatureInfoCommandHandler {
 	
 	@Inject
 	@Optional
-	void onToolItemChange(@UIEventTopic(QueryEventConstants.TOOLITEM_SELECTED) MToolItem item) {
+	void onToolItemChange(@UIEventTopic(RiMaPEventConstants.GLOBE_TOOLITEM_SELECTED) MToolItem item) {
 		if (item==this.toolItem) {
 			//do nothing, we probably issued the event
 			return;

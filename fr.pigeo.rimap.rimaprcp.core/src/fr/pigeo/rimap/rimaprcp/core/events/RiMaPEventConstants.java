@@ -44,4 +44,7 @@ public interface RiMaPEventConstants {
 	String ANIMATIONS_SELECTED_DATE_CHANGED = "fr/pigeo/rimap/rimaprcp/animations/date/selected/changed";
 	String ANIMATIONS_SECTORSELECTOR_SECTOR_CHANGED = "fr/pigeo/rimap/rimaprcp/animations/sectorselector/sector/changed";
 	String ANIMATIONS_PLAYER_DATE_CHANGED 			= "fr/pigeo/rimap/rimaprcp/animations/player/date_changed" ;
+	
+	//Globe view related
+	String GLOBE_TOOLITEM_SELECTED = "fr/pigeo/rimap/rimaprcp/globe/toolitem/selected";
 }

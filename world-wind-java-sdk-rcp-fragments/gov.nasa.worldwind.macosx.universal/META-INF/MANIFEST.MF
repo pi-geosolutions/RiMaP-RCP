@@ -8,4 +8,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: National Aeronautics and Space Administration (NASA)
 Eclipse-PlatformFilter: (& (osgi.ws=carbon) (osgi.os=macosx))
 Bundle-NativeCode: 
- libgluegen-rt.jnilib;libjogl_desktop.jnilib;libjogl_mobile.jnilib;libnativewindow_awt.jnilib;libnativewindow_macosx.jnilib;libnewt.jnilib;osname=macosx
+ libgluegen-rt.jnilib;libjogl_desktop.jnilib;libjogl_mobile.jnilib;libnativewindow_awt.jnilib;libnativewindow_macosx.jnilib;libnewt.jnilib;gdal/libgdalalljni.jnilib;osname=macosx
