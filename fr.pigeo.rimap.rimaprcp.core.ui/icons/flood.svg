@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16px"
+   height="16px"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="SVGRoot"
+   inkscape:export-filename="/home/jean/dev/RiMaP/gitrepo/fr.pigeo.rimap.rimaprcp.core.ui/icons/flood.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   inkscape:version="0.92.1 r15371"
+   sodipodi:docname="flood.svg">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="16"
+     inkscape:cx="8"
+     inkscape:cy="8"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1036"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     inkscape:grid-bbox="true" />
+  <defs
+     id="defs5036">
+    <inkscape:path-effect
+       is_visible="true"
+       id="path-effect5609"
+       effect="spiro" />
+    <inkscape:path-effect
+       is_visible="true"
+       id="path-effect5603"
+       effect="spiro" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5599"
+       is_visible="true" />
+  </defs>
+  <metadata
+     id="metadata5039">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Calque 1">
+    <path
+       style="fill:#3696ed;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 2.1640625,0.2890625 C -1.1294164,0.7660126 -4.5188499,2.602849 1.4006107,4.2716283 6.921875,5.5332031 1.6819854,11.054012 2.7246094,14.126953 4.067477,18.168406 12.701127,16.596721 13.640625,13.341797 18.643504,13.770786 21.33836,10.276989 15.589844,6.0351562 11.522077,4.910147 11.874463,9.541316 9.6872269,9.536347 7.5180124,9.531418 9.4606318,3.8902686 7.984375,1.5957031 7.3509841,-0.1805216 3.3115987,0.23174505 2.1640625,0.2890625 Z"
+       id="path5607"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccscc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#0a00cb;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 0.9375,2.6875 C 1.6436835,2.3730059 2.4642388,2.3235175 3.2031009,2.5508597 3.941963,2.7782019 4.5927639,3.2804152 5,3.9375 5.4045761,4.5902928 5.564174,5.3676506 5.6137312,6.1340476 5.6632884,6.9004446 5.6101066,7.6696468 5.625,8.4375 c 0.023306,1.2015575 0.2333797,2.44783 0.9315356,3.426023 0.349078,0.489097 0.8181868,0.899169 1.3696429,1.137847 0.5514561,0.238678 1.1864664,0.298594 1.7613215,0.12363 0.469605,-0.14293 0.880316,-0.431735 1.263559,-0.738464 0.383243,-0.30673 0.750774,-0.637763 1.173941,-0.886536 0.893727,-0.525407 2.017175,-0.642433 3,-0.3125"
+       id="path5597"
+       inkscape:connector-curvature="0"
+       inkscape:path-effect="#path-effect5599"
+       inkscape:original-d="M 0.9375,2.6875 C 2.2926667,3.1031667 3.6468333,3.5198333 5,3.9375 c 1.3531667,0.4176667 0.4176667,2.999 0.625,4.5 0.2073333,1.501 2.7093333,3.124 4.0625,4.6875 1.353167,1.5635 1.626,-1.084333 2.4375,-1.625 0.8115,-0.540667 2.001,-0.209333 3,-0.3125" />
+  </g>
+</svg>

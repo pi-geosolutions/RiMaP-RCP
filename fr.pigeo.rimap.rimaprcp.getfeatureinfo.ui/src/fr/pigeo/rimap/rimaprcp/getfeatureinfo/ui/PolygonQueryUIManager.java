@@ -23,12 +23,14 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.PolygonQuery;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.constants.QueryEventConstants;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.contactsapp.ContActs;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.core.i18n.Messages;
+import fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.dialogs.FillSMSGatewayCredentials;
 import fr.pigeo.rimap.rimaprcp.getfeatureinfo.ui.dialogs.SendMessageDialog;
 
 @Creatable
@@ -139,7 +141,19 @@ public class PolygonQueryUIManager {
 		if (dialog.open() == Window.OK) {
 			String title = dialog.getMessageTitle();
 			String content = dialog.getMessageContent();
-			ct.sendMessage(mode, title, content);
+			FillSMSGatewayCredentials creds = new FillSMSGatewayCredentials(shell);
+			if (creds.open() == Window.OK) {
+				String ak = creds.getAK();
+				String as = creds.getAS();
+				String ck = creds.getCK();
+				String service = creds.getService();
+				String phones = creds.getPhones();
+				String status = ct.sendMessageUsingOVHGateway(mode, title, content, ak, as, ck, service, phones);
+				MessageBox box = new MessageBox(shell);
+				box.setMessage(status);
+				box.open();
+			}
+			
 		}
 	}
 

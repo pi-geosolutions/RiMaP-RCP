@@ -159,29 +159,39 @@ public class ContActs {
 		return contactsList;
 	}
 
-	public String sendMessage(String mode, String title, String content) {
+//	public String sendMessage(String mode, String title, String content) {
+//		if (mode.equalsIgnoreCase("sms")) {
+//			// checkOVHSMSAPI();
+//			return sendSMSMessage(title, content, AK, AS, CK, ServiceName, phones);
+//			//return sendSMSMessageToMeWithFree(title, content);
+//		}
+//		return "";
+//	}
+	
+	public String sendMessageUsingOVHGateway(String mode, String title, String content, String AK, String AS, String CK, String ServiceName, String phones) {
 		if (mode.equalsIgnoreCase("sms")) {
 			// checkOVHSMSAPI();
-			return sendSMSMessage(title, content);
+			return sendSMSMessage(title, content, AK, AS, CK, ServiceName, phones);
 			//return sendSMSMessageToMeWithFree(title, content);
 		}
-		return "";
+		return "this contact mode is not dealt with for now";
 	}
 
-	private String sendSMSMessage(String title, String content) {
-		String AK = "putyourAKhere";
-		String AS = "putyourAShere";
-		String CK = "putyourCKhere";
-		String ServiceName = "putyourOVHServiceNamehere";
+	private String sendSMSMessage(String title, String content, String AK, String AS, String CK, String ServiceName, String phones) {
+//		String AK = "putyourAKhere";
+//		String AS = "putyourAShere";
+//		String CK = "putyourCKhere";
+//		String ServiceName = "putyourOVHServiceNamehere";
 		String url = "https://eu.api.ovh.com/1.0/sms/" + ServiceName + "/jobs/";
 		String METHOD = "POST";
 		String message = title.toUpperCase()+" \\n "+content;
 		System.out.println(message);
 		message = message.replace(System.getProperty("line.separator"), " \\n ");
 		System.out.println(message);
+		String out="unknown error";
 		try {
 			URL QUERY = new URL(url);
-			String BODY = "{\"receivers\":[\"002202030222\"],\"message\":\"" + message
+			String BODY = "{\"receivers\":[\""+phones+"\"],\"message\":\"" + message
 					+ "\",\"priority\":\"high\",\"sender\":\"J. POMMIER\",\"senderForResponse\":false,\"noStopClause\":true}";
 
 			long TSTAMP = new Date().getTime() / 1000;
@@ -224,19 +234,20 @@ public class ContActs {
 			in.close();
 
 			// Affichage du résultat
-			System.out.println(response.toString());
+			out = response.toString();
+			System.out.println(out);
 		} catch (MalformedURLException e) {
 			final String errmsg = "MalformedURLException: " + e;
 		} catch (IOException e) {
 			final String errmsg = "IOException: " + e;
 		}
-		return "OK";
+		return out;
 	}
 
-	private String checkOVHSMSAPI() {
-		String AK = "putyourAKhere";
-		String AS = "putyourAShere";
-		String CK = "putyourCKhere";
+	private String checkOVHSMSAPI(String AK, String AS, String CK) {
+//		String AK = "putyourAKhere";
+//		String AS = "putyourAShere";
+//		String CK = "putyourCKhere";
 		String url = "https://eu.api.ovh.com/1.0/sms/";
 		try {
 			String BODY = "";

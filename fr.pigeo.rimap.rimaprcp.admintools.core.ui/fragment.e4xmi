@@ -26,7 +26,7 @@
     <elements xsi:type="menu:HandledMenuItem" xmi:id="_vMmiADPKEea4hpsAeB2m5A" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.handledmenuitem.show.layertreeeditor" label="Show Layertree Editor" iconURI="platform:/plugin/fr.pigeo.rimap.rimaprcp.admintools.core.ui/icons/page_white_edit.png" command="_KmZksDPLEea4hpsAeB2m5A">
       <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_3MLCsGlYEeirzbDDuqMeCQ" coreExpressionId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.profile.is.admin"/>
     </elements>
-    <elements xsi:type="menu:DirectMenuItem" xmi:id="_ZFLq8GidEeiwBvrYx1KKzA" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.directmenuitem.logconsole" label="View Log Console" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.admintools.core.ui/fr.pigeo.rimap.rimaprcp.admintools.core.ui.handlers.ViewLogConsole">
+    <elements xsi:type="menu:DirectMenuItem" xmi:id="_ZFLq8GidEeiwBvrYx1KKzA" elementId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.directmenuitem.logconsole" toBeRendered="false" visible="false" label="View Log Console" contributionURI="bundleclass://fr.pigeo.rimap.rimaprcp.admintools.core.ui/fr.pigeo.rimap.rimaprcp.admintools.core.ui.handlers.ViewLogConsole">
       <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_KcYLQGldEeiRH8qnBrCxXA" coreExpressionId="fr.pigeo.rimap.rimaprcp.admintools.core.ui.user.is.me"/>
     </elements>
   </fragments>

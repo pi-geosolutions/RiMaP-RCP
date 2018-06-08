@@ -184,7 +184,7 @@ public class PolygonQueryResultsPart {
 			Job job = new Job("Load contActs") {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					ContActs c = pq.getContActs(layer);
+					final ContActs c = pq.getContActs(layer);
 
 					sync.asyncExec(new Runnable() {
 						@Override
