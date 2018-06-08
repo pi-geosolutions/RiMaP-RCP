@@ -150,7 +150,7 @@ public class PolygonQueryResultsPart {
 		viewer.setInput(pq.getLayers());
 
 		// needed for Windows env. (elsewise, nothing is selected by default):
-		// updateBrowser(browser, pq.getLayers().get(0), pq);
+		updateDisplay(pq.getLayers().get(0), pq);
 		// browser.setText(pq.getStats(pq.getLayers().get(0)));
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -247,6 +247,8 @@ public class PolygonQueryResultsPart {
 	}
 
 	private void displayContactsInLayerComposite(ContActs c) {
+		// clear the composite : this function is called asynchronously, so can be called twice, like at first opening because of windows hack
+		this.clearComposite(composite);
 		ContActs contacts = c;
 		TableViewer tv = new TableViewer(composite,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.SINGLE);
@@ -315,7 +317,7 @@ public class PolygonQueryResultsPart {
 		colView.setLabelProvider(new ContactButtonColumnLabelProvider(messages.polygonquery_ms_view_label, c, eventBroker, QueryEventConstants.POLYGONQUERY_MS_SHOW_CONTACTS_LIST));
 		
 		// send action
-		TableViewerColumn colSend = createTableViewerColumn(tv, "", 80);
+		TableViewerColumn colSend = createTableViewerColumn(tv, "", 110);
 		colSend.setLabelProvider(new ContactButtonColumnLabelProvider(messages.polygonquery_ms_send_label, c, eventBroker, QueryEventConstants.POLYGONQUERY_MS_SEND));
 	
 		tv.setInput(c.getCounter());

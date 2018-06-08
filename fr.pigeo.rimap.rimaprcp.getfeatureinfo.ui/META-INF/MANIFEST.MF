@@ -24,4 +24,4 @@ Require-Bundle: fr.pigeo.rimap.rimaprcp.getfeatureinfo.core,
 Import-Package: gov.nasa.worldwind.geom,
  javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

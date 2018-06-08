@@ -8,4 +8,4 @@ Bundle-Vendor: National Aeronautics and Space Administration (NASA)
 Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86_64))
 Bundle-NativeCode: 
  gluegen-rt.dll;jogl_desktop.dll;jogl_mobile.dll;nativewindow_awt.dll;nativewindow_win32.dll;newt.dll;gdalalljni64.dll;osname=win32;processor=x86_64
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

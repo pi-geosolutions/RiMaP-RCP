@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.jdom
 Bundle-SymbolicName: fr.pigeo.externals.org.jdom
 Bundle-Version: 2.0.2
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: jdom-2.0.2.jar,
  .
 Export-Package: org.jdom2,

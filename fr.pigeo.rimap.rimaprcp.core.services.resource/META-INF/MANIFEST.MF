@@ -4,7 +4,7 @@ Bundle-Name: Core Resource Service
 Bundle-SymbolicName: fr.pigeo.rimap.rimaprcp.core.services.resource
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: pi-Geosolutions
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.e4.core.contexts,
  org.eclipse.swt;bundle-version="3.104.1",
  fr.pigeo.rimap.rimaprcp.core,

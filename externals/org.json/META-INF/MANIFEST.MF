@@ -5,4 +5,4 @@ Bundle-SymbolicName: fr.pigeo.externals.org.json
 Bundle-Version: 1.0.0
 Bundle-ClassPath: json-20160810.jar
 Export-Package: org.json;version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

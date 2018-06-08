@@ -4,7 +4,7 @@ Bundle-Name: World Wind RCP
 Bundle-SymbolicName: gov.nasa.worldwind;singleton:=true
 Bundle-Version: 2.1.0
 Bundle-Vendor: National Aeronautics and Space Administration (NASA)
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BuddyPolicy: registered
 Bundle-ClassPath: gdal.jar,
  gluegen-rt.jar,
